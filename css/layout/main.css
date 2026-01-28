@@ -1,0 +1,73 @@
+/* ========================================
+   LAYOUT - MAIN
+   ======================================== */
+
+main {
+  padding-top: 100px;
+  text-align: center;
+
+}
+
+section {
+  margin-bottom: var(--spacing-xl);
+  padding: 0 var(--spacing-sm);
+}
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.container-with-photo {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: stretch;
+  max-width: 1200px;
+  margin: 0 auto var(--spacing-lg);
+  padding: 0 var(--spacing-sm);
+}
+
+
+
+
+.photo-aside {
+  flex: 0 0 380px;
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.photo-aside::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius-lg);
+  pointer-events: none;
+}
+
+.photo-aside img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+/* Classes utilitaires */
+.section-spacing {
+  margin-top: var(--spacing-xl);
+}
+
+.section-spacing-bottom {
+  margin-bottom: var(--spacing-xl);
+}
+
+.text-center {
+  text-align: center;
+}

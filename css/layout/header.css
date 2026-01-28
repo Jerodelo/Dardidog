@@ -1,0 +1,148 @@
+/* ========================================
+   LAYOUT - HEADER
+   ======================================== */
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 8px 15px;
+  background: rgba(250, 243, 232, 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(21, 71, 52, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo et nom */
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+
+.logo-svg {
+  width: 65px;
+  height: 65px;
+}
+
+.logo-svg:hover {
+  transform: scale(1.05);
+}
+
+.company-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3rem;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-top: 8px;
+}
+
+/* Navigation desktop */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 40px;
+}
+
+nav ul li {
+  position: relative;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: var(--transition);
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+  display: block;
+}
+
+nav ul li a:hover {
+  background-color: rgba(21, 71, 52, 0.08);
+}
+
+/* Onglet actif : Soulignement moderne (uniquement menu principal) */
+nav > ul > li > a.active {
+  background-color: transparent;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  
+}
+
+/* Menu déroulant */
+.dropdown {
+  position: relative;
+}
+
+.dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  display: none;
+}
+
+.dropdown:hover::after {
+  display: block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background-color: rgba(250, 243, 232, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  min-width: 240px;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius-md);
+  z-index: 100;
+  border: 2px solid rgba(21, 71, 52, 0.15);
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: var(--color-primary);
+  padding: 14px 22px;
+  text-decoration: none;
+  display: block;
+  font-size: 1rem;
+  transition: var(--transition);
+  border-left: 3px solid transparent;
+}
+
+.dropdown-content a:hover {
+  background-color: rgba(21, 71, 52, 0.08);
+  border-left-color: var(--color-primary);
+  padding-left: 28px;
+}

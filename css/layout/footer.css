@@ -1,0 +1,48 @@
+/* ========================================
+   LAYOUT - FOOTER
+   ======================================== */
+
+footer {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  text-align: center;
+  padding: var(--spacing-xs);
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-item a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+}
+
+.footer-item a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.footer-copy {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin: var(--spacing-xs) 0 0;
+  font-weight: 400;
+}

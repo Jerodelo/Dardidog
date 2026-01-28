@@ -1,0 +1,35 @@
+/* Polices Google Fonts centralisées */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 120px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', Tahoma, Verdana, sans-serif;
+  background:var(--color-background);
+  background-attachment: fixed;
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+
+h2 {
+  font-size: clamp(2.3rem, 3vw, 2.5rem);
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-md);
+}
+
+h3 {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+p {
+  margin-bottom: 1rem;
+  line-height: var(--line-height-text);
+}

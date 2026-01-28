@@ -1,0 +1,188 @@
+ <!-- concatener et minifier css avec une date (pour pouvoir actualiser malgré les caches) -->
+<!-- voir avec chabert pour mettre en ligne le sitemap et .htaccess-->
+<!-- soumettre sitemap a google-->
+ <!---->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dardidog - Accueil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dardidog, pet-sitter de l'ouest lyonnais diplômée ACACED. Balades, pension, visites à domicile pour chiens, chats, rongeurs, reptiles, oiseaux...">
+  <meta name="author" content="Dardidog">
+  <meta name="robots" content="index, follow">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dardidog.fr/">
+<meta property="og:title" content="Dardidog - Pet-sitting professionnel à Dardilly">
+<meta property="og:description" content="Pet-sitter diplômée ACACED. Balades, pension, visites à domicile pour chiens, chats et NAC. Dardilly et ouest lyonnais.">
+<meta property="og:image" content="https://dardidog.fr/images/logo_brand.png">
+<meta property="og:locale" content="fr_FR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://dardidog.fr/">
+<meta name="twitter:title" content="Dardidog - Pet-sitting professionnel à Dardilly">
+<meta name="twitter:description" content="Pet-sitter diplômée ACACED. Balades, pension, visites à domicile pour chiens, chats et NAC. Dardilly et ouest lyonnais.">
+<meta name="twitter:image" content="https://dardidog.fr/images/logo_brand.png">
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" type="image/webp" href="images/photo-portrait-medium.webp" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/style.min.css">
+
+  <!-- Favicons -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="images/android-chrome-512x512.png">
+
+ <!-- Données structurées JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Dardidog",
+    "description": "Pet-sitting professionnel à Dardilly - Balades, pension, visites à domicile pour chiens, chats et NAC",
+    "url": "https://dardidog.fr",
+    "telephone": "+33750913177",
+    "email": "contact@dardidog.fr",
+    "priceRange": "15€-40€",
+    "image": "https://dardidog.fr/images/logo_brand.png",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Dardilly",
+      "addressRegion": "Auvergne-Rhône-Alpes",
+      "postalCode": "69570",
+      "addressCountry": "FR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 45.799505,
+      "longitude": 4.756716
+    },
+    "areaServed": [
+      "Dardilly",
+      "Limonest",
+      "Écully",
+      "Charbonnières-les-Bains",
+      "Tassin-la-Demi-Lune",
+      "La Tour-de-Salvagny",
+      "Lentilly",
+      "Dommartin",
+      "Lissieu",
+      "Marcy-l'Étoile",
+      "Saint-Didier-au-Mont-d'Or",
+      "Champagne-au-Mont-d'Or",
+      "Lyon 9",
+      "Lyon 5"
+    ],
+    "openingHoursSpecification": [
+      {
+         "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "08:00",
+        "closes": "19:00"
+      }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "11"
+    },
+    "sameAs": [
+      "https://maps.app.goo.gl/R6BkngYzbHcGwdAR7"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- HEADER -->
+  <div id="header-placeholder"></div>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main>
+    <section>
+      <h2>QUI EST DARDIDOG ?</h2>
+      <div class="container-with-photo">
+        <div class="card">
+          <p>
+            Passionnée par les animaux depuis toujours, j'ai commencé par garder chiens, chats et lapins à mon domicile de manière occasionnelle. Puis, j'ai finalement décidé de faire de cette passion mon métier à temps plein.
+            Ingénieure reconvertie, je suis désormais titulaire de l'ACACED chiens, chats et NAC et j'ai suivi une formation en éducation canine positive. Ces compétences me permettent d'assurer un accompagnement de qualité, toujours bienveillant et adapté aux besoins spécifiques de chaque animal.
+            Qu'il soit timide, joueur, craintif, énergique ou encore fainéant, votre compagnon sera accueilli avec toute l'attention, la patience et l'affection qu'il mérite.
+          </p>
+        </div>
+        <div class="photo-aside">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="images/photo-portrait-small.webp 600w,
+                      images/photo-portrait-medium.webp 900w,
+                      images/photo-portrait-large.webp 1200w"
+              sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 450px">
+            <img
+              src="images/photo-portrait.jpg"
+              srcset="images/photo-portrait-small.jpg 600w,
+                      images/photo-portrait-medium.jpg 900w,
+                      images/photo-portrait-large.jpg 1200w"
+              sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 450px"
+              alt="Photo de la pet-sitteuse avec deux chiens à ses pieds qui la regardent"
+              loading="lazy">
+          </picture>
+        </div>
+      </div>
+
+      <h2>POURQUOI FAIRE APPEL A DARDIDOG ?</h2>
+      <div class="container">
+        <div class="card">
+          <h3>Vous craignez que votre chien s'ennuie</h3>
+          <p>Vous êtes soucieux du bien être de votre chien et vous craignez qu'il s'ennuie ou se sente seul pendant vos longues journées d'absence ? Offrez-lui un peu de compagnie le temps d'une visite à domicile, d'une balade ou encore d'une journée complète chez moi !
+          Au programme : jeux, balades en forêt, câlins, rencontre avec des congénères... Chaque chien est unique : je m'adapte à ses besoins comme aux vôtres, afin de lui offrir l'expérience la plus positive possible. Une demande particulière ? N'hésitez pas à me contacter, nous trouverons ensemble la solution idéale pour votre compagnon.</p>
+        </div>
+
+        <div class="card">
+          <h3>Votre chien a des troubles comportementaux</h3>
+          <p>Votre chien détruit des objets, tourne en rond, creuse des trous dans le jardin ou aboie sur tout ce qui bouge ? Dans bien des cas, ces comportements peuvent être dus ou amplifiés par un manque de stimulation lié à des sorties trop rares, trop courtes ou trop monotones.</p>
+          <p>Le jardin, aussi grand soit-il, n'offre pas la richesse d'expériences nécessaires à l'équilibre mental d'un chien. Ce dont nos compagnons ont réellement besoin, c'est de découvrir de nouveaux endroits, sentir des odeurs inédites, rencontrer d'autres congénères et vivre des expériences variées.</p>
+          <p>Augmenter la fréquence et la durée des sorties, tout en diversifiant les lieux de promenades, peut considérablement améliorer certains troubles comportementaux. Un chien dont les besoins sont assouvis est un chien apaisé qui fera moins de bêtises.</p>
+          <p>Entre les contraintes professionnelles, familiales et personnelles, il n'est pas toujours facile d'offrir à son chien toute la stimulation dont il a besoin. C'est là que Dardidog intervient pour proposer à votre compagnon des sorties variées et enrichissantes, faites de jeux et de rencontres. L'objectif est simple : qu'il rentre à la maison apaisé et heureux, tout en vous permettant de concilier sereinement votre vie quotidienne et son bien-être.</p>
+        </div>
+
+        <div class="card">
+          <h3>Vous souhaitez apprendre à votre chien les ordres de base</h3>
+          <p>« Assis », « Couché », « Pas bouger », « Laisse », « Prends », « Donne », « Au pied »…
+          Tous ces ordres, en plus d'être très utiles au quotidien, aident votre chien à acquérir de la discipline et à mieux gérer ses émotions, ce qui contribue à le rendre plus équilibré et stable.
+          Bonne nouvelle : il n'est jamais trop tard pour apprendre et Dardidog peut vous aider pour ça. Lors des visites, balades ou gardes à domicile, je mets mes compétences d'éducation canine au service de votre compagnon pour l'aider à progresser en douceur sur l'apprentissage de ces ordres de base, toujours dans une approche positive et bienveillante.</p>
+        </div>
+
+        <div class="card">
+          <h3>Vous vous apprêtez à accueillir un chiot</h3>
+          <p>L'arrivée d'un chiot est un moment rempli de joie… mais aussi de nouveaux défis. On sous-estime souvent le temps et l'énergie qu'un chiot demande au quotidien, notamment pendant ses premiers mois si cruciaux. Pourtant, votre chiot a besoin d'attention régulière : il ne peut pas encore se retenir toute la journée, et rester trop longtemps seul peut entraîner des accidents, du stress ou même des destructions. Mais avec un emploi du temps chargé, il est parfois difficile d'être présent autant qu'on le souhaitait initialement.</p>
+          <p>Dardidog vous propose deux solutions adaptées à vos besoins : des promenades quotidiennes ou bien une garderie à la journée. Quelle que soit l'option choisie, cela permettra à votre chiot de progresser sereinement dans son apprentissage de la propreté, d'éviter les destructions liées à l'ennui et de réduire l'anxiété due à la solitude.</p>
+          <p>Les promenades collectives peuvent également considérablement aider à la socialisation du chiot en lui permettant de rencontrer d'autres congénères, d'apprendre les codes canins et de gagner en confiance en s'habituant à différents environnements, bruits et situations du quotidien.</p>
+          <p>Ces moments peuvent aussi être l'occasion de lui apprendre en douceur les ordres de base, indispensables à son équilibre et à la gestion de ses émotions. Plus tôt vous commencez, plus facile et naturel sera son apprentissage.</p>
+        </div>
+
+        <div class="card">
+          <h3>Vous partez en week-end ou en vacances</h3>
+          <p>Vous partez en week-end ou en vacances, mais ne pouvez pas emmener votre fidèle compagnon avec vous et personne dans votre entourage n'est disponible pour le garder ? Vous avez visité un chenil et l'ambiance ne vous a pas emballé du tout ?
+          Dardidog vous propose un service de garderie à mon domicile pour les chiens, lapins et autres NACs ou encore un service de visite quotidienne à domicile pour les chats et autres NACs.
+          Parce qu'eux aussi méritent de belles vacances, vos animaux seront soignés, calinés, chouchoutés afin de les aider à vivre au mieux cette séparation.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-placeholder"></div>
+
+  <!-- SCRIPTS -->
+  <script src="script.js"></script>
+</body>
+</html>

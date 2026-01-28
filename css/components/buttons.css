@@ -1,0 +1,80 @@
+/* ========================================
+   COMPOSANTS - BOUTONS
+   ======================================== */
+
+/* ========================================
+   BOUTONS DE NAVIGATION (CTA)
+   ======================================== */
+.secteur-cta {
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+  padding: var(--btn-padding);
+  background-color: var(--color-card);
+  color: var(--color-primary);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition);
+}
+
+.secteur-cta:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-md);
+}
+
+
+/* ========================================
+   NUMÉRO DE TÉLÉPHONE - VERSION DESKTOP
+   ======================================== */
+.phone-number-desktop {
+  display: inline-block;
+  width: fit-content;
+  margin-top: var(--spacing-md);
+  padding: var(--btn-padding);
+  background-color: var(--color-card);
+  color: var(--color-primary);
+  font-size: 2.6rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition);
+}
+
+
+/* ========================================
+   NUMÉRO DE TÉLÉPHONE - VERSION MOBILE
+   ======================================== */
+.phone-number-mobile {
+  display: none;
+}
+
+
+/* ========================================
+   EMAIL DE CONTACT
+   ======================================== */
+.contact-email {
+  display: inline-block;
+  width: fit-content;
+  margin-top: var(--spacing-md);
+  padding: var(--btn-padding);
+  background-color: var(--color-card);
+  color: var(--color-primary);
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition);
+}
+
+.contact-email:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-md);
+}

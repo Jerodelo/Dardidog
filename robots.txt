@@ -1,0 +1,6 @@
+# Robots.txt pour Dardidog
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://dardidog.fr/sitemap.xml

@@ -1,0 +1,599 @@
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* ========================================
+   MENU MOBILE - BURGER BUTTON
+   ======================================== */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+  width: 28px;
+  height: 3px;
+  background-color: var(--color-primary);
+  border-radius: 3px;
+  transition: var(--transition);
+}
+
+/* Animation du burger en X */
+.mobile-menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+
+/* ========================================
+   NAVIGATION MOBILE
+   ======================================== */
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: rgba(243, 232, 213, 0.98);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  z-index: 999;
+}
+
+.mobile-nav.active {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  padding: 15px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-nav ul li {
+  margin-bottom: 0;
+}
+
+.mobile-nav ul li > a {
+  display: block;
+  padding: 14px 18px;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+  background-color: rgba(21, 71, 52, 0.05);
+  border-left: 3px solid var(--color-primary);
+}
+
+.mobile-nav ul li > a:hover {
+  background-color: rgba(21, 71, 52, 0.12);
+  transform: translateX(5px);
+}
+
+/* Dropdown mobile */
+.mobile-dropdown-content {
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.mobile-dropdown-content.active {
+  max-height: 300px;
+  padding-top: 8px;
+}
+
+.mobile-dropdown-content a {
+  font-size: 0.95rem;
+  padding: 10px 15px;
+  color: var(--color-text);
+  font-weight: 500;
+  background-color: rgba(21, 71, 52, 0.02);
+  border-left: 2px solid rgba(21, 71, 52, 0.3);
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+}
+
+.mobile-dropdown-content a:hover {
+  background-color: rgba(21, 71, 52, 0.08);
+  border-left-color: var(--color-primary);
+  transform: translateX(5px);
+}
+
+
+/* ========================================
+   TABLETTES ET PETITS ÉCRANS (max 1100px)
+   ======================================== */
+@media (max-width: 1100px) {
+  /* Navigation desktop */
+  nav ul {
+    gap: 10px;
+  }
+
+  /* Carrousel : 2 cards au lieu de 3 */
+  .avis-card {
+    flex: 0 0 calc((100% - 40px) / 2);
+  }
+
+  /* Passer à une card visite sur toute la largeur */
+  .features-grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(min(500px, 100%), 1fr));
+  }
+}
+
+
+/* ========================================
+   TABLETTES (max 990px)
+   ======================================== */
+@media (max-width: 990px) {
+  /* Basculer vers le menu mobile */
+  nav {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .mobile-nav {
+    display: block;
+  }
+
+  /* Card avec photo : empiler verticalement */
+  .container-with-photo {
+    flex-direction: column;
+  }
+
+  .container-with-photo .photo-aside {
+    flex: none;
+    width: 100%;
+    height: auto;
+    order: -1;
+  }
+
+  .container-with-photo .photo-aside img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Carrousel : 1 seule card visible */
+  .avis-card {
+    flex: 0 0 100%;
+  }
+
+  /* Boutons carrousel */
+  .carousel-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .carousel-btn::before {
+    width: 10px;
+    height: 10px;
+  }
+
+  .prev-btn::before {
+    left: 19px;
+  }
+
+  .next-btn::before {
+    right: 19px;
+  }
+}
+
+
+/* ========================================
+   TÉLÉPHONES (max 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* Numéro de téléphone cliquable */
+  .phone-number-desktop {
+    display: none;
+  }
+
+  .phone-number-mobile {
+    display: inline-block;
+    width: fit-content;
+    margin-top: var(--spacing-sm);
+    padding: var(--btn-padding);
+    background-color: transparent;
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--border-radius-md);
+    transition: var(--transition);
+  }
+
+  .phone-number-mobile:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: var(--hover-lift);
+    box-shadow: var(--shadow-md);
+  }
+
+  .contact-email {
+    font-size: 1.5rem;
+  }
+
+  /* Désactiver les animations sur mobile */
+  .card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+    border-color: rgba(21, 71, 52, 0.08);
+  }
+
+  .styled-table-simple tbody tr:hover {
+    background-color: transparent;
+    transform: none;
+  }
+
+  .communes-list li:hover {
+    transform: none;
+  }
+
+}
+
+
+/* ========================================
+   PETITS TÉLÉPHONES (max 600px)
+   ======================================== */
+@media (max-width: 600px) {
+  /* Contenu principal */
+  main {
+    padding-top: 80px;
+  }
+
+  /* Boutons carrousel */
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .carousel-btn::before {
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+  }
+
+  .prev-btn::before {
+    left: 15px;
+  }
+
+  .next-btn::before {
+    right: 15px;
+  }
+
+  /* Cards avis */
+  .avis-card {
+    padding: var(--spacing-sm);
+    min-height: 240px;
+  }
+
+  .avis-nom {
+    font-size: 1rem;
+  }
+
+  .avis-texte {
+    font-size: 0.9rem;
+  }
+
+  .avis-date {
+    font-size: 0.8rem;
+  }
+
+  .avis-carousel-container {
+    padding: 0 var(--spacing-xs);
+    gap: var(--spacing-xs);
+  }
+
+  /* Footer compact */
+  .footer-container {
+    gap: 5px;
+  }
+
+  .footer-item a {
+    font-size: 0.8rem;
+    gap: 3px;
+    padding: 1px 5px;
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    margin: 0px 0 0;
+  }
+}
+
+
+/* ========================================
+   TRÈS PETITS TÉLÉPHONES (max 480px)
+   ======================================== */
+@media (max-width: 480px) {
+  /* Header compact */
+  header {
+    padding: 10px 15px;
+  }
+
+  .company-name {
+    font-size: 2.5rem;
+  }
+
+  .logo-svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* Navigation mobile */
+  .mobile-nav ul li a {
+    font-size: 1rem;
+    padding: 12px 15px;
+  }
+
+  /* Containers */
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+
+  /* Boutons */
+  .secteur-cta {
+    font-size: 1rem;
+  }
+
+  /* Boutons carrousel très petits */
+  .carousel-btn {
+    width: 25px;
+    height: 25px;
+  }
+
+  .carousel-btn::before {
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+  }
+
+  .prev-btn::before {
+    left: 10px;
+  }
+
+  .next-btn::before {
+    right: 10px;
+  }
+
+  /* Cards avis très compactes */
+  .avis-card {
+    padding: var(--spacing-xs);
+    min-height: 240px;
+  }
+
+  .avis-nom {
+    font-size: 1rem;
+  }
+
+  .avis-texte {
+    font-size: 0.8rem;
+  }
+
+  .avis-date {
+    font-size: 0.7rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: var(--spacing-s);
+  }
+
+  /* Tables */
+  .styled-table-simple td {
+    padding: 14px 15px;
+  }
+}
+
+
+/* ========================================
+   ÉCRANS ULTRA PETITS (max 390px)
+   ======================================== */
+@media (max-width: 390px) {
+  /* Titres */
+  h2 {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+  }
+
+  /* Header */
+  .company-name {
+    font-size: 2rem;
+  }
+
+  .logo-svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .left-section {
+    gap: 10px;
+  }
+
+  /* Tables */
+  .styled-table-simple td {
+    padding: 10px 15px;
+  }
+}
+
+
+/* ========================================
+   ÉCRANS ULTRA PETITS (max 370px)
+   ======================================== */
+@media (max-width: 370px) {
+
+  /* Textes */
+  p {
+    font-size: 0.9rem !important;
+    line-height: 1.4;
+  }
+
+  .communes-list li {
+    font-size: 0.9rem !important;
+  }
+
+  .simple-list li {
+    font-size: 0.9rem !important;
+  }
+}
+
+
+/* ========================================
+   ÉCRANS ULTRA PETITS (max 350px)
+   ======================================== */
+@media (max-width: 350px) {
+  /* Contact */
+  .phone-number-mobile {
+    font-size: 1.3rem;
+  }
+
+  .contact-email {
+    font-size: 1.3rem;
+  }
+}
+
+
+/* ========================================
+   MODE PAYSAGE (max-height 480px)
+   ======================================== */
+@media (max-height: 480px) and (orientation: landscape) {
+  /* Header ultra compact */
+  header {
+    padding: 6px 10px;
+  }
+
+  .company-name {
+    font-size: 1.8rem;
+  }
+
+  .logo-svg {
+    width: 35px;
+    height: 35px;
+  }
+
+  .left-section {
+    gap: 8px;
+  }
+
+  /* Galerie */
+  .photo-gallery {
+    padding: 0 0;
+  }
+
+  /* Boutons */
+  .secteur-cta {
+    margin-top: 0;
+  }
+
+  /* Menu mobile optimisé */
+  .mobile-nav.active {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .mobile-nav ul {
+    padding: 8px;
+  }
+
+  .mobile-nav ul li a {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .mobile-dropdown-content a {
+    padding: 6px 12px 6px 24px;
+    font-size: 0.85rem;
+  }
+
+  /* Contenu principal */
+  main {
+    padding-top: 80px;
+  }
+
+  section {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* Footer ultra compact */
+  footer {
+    padding: 5px 5px;
+  }
+
+  .footer-container {
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .footer-item a {
+    font-size: 0.8rem;
+    gap: 20px;
+    padding: 0px 0px;
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    margin: 10px 0 0;
+  }
+}
+
+
+/* ========================================
+   MODE PAYSAGE TRÈS BAS (max-height 400px)
+   ======================================== */
+@media (max-height: 400px) and (orientation: landscape) {
+  /* Contenu principal */
+  main {
+    padding-top: 40px;
+  }
+
+  section {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* Footer */
+  footer {
+    padding: var(--spacing-xs) var(--spacing-xs);
+  }
+
+  .footer-container {
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .footer-item a {
+    gap: 0px;
+    padding: 0px 25px;
+  }
+}

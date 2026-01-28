@@ -1,0 +1,45 @@
+:root {
+  /* Couleurs */
+  --color-primary: #154734;
+  --color-primary-dark: #0b3314;
+  --color-primary-light: #214B36;
+  --color-accent: #8B7355;
+  --color-bg-cream: #F3E8D5;
+  --color-bg-light: #f5f2eb;
+  --color-text: #0b3314;
+  --color-text-light: #555;
+  --color-card: #FBF5ED;
+  --color-background:  #FAF3E8;
+  
+  /* Espacements */
+  --spacing-xs: 10px;
+  --spacing-s: 18px;
+  --spacing-sm: 20px;
+  --spacing-md: 40px;
+  --spacing-lg: 60px;
+  --spacing-xl: 80px;
+
+  /* Boutons */
+  --btn-padding: 14px 28px;
+
+  /* Containers */
+  --container-max-width: 900px;
+  --container-wide: 1300px;
+
+  /* Typographie */
+  --line-height-text: 1.7;
+
+  /* Bordures */
+  --border-radius-sm: 10px;
+  --border-radius-md: 15px;
+  --border-radius-lg: 20px;
+
+  /* Ombres */
+  --shadow-sm: 0 6px 16px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 20px rgba(0,0,0,0.15);
+
+  /* Animations */
+  --transition: all 0.3s ease;
+  --hover-lift: translateY(-2px);
+}

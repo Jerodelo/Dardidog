@@ -1,0 +1,23 @@
+/* ========================================
+   COMPOSANTS - GRILLES
+   ======================================== */
+
+/* Grille 2 colonnes (Balades, Pension canine) */
+.features-grid-2 {
+  display: grid;
+  gap: var(--spacing-md);
+  max-width: var(--container-wide);
+  margin: var(--spacing-lg) auto;
+  padding: 0 var(--spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(min(450px, 100%), 1fr));
+}
+
+/* Grille 3 colonnes (Visites à domicile) */
+.features-grid-3 {
+  display: grid;
+  gap: var(--spacing-md);
+  max-width: var(--container-wide);
+  margin: var(--spacing-lg) auto;
+  padding: 0 var(--spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
