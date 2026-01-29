@@ -7,7 +7,7 @@ header {
   top: 0;
   width: 100%;
   padding: 8px 15px;
-  background: rgba(250, 243, 232, 0.8);
+  background: rgba(var(--color-background-rgb), 0.9);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 2px solid rgba(21, 71, 52, 0.1);
@@ -15,6 +15,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
 }
 
 header:hover {
@@ -83,7 +84,7 @@ nav ul li a:hover {
   background-color: rgba(21, 71, 52, 0.08);
 }
 
-/* Onglet actif : Soulignement moderne (uniquement menu principal) */
+/* Onglet actif : mise en gras */
 nav > ul > li > a.active {
   background-color: transparent;
   color: var(--color-primary-dark);
@@ -115,7 +116,7 @@ nav > ul > li > a.active {
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  background-color: rgba(250, 243, 232, 0.9);
+  background-color: rgba(var(--color-background-rgb), 0.9);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   min-width: 240px;

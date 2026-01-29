@@ -9,8 +9,8 @@
   display: inline-block;
   margin-top: var(--spacing-sm);
   padding: var(--btn-padding);
-  background-color: var(--color-card);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-card);
   font-size: 1.05rem;
   font-weight: 600;
   text-decoration: none;
@@ -20,8 +20,9 @@
 }
 
 .secteur-cta:hover {
-  background-color: var(--color-primary);
-  color: white;
+  
+background-color: var(--color-button);
+  color: var(--color-primary);
   transform: var(--hover-lift);
   box-shadow: var(--shadow-md);
 }
@@ -35,8 +36,8 @@
   width: fit-content;
   margin-top: var(--spacing-md);
   padding: var(--btn-padding);
-  background-color: var(--color-card);
-  color: var(--color-primary);
+ background-color: var(--color-primary);
+ color: var(--color-card);
   font-size: 2.6rem;
   font-weight: 600;
   text-decoration: none;
@@ -62,8 +63,8 @@
   width: fit-content;
   margin-top: var(--spacing-md);
   padding: var(--btn-padding);
-  background-color: var(--color-card);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+   color: var(--color-card);
   font-size: 2.5rem;
   font-weight: 600;
   text-decoration: none;
@@ -73,8 +74,8 @@
 }
 
 .contact-email:hover {
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-button);
+  color: var(--color-primary);
   transform: var(--hover-lift);
   box-shadow: var(--shadow-md);
 }

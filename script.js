@@ -21,16 +21,33 @@ async function loadPartials() {
 function setActivePage() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  // Sélectionner tous les liens de navigation (desktop et mobile)
-  const navLinks = document.querySelectorAll('nav a, .mobile-nav a');
+  // Sélectionner tous les liens de navigation (desktop et mobile) SAUF les toggles
+  const navLinks = document.querySelectorAll('nav a, .mobile-nav a:not(.mobile-dropdown-toggle)');
 
   navLinks.forEach(link => {
-    const linkPage = link.getAttribute('href').split('#')[0]; // Enlever les ancres #balades, etc.
+    const linkHref = link.getAttribute('href');
+    if (!linkHref || linkHref === '#') return; // Ignorer les liens vides ou ancres seules
 
-    if (linkPage === currentPage ||
-        (currentPage === '' && linkPage === 'index.html') ||
-        (currentPage === 'index.html' && linkPage === 'index.html')) {
+    const linkPage = linkHref.split('#')[0]; // Enlever les ancres #balades, etc.
+
+    // Vérifier si c'est la page actuelle
+    const isActive = linkPage === currentPage ||
+                     (currentPage === '' && linkPage === 'index.html') ||
+                     (currentPage === 'index.html' && linkPage === 'index.html');
+
+    if (isActive) {
       link.classList.add('active');
+    }
+  });
+
+  // Marquer les parents des dropdowns mobiles si au moins un enfant est actif
+  document.querySelectorAll('.mobile-dropdown').forEach(dropdown => {
+    const hasActiveChild = dropdown.querySelector('.mobile-dropdown-content a.active');
+    if (hasActiveChild) {
+      const parentLink = dropdown.querySelector('.mobile-dropdown-toggle');
+      if (parentLink) {
+        parentLink.classList.add('active');
+      }
     }
   });
 }
@@ -51,10 +68,10 @@ function initMobileMenu() {
     document.querySelectorAll('.mobile-dropdown-toggle').forEach(link => {
       link.addEventListener('click', (event) => {
         event.preventDefault();
-        link.classList.toggle('active');
+        link.classList.toggle('open');
         const content = link.closest('.mobile-dropdown').querySelector('.mobile-dropdown-content');
         if (content) {
-          content.classList.toggle('active');
+          content.classList.toggle('open');
         }
       });
     });
@@ -164,6 +181,34 @@ function initAvisCarousel() {
 
   // Exposer moveCarousel globalement pour les boutons onclick
   window.moveCarousel = moveCarousel;
+
+  // Gestion du swipe tactile
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  track.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  track.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const swipeThreshold = 50; // Distance minimale pour considérer un swipe
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // Swipe vers la gauche - aller à droite
+        moveCarousel(1);
+      } else {
+        // Swipe vers la droite - aller à gauche
+        moveCarousel(-1);
+      }
+    }
+  }
 
   window.addEventListener('load', updateCarousel);
   window.addEventListener('resize', updateCarousel);

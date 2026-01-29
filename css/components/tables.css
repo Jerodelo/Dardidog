@@ -10,7 +10,7 @@
   max-width: 550px;
   margin: var(--spacing-md) auto;
   border-collapse: collapse;
-  background: var(--color-card);
+  background: var(--color-table);
   border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-md);
