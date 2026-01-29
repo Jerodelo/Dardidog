@@ -24,7 +24,7 @@ footer {
 }
 
 .footer-item a {
-  color: white;
+  color: var(--color-card);
   text-decoration: none;
   font-weight: 600;
   transition: var(--transition);

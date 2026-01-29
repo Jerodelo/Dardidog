@@ -84,12 +84,15 @@
   font-size: 1.05rem;
   border-radius: var(--border-radius-sm);
   transition: var(--transition);
+  background-color: rgba(21, 71, 52, 0.05);
+  border-left: 3px solid var(--color-primary);
 }
 
 /* Lien actif : texte en gras (comme le menu desktop) */
 .mobile-nav ul li > a.active {
   font-weight: 800;
   color: var(--color-primary-dark);
+  background-color: rgba(21, 71, 52, 0.12);
 }
 
 .mobile-nav ul li > a:hover {
@@ -493,12 +496,9 @@
    ÉCRANS MINUSCULES (max 350px)
    ======================================== */
 @media (max-height: 800px) {
- 
 .photo-item {
-
   height: 400px;
 }
-  
 }
 
 

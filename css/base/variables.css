@@ -9,8 +9,8 @@
   --color-text: #0b3314;
   --color-text-light: #555;
   --color-card:#f5e7d3 ;
-  --color-background:  #f5e5ce;
-  --color-background-rgb: 245, 229, 206; /* RGB values for rgba() usage */
+  --color-background:  #f7e9d6;
+  --color-background-rgb: 247, 233, 214; /* RGB values for rgba() usage */
   --color-button: var( --color-card);
   --color-table: #f5ebdc;
 

@@ -64,7 +64,7 @@ background-color: var(--color-button);
   margin-top: var(--spacing-md);
   padding: var(--btn-padding);
   background-color: var(--color-primary);
-   color: var(--color-card);
+  color: var(--color-card);
   font-size: 2.5rem;
   font-weight: 600;
   text-decoration: none;
