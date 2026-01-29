@@ -1,6 +1,7 @@
 * {
   box-sizing: border-box;
-}:root {
+}
+:root {
   /* Couleurs */
   --color-primary: #154734;
   --color-primary-dark: #0b3314;
@@ -10,12 +11,9 @@
   --color-bg-light: #f5f2eb;
   --color-text: #0b3314;
   --color-text-light: #555;
-  --color-card:#f8eedc ;
-  --color-background:  #faeedd;
-  --color-background-rgb: 250, 238, 221; /* RGB values for rgba() usage */
-  --color-button: var( --color-card);
-  --color-table: #f3ece1;
-
+  --color-card: #FBF5ED;
+  --color-background:  #FAF3E8;
+  
   /* Espacements */
   --spacing-xs: 10px;
   --spacing-s: 18px;
@@ -48,6 +46,9 @@
   --transition: all 0.3s ease;
   --hover-lift: translateY(-2px);
 }
+/* Polices Google Fonts centralisées */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap');
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 120px;
@@ -89,7 +90,7 @@ header {
   top: 0;
   width: 100%;
   padding: 8px 15px;
-  background: rgba(var(--color-background-rgb), 0.9);
+  background: rgba(250, 243, 232, 0.8);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 2px solid rgba(21, 71, 52, 0.1);
@@ -97,7 +98,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
 }
 
 header:hover {
@@ -166,7 +166,7 @@ nav ul li a:hover {
   background-color: rgba(21, 71, 52, 0.08);
 }
 
-/* Onglet actif : mise en gras */
+/* Onglet actif : Soulignement moderne (uniquement menu principal) */
 nav > ul > li > a.active {
   background-color: transparent;
   color: var(--color-primary-dark);
@@ -198,7 +198,7 @@ nav > ul > li > a.active {
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  background-color: rgba(var(--color-background-rgb), 0.9);
+  background-color: rgba(250, 243, 232, 0.9);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   min-width: 240px;
@@ -328,7 +328,7 @@ footer {
 }
 
 .footer-item a {
-  color: var(--color-background);
+  color: white;
   text-decoration: none;
   font-weight: 600;
   transition: var(--transition);
@@ -361,8 +361,8 @@ footer {
   display: inline-block;
   margin-top: var(--spacing-sm);
   padding: var(--btn-padding);
-  background-color: var(--color-primary);
-  color: var(--color-card);
+  background-color: var(--color-card);
+  color: var(--color-primary);
   font-size: 1.05rem;
   font-weight: 600;
   text-decoration: none;
@@ -372,9 +372,8 @@ footer {
 }
 
 .secteur-cta:hover {
-  
-background-color: var(--color-button);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: white;
   transform: var(--hover-lift);
   box-shadow: var(--shadow-md);
 }
@@ -388,8 +387,8 @@ background-color: var(--color-button);
   width: fit-content;
   margin-top: var(--spacing-md);
   padding: var(--btn-padding);
- background-color: var(--color-primary);
- color: var(--color-card);
+  background-color: var(--color-card);
+  color: var(--color-primary);
   font-size: 2.6rem;
   font-weight: 600;
   text-decoration: none;
@@ -415,8 +414,8 @@ background-color: var(--color-button);
   width: fit-content;
   margin-top: var(--spacing-md);
   padding: var(--btn-padding);
-  background-color: var(--color-primary);
-  color: var(--color-card);
+  background-color: var(--color-card);
+  color: var(--color-primary);
   font-size: 2.5rem;
   font-weight: 600;
   text-decoration: none;
@@ -426,8 +425,8 @@ background-color: var(--color-button);
 }
 
 .contact-email:hover {
-  background-color: var(--color-button);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: white;
   transform: var(--hover-lift);
   box-shadow: var(--shadow-md);
 }
@@ -570,7 +569,7 @@ background-color: var(--color-button);
   max-width: 550px;
   margin: var(--spacing-md) auto;
   border-collapse: collapse;
-  background: var(--color-table);
+  background: var(--color-card);
   border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -688,7 +687,7 @@ background-color: var(--color-button);
 }
 
 .photo-gallery::-webkit-scrollbar {
-  height: 20px;
+  height: 24px;
 }
 
 .photo-gallery::-webkit-scrollbar-track {
@@ -805,7 +804,8 @@ background-color: var(--color-button);
 .lightbox-close:hover {
   transform: scale(1.1);
   color: var(--color-accent);
-}/* ========================================
+}
+/* ========================================
    COMPOSANTS - CAROUSEL AVIS
    ======================================== */
 
@@ -979,7 +979,8 @@ background-color: var(--color-button);
     opacity: 1;
     transform: translateY(0);
   }
-}/* ========================================
+}
+/* ========================================
    RESPONSIVE DESIGN
    ======================================== */
 
@@ -1028,7 +1029,7 @@ background-color: var(--color-button);
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: rgba(var(--color-background-rgb), 1);;
+  background-color: rgba(243, 232, 213, 0.98);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
@@ -1069,13 +1070,6 @@ background-color: var(--color-button);
   border-left: 3px solid var(--color-primary);
 }
 
-/* Lien actif : texte en gras (comme le menu desktop) */
-.mobile-nav ul li > a.active {
-  font-weight: 800;
-  color: var(--color-primary-dark);
-  background-color: rgba(21, 71, 52, 0.12);
-}
-
 .mobile-nav ul li > a:hover {
   background-color: rgba(21, 71, 52, 0.12);
   transform: translateX(5px);
@@ -1092,7 +1086,7 @@ background-color: var(--color-button);
   transition: max-height 0.3s ease;
 }
 
-.mobile-dropdown-content.open {
+.mobile-dropdown-content.active {
   max-height: 300px;
   padding-top: 8px;
 }
@@ -1197,7 +1191,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-   GRANDS TÉLÉPHONES (max 768px)
+   TÉLÉPHONES (max 768px)
    ======================================== */
 @media (max-width: 768px) {
   /* Numéro de téléphone cliquable */
@@ -1210,9 +1204,8 @@ background-color: var(--color-button);
     width: fit-content;
     margin-top: var(--spacing-sm);
     padding: var(--btn-padding);
-    background-color: var(--color-primary);
-     color: var(--color-card);
-   
+    background-color: transparent;
+    color: var(--color-primary);
     font-size: 1.5rem;
     font-weight: 600;
     text-decoration: none;
@@ -1222,8 +1215,8 @@ background-color: var(--color-button);
   }
 
   .phone-number-mobile:hover {
-    background-color: var(--color-card);
-    color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: white;
     transform: var(--hover-lift);
     box-shadow: var(--shadow-md);
   }
@@ -1252,7 +1245,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-   MOYENS TÉLÉPHONES (max 600px)
+   PETITS TÉLÉPHONES (max 600px)
    ======================================== */
 @media (max-width: 600px) {
   /* Contenu principal */
@@ -1324,7 +1317,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-  PETITS TÉLÉPHONES (max 480px)
+   TRÈS PETITS TÉLÉPHONES (max 480px)
    ======================================== */
 @media (max-width: 480px) {
   /* Header compact */
@@ -1409,7 +1402,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-   TRES PETITS TELEPHONES (max 390px)
+   ÉCRANS ULTRA PETITS (max 390px)
    ======================================== */
 @media (max-width: 390px) {
   /* Titres */
@@ -1439,7 +1432,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-   ENCORE PLUS PETITS TELEPHONES(max 370px)
+   ÉCRANS ULTRA PETITS (max 370px)
    ======================================== */
 @media (max-width: 370px) {
 
@@ -1460,7 +1453,7 @@ background-color: var(--color-button);
 
 
 /* ========================================
-   ÉCRANS MINUSCULES (max 350px)
+   ÉCRANS ULTRA PETITS (max 350px)
    ======================================== */
 @media (max-width: 350px) {
   /* Contact */
@@ -1471,15 +1464,6 @@ background-color: var(--color-button);
   .contact-email {
     font-size: 1.3rem;
   }
-}
-
-/* ========================================
-   ÉCRANS MINUSCULES (max 350px)
-   ======================================== */
-@media (max-height: 800px) {
-.photo-item {
-  height: 400px;
-}
 }
 
 

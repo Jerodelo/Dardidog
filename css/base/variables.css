@@ -8,11 +8,11 @@
   --color-bg-light: #f5f2eb;
   --color-text: #0b3314;
   --color-text-light: #555;
-  --color-card:#f3e6d4 ;
-  --color-background:  #f7e9d6;
-  --color-background-rgb: 247, 233, 214; /* RGB values for rgba() usage */
+  --color-card:#f8eedc ;
+  --color-background:  #faeedd;
+  --color-background-rgb: 250, 238, 221; /* RGB values for rgba() usage */
   --color-button: var( --color-card);
-  --color-table: #f5ebdc;
+  --color-table: #f3ece1;
 
   /* Espacements */
   --spacing-xs: 10px;

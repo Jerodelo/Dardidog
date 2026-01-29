@@ -47,7 +47,7 @@
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: rgba(var(--color-background-rgb), 0.98);;
+  background-color: rgba(var(--color-background-rgb), 1);;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
