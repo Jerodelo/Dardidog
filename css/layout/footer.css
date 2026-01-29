@@ -41,6 +41,7 @@ footer {
 }
 
 .footer-copy {
+  color: var(--color-background);
   font-size: 0.95rem;
   opacity: 0.85;
   margin: var(--spacing-xs) 0 0;
