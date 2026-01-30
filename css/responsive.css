@@ -454,20 +454,18 @@
   .styled-table-simple td {
     padding: 10px 15px;
   }
-}
-
-
-/* ========================================
-   ENCORE PLUS PETITS TELEPHONES(max 370px)
-   ======================================== */
-@media (max-width: 370px) {
-
+  :root {
+ --line-height-text: 1.5;
+  }
   /* Textes */
   p {
-    font-size: 0.9rem !important;
-    line-height: 1.4;
+    font-size: 0.9rem !important;  
   }
 
+   /* Textes */
+  card p {
+    font-size: 0.9rem !important;
+  }
   .communes-list li {
     font-size: 0.9rem !important;
   }
@@ -476,6 +474,7 @@
     font-size: 0.9rem !important;
   }
 }
+
 
 
 /* ========================================

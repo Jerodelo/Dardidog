@@ -67,6 +67,7 @@
   position: relative;
   color: var(--color-text);
   line-height: var(--line-height-text);
+  font-size: 1.05rem;
 }
 
 .simple-list li:before {

@@ -27,6 +27,7 @@ h3 {
 }
 
 p {
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.05rem;
   line-height: var(--line-height-text);
 }

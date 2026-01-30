@@ -9,7 +9,7 @@
 .photo-description p {
   font-size: 1.1rem;
   margin-bottom: var(--spacing-sm);
-  line-height: 1.8;
+  line-height: var(--line-height-text);
 }
 
 .photo-gallery {
