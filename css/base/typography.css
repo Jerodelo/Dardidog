@@ -1,0 +1,36 @@
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 120px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', Tahoma, Verdana, sans-serif;
+  background:var(--color-background);
+  background-attachment: fixed;
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: 16px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+h2 {
+  font-size: clamp(2.5rem, 3.5vw, 3rem);
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-md);
+}
+
+h3 {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 1.05rem;
+  line-height: var(--line-height-text);
+}

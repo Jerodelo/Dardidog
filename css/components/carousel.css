@@ -1,0 +1,152 @@
+/* ========================================
+   COMPOSANTS - CAROUSEL AVIS
+   ======================================== */
+
+/* ========================================
+   CONTENEUR PRINCIPAL DU CAROUSEL
+   ======================================== */
+.avis-carousel-container {
+  position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+
+/* ========================================
+   BOUTONS DE NAVIGATION (PRÉCÉDENT/SUIVANT)
+   ======================================== */
+.carousel-btn {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+/* Flèche des boutons */
+.carousel-btn::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+  position: absolute;
+}
+
+/* Flèche bouton précédent */
+.prev-btn::before {
+  transform: rotate(45deg);
+  left: 23px;
+}
+
+/* Flèche bouton suivant */
+.next-btn::before {
+  transform: rotate(-135deg);
+  right: 23px;
+}
+
+/* Effet hover sur les boutons */
+.carousel-btn:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Effet clic sur les boutons */
+.carousel-btn:active {
+  transform: scale(0.95);
+}
+
+
+/* ========================================
+   ZONE DE DÉFILEMENT DES AVIS
+   ======================================== */
+.avis-carousel {
+  overflow: hidden;
+  flex: 1;
+  max-width: 100%;
+}
+
+.avis-track {
+  display: flex;
+  gap: var(--spacing-md);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ========================================
+   CARD AVIS INDIVIDUEL
+   ======================================== */
+.avis-card {
+  flex: 0 0 calc((100% - 80px) / 3);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition);
+  min-height: 280px;
+  border: 2px solid rgba(21, 71, 52, 0.08);
+}
+
+
+/* ========================================
+   CONTENU DE LA CARD AVIS
+   ======================================== */
+
+/* En-tête (nom + étoiles) */
+.avis-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+  gap: 6px;
+}
+
+/* Nom de l'auteur */
+.avis-nom {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Étoiles de notation */
+.avis-stars {
+  color: #f9b700;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Texte de l'avis */
+.avis-texte {
+  font-size: 1rem;
+  color: var(--color-text);
+  line-height: var(--line-height-text);
+  margin: 0 0 var(--spacing-sm);
+  flex: 1;
+  font-style: italic;
+}
+
+/* Date de l'avis */
+.avis-date {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  text-align: right;
+  font-weight: 500;
+}

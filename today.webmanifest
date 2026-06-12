@@ -1,0 +1,13 @@
+{
+  "name": " ",
+  "short_name": " ",
+  "start_url": "/today.html",
+  "display": "standalone",
+  "background_color": "#214B36",
+  "theme_color": "#154734",
+  "icons": [
+    { "src": "images/logo_192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "images/logo_512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/maskable_icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

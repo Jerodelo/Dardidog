@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>if(!localStorage.getItem('dardidog_auth')){window.location.replace('suivi-2m0x.html');}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Today</title>
+<link rel="manifest" href="today.webmanifest">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content=" ">
+<link rel="apple-touch-icon" sizes="180x180" href="images/logo_180.png">
+<meta name="theme-color" content="#154734">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #214B36;
+    min-height: 100vh;
+    color: #fff;
+    padding-bottom: 40px;
+  }
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px 14px;
+  }
+  .top-bar a {
+    color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.82rem;
+    background: rgba(255,255,255,0.12); padding: 6px 14px; border-radius: 20px;
+  }
+  .date-header { padding: 0 20px 20px; }
+  .date-header .day { font-size: 1.8rem; font-weight: 600; text-transform: capitalize; }
+  .date-header .full { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 2px; text-transform: capitalize; }
+
+  .agenda-wrap {
+    display: flex;
+    margin: 0 12px 20px 12px;
+    position: relative;
+    background: #f7f1e3;
+    border-radius: 16px;
+    padding: 8px 8px 8px 0;
+  }
+  .agenda-hours {
+    width: 40px;
+    flex-shrink: 0;
+    position: relative;
+    user-select: none;
+  }
+  .h-label {
+    height: 64px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-right: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.25);
+    transform: translateY(-9px);
+  }
+  .agenda-body {
+    flex: 1;
+    position: relative;
+    border-left: 1px solid rgba(0,0,0,0.08);
+  }
+  .h-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.07);
+  }
+  .h-line-half {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.03);
+  }
+  .agenda-event {
+    position: absolute;
+    border-radius: 10px;
+    background: #214B36;
+    border-left: 3px solid rgba(255,255,255,0.4);
+    padding: 6px 8px;
+    overflow: hidden;
+    z-index: 5;
+  }
+  .e-animal { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .e-presta { font-size: 0.72rem; color: rgba(255,255,255,0.65); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .e-time { font-size: 0.68rem; color: rgba(255,255,255,0.45); margin-top: 3px; }
+  .empty {
+    text-align: center; padding: 60px 20px;
+    color: rgba(255,255,255,0.4); font-size: 1rem; line-height: 1.8;
+  }
+  .empty .icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a id="nav-jour" href=""></a>
+</div>
+
+<div class="date-header">
+  <div class="day" id="label-day"></div>
+  <div class="full" id="label-full"></div>
+</div>
+
+<div id="agenda-wrap" class="agenda-wrap">
+  <div class="agenda-hours" id="agenda-hours"></div>
+  <div class="agenda-body" id="agenda-body"></div>
+</div>
+
+<script>
+  const now = new Date();
+  const offset = parseInt(new URLSearchParams(location.search).get('j') || '0');
+  const target = new Date(now);
+  target.setDate(target.getDate() + offset);
+
+  const todayISO = target.getFullYear() + '-' +
+    String(target.getMonth()+1).padStart(2,'0') + '-' +
+    String(target.getDate()).padStart(2,'0');
+
+  document.getElementById('label-day').textContent =
+    target.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric' });
+  document.getElementById('label-full').textContent =
+    target.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+  const navJour = document.getElementById('nav-jour');
+  if (offset === 0) {
+    navJour.href = '?j=1';
+    navJour.textContent = 'Demain →';
+    navJour.style.marginLeft = 'auto';
+  } else {
+    navJour.href = 'today.html';
+    navJour.textContent = '← Aujourd\'hui';
+  }
+
+  const H_START = 7, H_END = 23;
+  const PX_H = 64;
+  const PX_M = PX_H / 60;
+
+  let state;
+  try { state = JSON.parse(localStorage.getItem('petsitter_data') || 'null'); } catch(e) {}
+
+  function expandPrestations(prests) {
+    const res = [];
+    prests.forEach(p => {
+      res.push(p);
+      if (p.hdebut2) res.push(Object.assign({}, p, { hdebut: p.hdebut2, hfin: p.hfin2 || '' }));
+    });
+    return res;
+  }
+
+  function parseMin(t) {
+    if (!t) return null;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  const todayPrests = (state && state.prestations || []).filter(p => p.date === todayISO);
+  const evPerso = (state && state.evenements || []).filter(ev => {
+    if (ev.type === 'heure' || ev.type === 'journee') return ev.date === todayISO;
+    if (ev.type === 'periode') return ev.dateDebut <= todayISO && ev.dateFin >= todayISO;
+    return false;
+  });
+  const evPersoAllDay = evPerso.filter(e => e.type === 'journee' || e.type === 'periode');
+  const evPersoTimed = evPerso.filter(e => e.type === 'heure');
+
+  const todayEvents = expandPrestations(todayPrests).map(p => ({
+    _isPresta: true, label: `${p.animal} — ${p.prestation}`, hdebut: p.hdebut || '', hfin: p.hfin || '', color: null,
+  }));
+  const events = [
+    ...todayEvents,
+    ...evPersoTimed.map(e => ({ _isPresta: false, label: e.nom, hdebut: e.heureDebut || '', hfin: e.heureFin || '', color: '#D4BC9E' })),
+  ];
+
+  const hoursEl  = document.getElementById('agenda-hours');
+  const bodyEl   = document.getElementById('agenda-body');
+  const totalPx  = (H_END - H_START) * PX_H;
+
+  // Bannières événements journée/période
+  if (evPersoAllDay.length > 0) {
+    const bannerWrap = document.createElement('div');
+    bannerWrap.style.cssText = 'margin:0 12px 12px;display:flex;flex-direction:column;gap:6px';
+    evPersoAllDay.forEach(e => {
+      const b = document.createElement('div');
+      b.style.cssText = 'background:#D4BC9E;color:white;border-radius:10px;padding:8px 14px;font-size:0.85rem;font-weight:600';
+      b.textContent = e.nom;
+      bannerWrap.appendChild(b);
+    });
+    document.getElementById('agenda-wrap').before(bannerWrap);
+  }
+
+  {
+    // Heures + lignes
+    bodyEl.style.height = totalPx + 'px';
+    for (let h = H_START; h <= H_END; h++) {
+      const lbl = document.createElement('div');
+      lbl.className = 'h-label';
+      lbl.textContent = h < H_END ? h + 'h' : '';
+      hoursEl.appendChild(lbl);
+
+      if (h < H_END) {
+        const line = document.createElement('div');
+        line.className = 'h-line';
+        line.style.top = ((h - H_START) * PX_H) + 'px';
+        bodyEl.appendChild(line);
+
+        const half = document.createElement('div');
+        half.className = 'h-line-half';
+        half.style.top = ((h - H_START) * PX_H + PX_H / 2) + 'px';
+        bodyEl.appendChild(half);
+      }
+    }
+
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+
+    // Calcul des colonnes pour les événements qui se chevauchent
+    events.forEach(e => {
+      e._start = parseMin(e.hdebut) ?? H_START * 60;
+      e._end   = parseMin(e.hfin)   ?? (e._start + 30);
+      if (e._end <= e._start) e._end = e._start + 30;
+    });
+    events.sort((a, b) => a._start - b._start);
+
+    const cols = [];
+    events.forEach(evt => {
+      let placed = false;
+      for (let i = 0; i < cols.length; i++) {
+        if (cols[i] <= evt._start) {
+          evt._col = i; cols[i] = evt._end; placed = true; break;
+        }
+      }
+      if (!placed) { evt._col = cols.length; cols.push(evt._end); }
+    });
+    events.forEach(evt => {
+      let maxCol = 0;
+      events.forEach(o => {
+        if (o._start < evt._end && o._end > evt._start) maxCol = Math.max(maxCol, o._col + 1);
+      });
+      evt._numCols = maxCol;
+    });
+
+    // Rendu des événements
+    const accentColors = ['rgba(255,255,255,0.5)','rgba(180,220,195,0.7)','rgba(255,220,150,0.6)'];
+    events.forEach(evt => {
+      const top    = (evt._start - H_START * 60) * PX_M;
+      const height = Math.max(36, (evt._end - evt._start) * PX_M - 3);
+      const colW   = 100 / evt._numCols;
+      const colL   = evt._col * colW;
+      const bg     = evt.color || '#214B36';
+      const accent = evt.color ? 'rgba(255,255,255,0.4)' : accentColors[evt._col % accentColors.length];
+      const el = document.createElement('div');
+      el.className = 'agenda-event';
+      el.style.cssText = `top:${top}px;height:${height}px;left:calc(${colL}% + 4px);width:calc(${colW}% - 6px);background:${bg};border-left-color:${accent}`;
+      const debut = evt.hdebut || '';
+      const fin   = evt.hfin   || '';
+      el.innerHTML = `
+        <div class="e-animal">${evt.label}</div>
+        ${debut ? `<div class="e-time">${debut}${fin ? ' — ' + fin : ''}</div>` : ''}
+      `;
+      bodyEl.appendChild(el);
+    });
+
+    // Scroll vers la ligne "maintenant" ou le premier événement
+    const scrollTo = (offset === 0 && nowMin >= H_START * 60)
+      ? Math.max(0, (nowMin - H_START * 60) * PX_M - 80)
+      : events.length > 0 ? Math.max(0, (events[0]._start - H_START * 60) * PX_M - 40) : 0;
+    window.scrollTo({ top: scrollTo + document.getElementById('agenda-wrap').offsetTop, behavior: 'smooth' });
+  }
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+</script>
+</body>
+</html>

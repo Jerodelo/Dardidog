@@ -1,0 +1,730 @@
+﻿<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<script>if(!localStorage.getItem('dardidog_auth')){window.location.replace('suivi-2m0x.html');}</script> 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title> </title>
+<link rel="manifest" href="gestion.webmanifest">
+<meta name="apple-mobile-web-app-title" content=" ">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="images/logo_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/logo_16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/logo_180.png">
+<meta name="theme-color" content="#154734">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="gestion.css">
+</style>
+
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="left-section">
+    <img src="images/favicon.svg" alt="Logo Dardidog" class="logo-svg">
+  </a>
+
+  <!-- Navigation desktop -->
+  <nav>
+    <ul>
+      <li><a href="#" data-page="prestations" onclick="showPage('prestations');return false;">Prestations</a></li>
+     <li><a href="#" data-page="planning" onclick="showPage('planning');return false;">Planning</a></li>
+     <li><a href="#" data-page="recettes" onclick="showPage('recettes');return false;">Factures</a></li>
+          <li><a href="#" data-page="depenses" onclick="showPage('depenses');return false;">Charges</a></li>
+      <li><a href="#" data-page="bilan" onclick="showPage('bilan');return false;">Bilan</a></li>
+      <li><a href="#" data-page="clients" onclick="showPage('clients');return false;">Clients</a></li>
+      <li><a href="#" data-page="donnees" onclick="showPage('donnees');return false;">Donn&eacute;es</a></li>
+    </ul>
+  </nav>
+
+  <!-- Raccourci planning mobile -->
+  <button class="mobile-planning-btn" id="planningBtn" aria-label="Planning" onclick="showPage('planning');closeMobileNav()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="5" width="18" height="17" rx="2" fill="currentColor" opacity="0.15"/>
+      <path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v2H3V7z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M3 11h18v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-9zm3 2h2v2H6v-2zm0 4h2v2H6v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
+      <rect x="8" y="2" width="2" height="5" rx="1"/>
+      <rect x="14" y="2" width="2" height="5" rx="1"/>
+    </svg>
+  </button>
+
+  <!-- Bouton menu burger mobile -->
+  <button class="mobile-menu-toggle" id="burgerBtn" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Navigation mobile -->
+  <nav class="mobile-nav" id="mobileNav">
+    <ul>
+      <li><a href="#" data-page="prestations" onclick="showPage('prestations');closeMobileNav();return false;">Prestations</a></li>
+         <li><a href="#" data-page="planning" onclick="showPage('planning');closeMobileNav();return false;">Planning</a></li>
+   <li><a href="#" data-page="recettes" onclick="showPage('recettes');closeMobileNav();return false;">Factures</a></li>
+     <li><a href="#" data-page="depenses" onclick="showPage('depenses');closeMobileNav();return false;">Charges</a></li>
+    
+      <li><a href="#" data-page="bilan" onclick="showPage('bilan');closeMobileNav();return false;">Bilan</a></li>
+      <li><a href="#" data-page="clients" onclick="showPage('clients');closeMobileNav();return false;">Clients</a></li>
+      <li><a href="#" data-page="donnees" onclick="showPage('donnees');closeMobileNav();return false;">Donn&eacute;es</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE PRESTATIONS -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page active" id="page-prestations">
+    <div class="page-title">Prestations</div>
+    <div id="alert-prestations"></div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="ptab-presta-indiv" onclick="switchPrestationsTab('indiv')">Saisie individuelle</button>
+      <button class="ptab vtab" id="ptab-presta-lot" onclick="switchPrestationsTab('lot')">Saisie en lot</button>
+      <button class="ptab vtab" id="ptab-presta-liste" onclick="switchPrestationsTab('liste')">Liste</button>
+    </div>
+
+    <div id="presta-vue-indiv">
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Animal</label>
+          <select id="p-animal" onchange="onAnimalChange('p')">
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Client (auto)</label>
+          <input type="text" id="p-client" placeholder="Auto-rempli" readonly style="background:var(--surface2)">
+        </div>
+        <div class="form-group">
+          <label>Prestation</label>
+          <select id="p-prestation" onchange="onPrestationChange('p')">
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Montant (€)</label>
+          <input type="number" id="p-montant" step="0.5" min="0" placeholder="0.00">
+        </div>
+        <div class="form-group full">
+          <label>Date</label>
+          <input type="date" id="p-date" onchange="document.getElementById('p-hdebut').focus()">
+        </div>
+        <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="form-group">
+            <label>Heure début</label>
+            <input type="time" id="p-hdebut" oninput="autoFillHeureFin('p')" required>
+          </div>
+          <div class="form-group">
+            <label>Heure fin</label>
+            <input type="time" id="p-hfin" required>
+          </div>
+        </div>
+      </div>
+      <div id="p-slot2" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+          <div class="form-group">
+            <label>2ᵉ heure début</label>
+            <input type="time" id="p-hdebut2" oninput="autoFillHeureFin2('p')">
+          </div>
+          <div class="form-group">
+            <label>2ᵉ heure fin</label>
+            <input type="time" id="p-hfin2">
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="ajouterPrestation()">Ajouter</button>
+      </div>
+    </div>
+    </div><!-- /presta-vue-indiv -->
+
+    <div id="presta-vue-lot" style="display:none">
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Animal</label>
+          <select id="lot-animal" onchange="onAnimalChange('lot')">
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Client (auto)</label>
+          <input type="text" id="lot-client" placeholder="Auto-rempli" readonly style="background:var(--surface2)">
+        </div>
+        <div class="form-group">
+          <label>Prestation</label>
+          <select id="lot-prestation" onchange="onPrestationChange('lot')">
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Montant (€)</label>
+          <input type="number" id="lot-montant" step="0.5" min="0" placeholder="0.00">
+        </div>
+        <div class="form-group full">
+          <label>Période</label>
+          <button type="button" class="date-range-trigger" id="lot-periode-btn" onclick="ouvrirDateRange('lot-debut','lot-fin','lot-periode-btn')">Choisir une période</button>
+          <input type="hidden" id="lot-debut">
+          <input type="hidden" id="lot-fin">
+        </div>
+        <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group">
+            <label>Heure début</label>
+            <input type="time" id="lot-hdebut" oninput="autoFillHeureFin('lot')" required>
+          </div>
+          <div class="form-group">
+            <label>Heure fin</label>
+            <input type="time" id="lot-hfin" required>
+          </div>
+        </div>
+      </div>
+      <div id="lot-slot2" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+          <div class="form-group">
+            <label>2ᵉ heure début</label>
+            <input type="time" id="lot-hdebut2" oninput="autoFillHeureFin2('lot')">
+          </div>
+          <div class="form-group">
+            <label>2ᵉ heure fin</label>
+            <input type="time" id="lot-hfin2">
+          </div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Jours de la semaine</label>
+        <div class="days-grid">
+          <div class="day-check"><label>Lun</label><input type="checkbox" id="day-1" checked></div>
+          <div class="day-check"><label>Mar</label><input type="checkbox" id="day-2" checked></div>
+          <div class="day-check"><label>Mer</label><input type="checkbox" id="day-3" checked></div>
+          <div class="day-check"><label>Jeu</label><input type="checkbox" id="day-4" checked></div>
+          <div class="day-check"><label>Ven</label><input type="checkbox" id="day-5" checked></div>
+          <div class="day-check"><label>Sam</label><input type="checkbox" id="day-6"></div>
+          <div class="day-check"><label>Dim</label><input type="checkbox" id="day-0"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="ajouterLot()">Ajouter</button>
+      </div>
+    </div>
+    </div><!-- /presta-vue-lot -->
+
+    <div id="presta-vue-liste" style="display:none">
+    <div class="card">
+      <div class="filter-bar">
+        <select id="filter-annee-p" onchange="renderPrestations()"><option value="">Année</option></select>
+        <select id="filter-mois" onchange="renderPrestations()"><option value="">Mois</option></select>
+        <select id="filter-animal" onchange="renderPrestations()"><option value="">Animal</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Animal</th><th>Client</th><th>Prestation</th><th>Montant</th><th id="th-delete-presta"></th></tr></thead>
+          <tbody id="tbody-prestations"></tbody>
+          <tfoot id="tfoot-prestations"></tfoot>
+        </table>
+      </div>
+      <div id="empty-prestations" class="empty" style="display:none">
+        <div>Aucune prestation pour ces filtres</div>
+      </div>
+    </div>
+    </div><!-- /presta-vue-liste -->
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE RECETTES -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-recettes">
+    <div class="page-title">Factures</div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="ptab-facture-form" onclick="switchFacturesTab('form')">Établir une facture</button>
+      <button class="ptab vtab" id="ptab-facture-liste" onclick="switchFacturesTab('liste')">Liste des factures</button>
+    </div>
+
+    <div id="facture-vue-form">
+    <div class="card">
+      <div id="alert-recettes-form"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client</label>
+          <select id="r-client" onchange="resetFactureForm()"><option value="">-- Choisir --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Mois</label>
+          <select id="r-mois" onchange="resetFactureForm()"></select>
+        </div>
+        <div class="form-group">
+          <label>Année</label>
+          <select id="r-annee" onchange="resetFactureForm()"></select>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:14px">
+        <div class="form-group">
+          <label>Ristourne</label>
+          <select id="r-ristourne-type" onchange="onRistourneChange()">
+            <option value="">Pas de ristourne</option>
+            <option value="pct">Pourcentage</option>
+            <option value="montant">Montant</option>
+          </select>
+        </div>
+        <div class="form-group" id="r-ristourne-val-wrap" style="display:none">
+          <label id="r-ristourne-val-label">Valeur</label>
+          <input type="number" id="r-ristourne-val" step="0.01" min="0" placeholder="0" oninput="resetFactureForm()">
+        </div>
+      </div>
+      <div id="r-preview" style="display:none;margin-top:14px">
+        <div style="background:#f9f6f0;border:1px solid #ddd6c8;border-radius:10px;padding:14px;font-size:0.88rem">
+          <div id="r-preview-content"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="btn-creer" class="btn btn-secondary" onclick="onBtnCreer()">Aperçu</button>
+      </div>
+    </div>
+    </div><!-- /facture-vue-form -->
+
+    <div id="facture-vue-liste" style="display:none">
+    <div class="card">
+      <div class="filter-bar">
+        <select id="filter-annee-r" onchange="renderRecettes()"><option value="">Année</option></select>
+        <select id="filter-mois-r" onchange="renderRecettes()"><option value="">Mois</option></select>
+        <select id="filter-client-r" onchange="renderRecettes()"><option value="">Client</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th><th>Réf.</th><th>Client</th><th>Type</th>
+              <th>Date</th><th>Montant</th><th>Mode</th><th>Statut</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-recettes"></tbody>
+        </table>
+      </div>
+      <div id="empty-recettes" class="empty" style="display:none">
+        <div>Aucune facture enregistrée</div>
+      </div>
+    </div>
+    </div><!-- /facture-vue-liste -->
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE DÉPENSES -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-depenses">
+    <div class="page-title">Charges</div>
+    <div id="alert-depenses"></div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="ptab-charge-form" onclick="switchChargesTab('form')">Ajouter une charge</button>
+      <button class="ptab vtab" id="ptab-charge-liste" onclick="switchChargesTab('liste')">Liste</button>
+    </div>
+
+    <div id="charge-vue-form">
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="dep-type">
+            <option value="">-- Choisir --</option>
+            <option>Essence</option>
+            <option>Matériel</option>
+            <option>Communication</option>
+            <option>Frais de gestion</option>
+            <option>Impôts</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Libellé</label>
+          <input type="text" id="dep-label" placeholder="Ex: Plein du 15 mai…">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="dep-date">
+        </div>
+        <div class="form-group">
+          <label>Montant (€)</label>
+          <input type="number" id="dep-montant" step="0.01" min="0" placeholder="0.00">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="ajouterDepense()">Ajouter</button>
+      </div>
+    </div>
+    </div><!-- /charge-vue-form -->
+
+    <div id="charge-vue-liste" style="display:none">
+    <div class="card">
+      <div class="filter-bar">
+        <select id="filter-annee-d" onchange="renderDepenses()"><option value="">Année</option></select>
+        <select id="filter-mois-d" onchange="renderDepenses()"><option value="">Mois</option></select>
+        <select id="filter-type-d" onchange="renderDepenses()">
+          <option value="">Type</option>
+          <option>Essence</option>
+          <option>Matériel</option>
+          <option>Communication</option>
+          <option>Frais de gestion</option>
+          <option>Impôts</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Libellé</th><th>Montant</th><th></th></tr></thead>
+          <tbody id="tbody-depenses"></tbody>
+        </table>
+      </div>
+      <div id="empty-depenses" class="empty" style="display:none"><div>Aucune charge pour ces filtres</div></div>
+      <div style="text-align:right;margin-top:12px;font-weight:700;font-size:1rem;color:#154734">
+        Total : <span id="total-depenses-annee">0,00 €</span>
+      </div>
+    </div>
+    </div><!-- /charge-vue-liste -->
+  </div>
+
+  <!-- PAGE BILAN -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-bilan">
+    <div class="page-title">Bilan</div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="btab-annuel" onclick="switchBilanMode('annuel')">Annuel</button>
+      <button class="ptab vtab" id="btab-trimestriel" onclick="switchBilanMode('trimestriel')">Trimestriel</button>
+      <button class="ptab vtab" id="btab-mois" onclick="switchBilanMode('mois')">Mois</button>
+    </div>
+    <div class="card">
+      <div class="filter-bar">
+        <select id="filter-bilan-annee" onchange="renderBilan()"></select>
+        <select id="filter-bilan-trimestre" onchange="renderBilan()" style="display:none">
+          <option value="T1">T1 — Jan. à Mars</option>
+          <option value="T2">T2 — Avr. à Juin</option>
+          <option value="T3">T3 — Juil. à Sept.</option>
+          <option value="T4">T4 — Oct. à Déc.</option>
+        </select>
+        <select id="filter-bilan-mois" onchange="renderBilan()" style="display:none"></select>
+      </div>
+      <div class="stats-row" id="stats-row"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE CLIENTS -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-clients">
+    <div class="page-title">Clients</div>
+    <div id="alert-clients"></div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="vtab-animaux" onclick="switchClientsVue('animaux')">Animaux</button>
+      <button class="ptab vtab" id="vtab-clients" onclick="switchClientsVue('clients')">Propriétaires</button>
+    </div>
+
+    <!-- Vue clients -->
+    <div id="vue-clients">
+      <div id="carnet-clients" class="card" style="padding:16px;overflow:hidden"></div>
+      <div id="empty-clients" class="empty" style="display:none">
+        <div>Aucun client enregistré. Importez une fiche ci-dessous.</div>
+      </div>
+    </div>
+
+    <!-- Vue animaux -->
+    <div id="vue-animaux" style="display:none">
+      <div id="carnet-animaux" class="card" style="padding:16px;overflow:hidden"></div>
+      <div id="empty-animaux" class="empty" style="display:none">
+        <div>Aucun animal enregistré.</div>
+      </div>
+    </div>
+
+    <!-- Import JSON (collapsible) -->
+    <div class="card collapsible-card" style="margin-top:20px">
+      <div class="card-toggle" onclick="toggleSection('import-json-clients')">
+        <span>Importer une fiche JSON</span>
+      </div>
+      <div id="import-json-clients" class="collapse-body" style="display:none">
+        <textarea id="paste-json" rows="5" style="font-family:monospace;font-size:0.76rem;width:100%;box-sizing:border-box"></textarea>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn btn-primary" onclick="importerDepuisMail()">Importer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL FICHE ANIMAL -->
+    <div class="modal-overlay" id="modal-fiche-animal">
+      <div class="modal" style="max-width:560px;padding:0;overflow-y:auto;max-height:92vh">
+        <div id="fiche-animal-header" style="background:#ede6d8;padding:12px 24px 14px;border-bottom:1px solid #c8bfaf;position:relative">
+          <div id="fiche-animal-title" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#2d3b2f;margin-bottom:2px"></div>
+          <div id="fiche-animal-proprio" style="font-size:0.85rem;color:#4a6355"></div>
+          <button id="fiche-edit-btn" onclick="switchFicheMode()" style="position:absolute;top:8px;right:58px;background:none;border:none;cursor:pointer;color:#4a6355;line-height:1;padding:10px;border-radius:10px;transition:background 0.15s" aria-label="Modifier">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button onclick="closeModal('modal-fiche-animal')" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:#4a6355;line-height:1;padding:10px;border-radius:10px" aria-label="Fermer">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div id="fiche-animal-content" style="padding:18px 22px;font-size:0.88rem;line-height:1.3"></div>
+        <div id="notes-section" style="padding:0 20px 16px">
+          <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.06em;color:#7a9e7e;margin-bottom:5px;font-weight:700">Notes personnelles</div>
+          <textarea id="fiche-animal-notes" rows="3" placeholder="Ajouter des notes…"
+            style="width:100%;border:1.5px solid #ddd6c8;border-radius:8px;padding:10px 12px;font-size:0.84rem;font-family:'DM Sans',sans-serif;resize:vertical;background:#faf7f2;box-sizing:border-box"
+            oninput="saveAnimalNotes(this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL FICHE CLIENT -->
+    <div class="modal-overlay" id="modal-fiche-client">
+      <div class="modal" style="max-width:560px;padding:0;overflow-y:auto;max-height:92vh">
+        <div style="background:#ede6d8;padding:12px 24px 14px;border-bottom:1px solid #c8bfaf;position:relative">
+          <div id="fiche-client-title" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#2d3b2f;margin-bottom:2px"></div>
+          <button id="fiche-client-edit-btn" onclick="switchFicheClientMode()" style="position:absolute;top:8px;right:58px;background:none;border:none;cursor:pointer;color:#4a6355;line-height:1;padding:10px;border-radius:10px;transition:background 0.15s" aria-label="Modifier">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button onclick="closeModal('modal-fiche-client')" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:#4a6355;line-height:1;padding:10px;border-radius:10px" aria-label="Fermer">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div id="fiche-client-content" style="padding:18px 22px;font-size:0.88rem;line-height:1.3"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE DONNÉES -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-donnees">
+    <div class="page-title">Données</div>
+    <div id="alert-donnees"></div>
+
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="ptab-donnees-presta" onclick="switchDonneesTab('presta')">Catalogue prestations</button>
+      <button class="ptab vtab" id="ptab-donnees-config" onclick="switchDonneesTab('config')">Profil &amp; facturation</button>
+      <button class="ptab vtab" id="ptab-donnees-sauvegarde" onclick="switchDonneesTab('sauvegarde')">Sauvegarde</button>
+    </div>
+
+    <div id="donnees-vue-presta">
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nouvelle prestation</label>
+          <input type="text" id="new-prestation" placeholder="Ex: Balade VIP 2h">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="ajouterTypePrestation()">Ajouter</button>
+      </div>
+      <div style="margin-top:14px">
+        <div id="liste-prestations-types"></div>
+      </div>
+    </div>
+    </div><!-- /donnees-vue-presta -->
+
+    <div id="donnees-vue-config" style="display:none">
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nom / Raison sociale</label>
+          <input type="text" id="cfg-nom">
+        </div>
+        <div class="form-group">
+          <label>Statut juridique</label>
+          <input type="text" id="cfg-statut">
+        </div>
+        <div class="form-group">
+          <label>SIRET</label>
+          <input type="text" id="cfg-siret" placeholder="Ex: 10477551500018">
+        </div>
+        <div class="form-group">
+          <label>Code APE</label>
+          <input type="text" id="cfg-ape" placeholder="Ex: 9609Z">
+        </div>
+        <div class="form-group">
+          <label>Adresse (ligne 1)</label>
+          <input type="text" id="cfg-adresse1">
+        </div>
+        <div class="form-group">
+          <label>Adresse (ligne 2)</label>
+          <input type="text" id="cfg-adresse2">
+        </div>
+        <div class="form-group">
+          <label>IBAN</label>
+          <input type="text" id="cfg-iban" placeholder="FR76 XXXX...">
+        </div>
+        <div class="form-group">
+          <label>Titulaire du compte</label>
+          <input type="text" id="cfg-titulaire">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveConfig()">Enregistrer</button>
+      </div>
+    </div>
+    </div><!-- /donnees-vue-config -->
+
+    <div id="donnees-vue-sauvegarde" style="display:none">
+    <div class="card">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">
+        <button class="btn btn-secondary" onclick="exporterDonnees()">Exporter sauvegarde JSON</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Restaurer une sauvegarde</button>
+        <input type="file" id="import-file" accept=".json" onchange="importerDonnees(event)" style="display:none">
+        <button class="btn btn-secondary" onclick="exporterRecettesCSV()">Exporter le livret des recettes</button>
+      </div>
+    </div>
+    </div><!-- /donnees-vue-sauvegarde -->
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE PLANNING -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-planning">
+    <div class="page-title">Planning</div>
+  
+    <!-- SOUS-ONGLETS -->
+    <div class="planning-tabs">
+      <button class="ptab vtab active" id="ptab-jour" onclick="switchPlanningTab('jour')">Jour</button>
+      <button class="ptab vtab" id="ptab-semaine" onclick="switchPlanningTab('semaine')">Semaine</button>
+      <button class="ptab vtab" id="ptab-mois" onclick="switchPlanningTab('mois')">Mois</button>
+    </div>
+
+    <!-- VUE JOUR -->
+    <div id="planning-jour">
+    <div class="card">
+      <div class="planning-nav">
+        <button class="btn btn-secondary btn-sm" onclick="jourPrecedent()">← Préc.</button>
+        <span id="label-jour" style="font-weight:600;font-size:0.95rem"></span>
+        <button class="btn btn-secondary btn-sm" onclick="jourSuivant()">Suiv. →</button>
+      </div>
+      <div id="grille-jour" class="grille-jour"></div>
+    </div>
+    </div>
+
+    <!-- VUE SEMAINE -->
+    <div id="planning-semaine" style="display:none">
+    <div class="card">
+      <div class="planning-nav">
+        <button class="btn btn-secondary btn-sm" onclick="semainePrecedente()">← Préc.</button>
+        <span id="label-semaine" style="font-weight:600;font-size:0.95rem"></span>
+        <button class="btn btn-secondary btn-sm" onclick="semaineSuivante()">Suiv. →</button>
+      </div>
+      <div id="grille-semaine" class="grille-semaine"></div>
+    </div>
+    </div>
+
+    <!-- VUE MOIS -->
+    <div id="planning-mois" style="display:none">
+    <div class="card">
+      <div class="planning-nav">
+        <button class="btn btn-secondary btn-sm" onclick="moisPrecedent()">← Préc.</button>
+        <span id="label-mois" style="font-weight:600;font-size:0.95rem"></span>
+        <button class="btn btn-secondary btn-sm" onclick="moisSuivant()">Suiv. →</button>
+      </div>
+      <div id="grille-mois" class="grille-mois"></div>
+    </div>
+    </div>
+
+    <!-- ÉVÉNEMENT PERSONNEL -->
+    <div class="card" style="margin-top:12px">
+      <div style="font-weight:600;font-size:0.95rem;margin-bottom:12px">Ajouter un événement personnel</div>
+      <div id="alert-evenement"></div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Nom</label>
+          <input type="text" id="ev-nom" autocomplete="new-password">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Type</label>
+          <div style="display:flex;gap:20px;align-items:center;margin-top:6px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+              <input type="radio" name="ev-type" value="heure" checked onchange="updateEvForm()"> Ponctuel
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+              <input type="radio" name="ev-type" value="journee" onchange="updateEvForm()"> Journée entière
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+              <input type="radio" name="ev-type" value="periode" onchange="updateEvForm()"> Période
+            </label>
+          </div>
+        </div>
+        <div class="form-group" id="ev-grp-date" style="grid-column:1/-1">
+          <label>Date</label>
+          <input type="date" id="ev-date">
+        </div>
+        <div class="form-group" id="ev-grp-hdebut">
+          <label>Début</label>
+          <input type="time" id="ev-hdebut" oninput="autoFillHeureFinEv()">
+        </div>
+        <div class="form-group" id="ev-grp-hfin">
+          <label>Fin</label>
+          <input type="time" id="ev-hfin">
+        </div>
+        <div class="form-group" id="ev-grp-periode" style="display:none;grid-column:1/-1">
+          <label>Période</label>
+          <input type="hidden" id="ev-datedebut">
+          <input type="hidden" id="ev-datefin">
+          <button type="button" class="btn btn-secondary btn-sm" id="ev-drp-btn" onclick="ouvrirDateRange('ev-datedebut','ev-datefin','ev-drp-btn')">Sélectionner les dates</button>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn btn-primary" onclick="ajouterEvenement()">Ajouter</button>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div>
+
+<!-- DATE RANGE PICKER -->
+<div id="drp-overlay" onclick="drpOverlayClick(event)">
+  <div class="drp-modal">
+    <div class="drp-header">
+      <button class="drp-nav-btn" onclick="drpPrevMonth()">&#8249;</button>
+      <span id="drp-label-mois"></span>
+      <button class="drp-nav-btn" onclick="drpNextMonth()">&#8250;</button>
+    </div>
+    <div class="drp-weekdays">
+      <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
+    </div>
+    <div id="drp-grid" class="drp-grid"></div>
+    <div id="drp-hint" class="drp-hint">Sélectionnez la date de début</div>
+    <div class="drp-footer">
+      <button class="btn btn-secondary btn-sm" onclick="fermerDateRange()">Annuler</button>
+      <button class="btn btn-primary btn-sm" id="drp-confirm" onclick="drpConfirm()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div id="gs-toast"></div>
+<script src="gestion.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+
+</body>
+</html>

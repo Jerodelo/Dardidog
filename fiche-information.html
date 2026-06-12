@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Dardidog — Fiche d'information animal</title>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="images/logo_32.png">
+<link rel="stylesheet" href="css/style.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* Variables spécifiques à ce formulaire (sans équivalent dans le projet) */
+:root {
+  --surface: #ffffff;
+  --surface2: #f9f6f0;
+  --border: #ddd6c8;
+  --text2: #4a6355;
+  --green-bg: #e8f2ec;
+  --red: #c0392b;
+  --red-bg: #fdecea;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  min-height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  background: var(--color-background);
+  color: var(--color-primary-dark);
+  padding: 32px 20px 28px;
+  text-align: center;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.7rem;
+  margin-bottom: 8px;
+  color: var(--color-primary-dark);
+}
+.hero p {
+  font-size: 0.88rem;
+  opacity: 0.85;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.5;
+  color: var(--text2);
+}
+
+/* PROGRESS */
+.progress-wrap {
+  background: var(--color-background);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.progress-inner { max-width: 680px; margin: 0 auto; }
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 5px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.progress-step {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* MAIN */
+main { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; flex: 1; width: 100%; }
+
+/* SECTION */
+.section { display: none; animation: fadeIn 0.3s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+.section-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-md);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 4px;
+}
+.section-desc { font-size: 0.84rem; color: var(--text2); }
+
+/* ANIMAL BADGE */
+.animal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary);
+  color: white;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* CARD (override projet) */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-md);
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+/* FORM */
+.form-group { margin-bottom: 16px; }
+.form-group:last-child { margin-bottom: 0; }
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.required::after { content: ' *'; color: var(--red); }
+input[type=text], input[type=tel], input[type=date], textarea, select {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  padding: 11px 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.93rem;
+  color: var(--color-text);
+  background: var(--surface);
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+textarea { resize: vertical; min-height: 80px; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b5e52' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* RADIO GROUP */
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.radio-option {
+  flex: 1;
+  min-width: 100px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  padding: 11px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  user-select: none;
+}
+.radio-option input { display: none; }
+.radio-option .dot {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.radio-option.selected {
+  border-color: var(--color-primary);
+  background: var(--green-bg);
+}
+.radio-option.selected .dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  justify-content: space-between;
+}
+.btn {
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 13px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  flex: 1;
+  justify-content: center;
+}
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: var(--hover-lift);
+  box-shadow: var(--shadow-md);
+}
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover { background: var(--color-background); }
+.btn-green { background: var(--color-primary); color: white; flex: 1; justify-content: center; }
+.btn-green:hover { background: var(--color-primary-dark); }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+  flex: 1;
+  justify-content: center;
+}
+
+/* ALERT */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.alert-error { background: var(--red-bg); color: var(--red); border: 1px solid #f5c6c2; }
+.alert-info { background: #eef4ff; color: #2563eb; border: 1px solid #bdd0ff; }
+
+/* SUCCESS */
+.success-screen {
+  text-align: center;
+  padding: 40px 20px;
+}
+.success-icon { font-size: 4rem; margin-bottom: 16px; }
+.success-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 10px;
+}
+.success-text { color: var(--text2); margin-bottom: 28px; line-height: 1.6; }
+.download-card {
+  background: var(--green-bg);
+  border: 1.5px solid #b8dfc9;
+  border-radius: var(--border-radius-md);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.download-card p { color: var(--color-primary); font-size: 0.88rem; margin-bottom: 14px; }
+
+/* FOOTER (override project dark gradient) */
+footer {
+  background: var(--color-primary);
+  color: var(--color-background);
+  border-top: 1px solid var(--border);
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 0.78rem;
+  margin-top: 0;
+}
+
+/* ANIMAL RECAP */
+.animal-recap {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+.animal-recap strong { color: var(--color-primary-dark); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="images/logo_192.png" alt="Dardidog" style="height:64px;width:64px;object-fit:contain;margin-bottom:12px;border-radius:50%">
+  <h1>Fiche d'information animal</h1>
+  <p>Ce formulaire me permet de centraliser les informations sur vos animaux afin de m'en occuper dans les meilleures conditions. Cela ne prendra que quelques minutes.</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-labels">
+      <span id="progress-label">Informations propriétaire</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<main>
+  <div id="alert-global"></div>
+
+  <!-- ═══════ SECTION 1 : PROPRIÉTAIRE ═══════ -->
+  <div class="section active" id="section-proprio">
+    <div class="section-header">
+      <div class="section-title">Informations propriétaire</div>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="required">Nom et prénom</label>
+        <input type="text" id="proprio-nom" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="required">Numéro(s) de téléphone</label>
+        <input type="tel" id="proprio-tel" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label>Adresse</label>
+        <input type="text" id="proprio-adresse" autocomplete="street-address">
+      </div>
+      <div class="form-group">
+        <label>Complément d'adresse <span style="font-weight:400;text-transform:none;font-size:0.75rem">(bâtiment, étage…)</span></label>
+        <input type="text" id="proprio-complement" autocomplete="address-line2">
+      </div>
+      <div class="form-group" style="display:flex;gap:10px">
+        <div style="flex:0 0 110px">
+          <label>Code postal</label>
+          <input type="text" id="proprio-cp" autocomplete="postal-code" inputmode="numeric">
+        </div>
+        <div style="flex:1">
+          <label>Ville</label>
+          <input type="text" id="proprio-ville" autocomplete="address-level2">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="validerProprietaire()">Suivant →</button>
+    </div>
+
+    <div style="margin-top:16px;font-size:0.78rem;color:var(--text2);line-height:1.6;text-align:center">
+      🔒 <strong>Vos données sont protégées.</strong> Ces informations sont transmises directement et uniquement à Dardidog, sans passer par un serveur tiers ni être stockées en ligne. Elles sont utilisées exclusivement pour assurer la garde de votre animal, conformément au RGPD. Vous pouvez demander leur suppression à tout moment à <a href="mailto:contact@dardidog.fr" style="color:var(--color-primary);font-weight:600">contact@dardidog.fr</a>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 2 : ANIMAL ═══════ -->
+  <div class="section" id="section-animal">
+    <div class="section-header">
+      <div class="section-title">Informations sur l'animal</div>
+      <div class="section-desc">Si vous avez plusieurs animaux, remplissez d'abord pour un seul</div>
+    </div>
+
+    <div class="card">
+      <div id="animal-badge-wrap" style="margin-bottom:14px;text-align:center"></div>
+      <div class="form-group">
+        <label class="required">Nom de l'animal</label>
+        <input type="text" id="animal-nom">
+      </div>
+      <div class="form-group">
+        <label class="required">Sexe</label>
+        <div class="radio-group">
+          <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Mâle')">
+            <input type="radio" name="animal-sexe" value="Mâle"><div class="dot"></div> Mâle
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Femelle')">
+            <input type="radio" name="animal-sexe" value="Femelle"><div class="dot"></div> Femelle
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="required">Date de naissance</label>
+        <input type="date" id="animal-naissance">
+      </div>
+      <div class="form-group">
+        <label>Espèce / Race</label>
+        <input type="text" id="animal-race">
+      </div>
+      <div class="form-group">
+        <label class="required">Stérilisée / Castré </label>
+        <div class="radio-group">
+          <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Oui')">
+            <input type="radio" name="animal-sterilise" value="Oui"><div class="dot"></div> Oui
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Non')">
+            <input type="radio" name="animal-sterilise" value="Non"><div class="dot"></div> Non
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="required">Vaccins à jour</label>
+        <div class="radio-group">
+          <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Oui')">
+            <input type="radio" name="animal-vaccins" value="Oui"><div class="dot"></div> Oui
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Non')">
+            <input type="radio" name="animal-vaccins" value="Non"><div class="dot"></div> Non
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Problème(s) de santé à connaître</label>
+        <textarea id="animal-sante"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Traitement en cours et posologie</label>
+        <textarea id="animal-traitement"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Nom et adresse du cabinet vétérinaire</label>
+        <textarea id="animal-veto" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Aliments interdits</label>
+        <textarea id="animal-aliments" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Entente avec les chiens</label>
+        <textarea id="animal-chiens" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Entente avec les chats</label>
+        <textarea id="animal-chats" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Entente avec les enfants</label>
+        <textarea id="animal-enfants" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Peurs particulières</label>
+        <textarea id="animal-peurs" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Autres informations importantes</label>
+        <textarea id="animal-autres" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="showSection('proprio')">← Retour</button>
+      <button class="btn btn-primary" onclick="validerAnimal()">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 3 : AUTRE ANIMAL ? ═══════ -->
+  <div class="section" id="section-autre-animal">
+    <div class="section-header">
+      <div class="section-title">✅ Animal enregistré !</div>
+      <div id="recap-animaux-list" style="margin-top:12px"></div>
+    </div>
+
+
+
+    <div class="card">
+      <div class="form-group">
+        <label class="required">Avez-vous un autre animal à déclarer ?</label>
+        <div class="radio-group">
+          <label class="radio-option" onclick="selectRadio(this,'autre-animal','Oui')">
+            <input type="radio" name="autre-animal" value="Oui"><div class="dot"></div> Oui
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'autre-animal','Non')">
+            <input type="radio" name="autre-animal" value="Non"><div class="dot"></div> Non
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="showSection('animal')">← Modifier dernier animal</button>
+      <button class="btn btn-primary" onclick="validerAutreAnimal()">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 4 : SUCCÈS ═══════ -->
+  <div class="section" id="section-succes">
+    <div class="success-screen">
+      <div class="success-icon" id="succes-icon">⏳</div>
+      <div class="success-title" id="succes-title">Envoi en cours…</div>
+      <p class="success-text" id="succes-text">
+        Votre fiche est en cours d'envoi à Dardidog. Merci de patienter quelques secondes.
+      </p>
+
+      <div id="succes-actions" style="display:none">
+
+        <div class="alert alert-error" id="succes-erreur" style="display:none">
+          <div>
+            <strong>⚠️ L'envoi automatique a échoué.</strong><br>
+            Contactez Dardidog directement à <a href="mailto:contact@dardidog.fr" style="color:var(--red)">contact@dardidog.fr</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="recap-final"></div>
+    </div>
+  </div>
+
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+const EMAILJS_SERVICE_ID  = 'service_dwl1xmb';
+const EMAILJS_TEMPLATE_ID = 'template_a9ks9hp';
+const EMAILJS_PUBLIC_KEY  = '4xOShhDbIP50Z1RUo';
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+const state = {
+  proprietaire: { nom:'', tel:'', adresse:'', complement:'', cp:'', ville:'' },
+  animaux: [],
+  _animalEnCours: null,
+};
+
+let currentSection = 'proprio';
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  currentSection = name;
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+function updateProgress() {
+  const steps = { proprio:1, animal:2, 'autre-animal':3, succes:4 };
+  const current = steps[currentSection] || 1;
+  const total = 3 + state.animaux.length;
+  const pct = currentSection === 'succes' ? 100 : Math.round((current / (total + 1)) * 100);
+
+  const labels = {
+    proprio: 'Informations propriétaire',
+    animal: `Animal ${state.animaux.length + 1}`,
+    'autre-animal': 'Récapitulatif',
+    succes: 'Terminé'
+  };
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent = labels[currentSection] || '';
+}
+
+function selectRadio(el, name, value) {
+  document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+    r.closest('.radio-option').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+function getRadio(name) {
+  const checked = document.querySelector(`[name="${name}"]:checked`);
+  return checked ? checked.value : null;
+}
+
+function validerProprietaire() {
+  const nom = document.getElementById('proprio-nom').value.trim();
+  const tel = document.getElementById('proprio-tel').value.trim();
+  const adresse = document.getElementById('proprio-adresse').value.trim();
+  const complement = document.getElementById('proprio-complement').value.trim();
+  const cp = document.getElementById('proprio-cp').value.trim();
+  const ville = document.getElementById('proprio-ville').value.trim();
+
+  if (!nom || !tel) {
+    showAlert('Veuillez renseigner votre nom et votre téléphone.', 'error');
+    return;
+  }
+
+  state.proprietaire = { nom, tel, adresse, complement, cp, ville };
+  clearAlert();
+  resetAnimalForm();
+  showSection('animal');
+  document.getElementById('animal-badge-wrap').innerHTML =
+    `<div class="animal-badge">Animal n°${state.animaux.length + 1}</div>`;
+}
+
+function validerAnimal() {
+  const nom = document.getElementById('animal-nom').value.trim();
+  const sexe = getRadio('animal-sexe');
+  const naissance = document.getElementById('animal-naissance').value;
+  const sterilise = getRadio('animal-sterilise');
+  const vaccins = getRadio('animal-vaccins');
+
+  const missing = [];
+  if (!nom) missing.push('Nom de l\'animal');
+  if (!sexe) missing.push('Sexe');
+  if (!naissance) missing.push('Date de naissance');
+  if (!sterilise) missing.push('Stérilisation');
+  if (!vaccins) missing.push('Vaccins');
+
+  if (missing.length > 0) {
+    showAlert('Champs obligatoires manquants : ' + missing.join(', '), 'error');
+    return;
+  }
+
+  const animal = {
+    nom,
+    sexe,
+    naissance,
+    race: document.getElementById('animal-race').value.trim(),
+    sterilise,
+    vaccins,
+    sante: document.getElementById('animal-sante').value.trim(),
+    traitement: document.getElementById('animal-traitement').value.trim(),
+    veto: document.getElementById('animal-veto').value.trim(),
+    aliments: document.getElementById('animal-aliments').value.trim(),
+    entente_chiens: document.getElementById('animal-chiens').value.trim(),
+    entente_chats: document.getElementById('animal-chats').value.trim(),
+    entente_enfants: document.getElementById('animal-enfants').value.trim(),
+    peurs: document.getElementById('animal-peurs').value.trim(),
+    autres: document.getElementById('animal-autres').value.trim(),
+  };
+
+  if (state._animalEnCours !== null) {
+    state.animaux[state._animalEnCours] = animal;
+    state._animalEnCours = null;
+  } else {
+    state.animaux.push(animal);
+  }
+
+  clearAlert();
+  afficherRecapAnimaux();
+
+  document.querySelectorAll('[name="autre-animal"]').forEach(r => {
+    r.closest('.radio-option').classList.remove('selected');
+    r.checked = false;
+  });
+
+  showSection('autre-animal');
+}
+
+function validerAutreAnimal() {
+  const choix = getRadio('autre-animal');
+  if (!choix) {
+    showAlert('Veuillez indiquer si vous avez un autre animal.', 'error');
+    return;
+  }
+  clearAlert();
+
+  if (choix === 'Oui') {
+    resetAnimalForm();
+    document.getElementById('animal-badge-wrap').innerHTML =
+      `<div class="animal-badge">🐾 Animal n°${state.animaux.length + 1}</div>`;
+    showSection('animal');
+  } else {
+    afficherRecapFinal();
+    showSection('succes');
+  }
+}
+
+function resetAnimalForm() {
+  ['animal-nom','animal-race','animal-naissance','animal-sante','animal-traitement',
+   'animal-veto','animal-aliments','animal-chiens','animal-chats','animal-enfants',
+   'animal-peurs','animal-autres']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+
+  ['animal-sexe','animal-sterilise','animal-vaccins'].forEach(name => {
+    document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+      r.closest('.radio-option').classList.remove('selected');
+      r.checked = false;
+    });
+  });
+}
+
+function afficherRecapAnimaux() {
+  const list = document.getElementById('recap-animaux-list');
+
+  list.innerHTML = state.animaux.map((a, i) => `
+    <div class="animal-recap">
+      <strong>🐾 ${a.nom}</strong> — ${a.race || 'race non précisée'} — ${a.sexe}
+      <br><span style="color:var(--text2);font-size:0.8rem">
+        Né(e) le ${a.naissance ? new Date(a.naissance).toLocaleDateString('fr-FR') : '?'}
+      </span>
+    </div>
+  `).join('');
+}
+
+function afficherRecapFinal() {
+  document.getElementById('recap-final').innerHTML = `
+    <div style="text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:var(--border-radius-md);padding:16px;margin-top:20px">
+<div style="font-size:0.85rem;margin-bottom:2px"><strong style="color:var(--color-text)">${state.proprietaire.nom}</strong></div>
+      <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px">${state.proprietaire.tel}</div>
+      ${(state.proprietaire.adresse || state.proprietaire.complement || state.proprietaire.cp || state.proprietaire.ville) ? `<div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">${[state.proprietaire.adresse, state.proprietaire.complement, [state.proprietaire.cp, state.proprietaire.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ')}</div>` : ''}
+      ${state.animaux.map(a => `
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--border-radius-sm);padding:10px;margin-top:8px;font-size:0.83rem">
+          <strong>🐾 ${a.nom}</strong>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  envoyerFicheEmail();
+}
+
+async function envoyerFicheEmail() {
+  const fiche = buildFiche();
+  const json = JSON.stringify(fiche, null, 2);
+
+  const templateParams = {
+    proprio_nom:     state.proprietaire.nom,
+    proprio_tel:     state.proprietaire.tel,
+    proprio_adresse: [state.proprietaire.adresse, state.proprietaire.complement, [state.proprietaire.cp, state.proprietaire.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ') || '—',
+    animaux_noms:    state.animaux.map(a => `${a.nom}${a.race ? ' ('+a.race+')' : ''}`).join(', '),
+    json_data:       json,
+  };
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    document.getElementById('succes-icon').textContent  = '🐾';
+    document.getElementById('succes-title').textContent = 'Fiche envoyée !';
+    document.getElementById('succes-text').textContent  =
+      'Dardidog a bien reçu votre fiche';
+  } catch(err) {
+    document.getElementById('succes-icon').textContent  = '⚠️';
+    document.getElementById('succes-title').textContent = 'Envoi échoué';
+    document.getElementById('succes-text').textContent  =
+      'Une erreur s\'est produite lors de l\'envoi automatique.';
+    document.getElementById('succes-erreur').style.display = 'block';
+    console.error('EmailJS error:', err);
+  }
+  document.getElementById('succes-actions').style.display = 'block';
+}
+
+function buildFiche() {
+  return {
+    _type: 'petsitter_fiche_client',
+    _version: '1.0',
+    _date: new Date().toISOString(),
+    proprietaire: state.proprietaire,
+    animaux: state.animaux,
+  };
+}
+
+function telechargerFiche() {
+  const fiche = buildFiche();
+  const json = JSON.stringify(fiche, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fiche_${state.proprietaire.nom.replace(/ /g,'_')}_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+}
+
+function showAlert(msg, type) {
+  document.getElementById('alert-global').innerHTML =
+    `<div class="alert alert-${type}">${type==='error'?'⚠️':''} ${msg}</div>`;
+  document.getElementById('alert-global').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function clearAlert() {
+  document.getElementById('alert-global').innerHTML = '';
+}
+
+updateProgress();
+</script>
+</body>
+</html>
