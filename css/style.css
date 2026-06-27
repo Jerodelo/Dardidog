@@ -1501,6 +1501,11 @@ nav ul li a{
     font-size: 1.5rem;
   }
 
+  .contact-btn {
+    font-size: 1.5rem;
+    padding: 18px 28px;
+  }
+
   /* Désactiver les animations sur mobile */
   .card:hover {
     transform: none;

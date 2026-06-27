@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://dardidog.fr/contact.html">
   <meta property="og:title" content="Avis clients et contact - Dardidog">
   <meta property="og:description" content="Consultez les avis clients et prenez contact pour plus d'informations sur les services de petsitting proposés par Dardidog. Réponse rapide garantie.">
-  <meta property="og:image" content="https://dardidog.fr/images/logo_brand.png">
+  <meta property="og:image" content="https://dardidog.fr/images/logo_512.png">
   <meta property="og:locale" content="fr_FR">
 
   <!-- Twitter Card -->
@@ -23,7 +23,7 @@
   <meta name="twitter:url" content="https://dardidog.fr/contact.html">
   <meta name="twitter:title" content="Avis clients et contact - Dardidog">
   <meta name="twitter:description" content="Consultez les avis clients et prenez contact pour plus d'informations sur les services de petsitting proposés par Dardidog. Réponse rapide garantie.">
-  <meta name="twitter:image" content="https://dardidog.fr/images/logo_brand.png">
+  <meta name="twitter:image" content="https://dardidog.fr/images/logo_512.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,7 +115,7 @@
       font-size: 1.3rem;
       font-weight: 600;
       color: var(--color-primary);
-      margin: var(--spacing-xl) auto 8px;
+      margin: var(--spacing-xl) auto var(--spacing-sm);
       max-width: 66%;
     }
     .contact-form {
@@ -403,11 +403,11 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
           contact_tel: telephone || '—',
           contact_message: message,
         });
-        status.textContent = 'Message envoyé, je reviens vers vous au plus vite 😊';
+        status.textContent = 'Message reçu ! Je reviens vers vous au plus vite 😊';
         status.className = 'contact-form-status success';
         document.getElementById('contact-form').reset();
       } catch (err) {
-        status.textContent = "Une erreur s'est produite. Merci de réessayer ou de m'appeler/écrire directement.";
+        status.textContent = "Une erreur s'est produite. Merci de réessayer ou de me contacter directement par sms ou e-mail.";
         status.className = 'contact-form-status error';
         console.error('EmailJS error:', err);
       } finally {
