@@ -1246,22 +1246,62 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   adresse.forEach((line, i) => doc.text(line, W - margin, y + 11 + i * 5, { align: 'right' }));
 
   // Tableau des prestations
-  y += 6 + emetteurLines.length * 5 + 10;
+  const FOOTER_Y = 285;
+  const TABLE_BOTTOM = 270;
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Prestations', margin, y);
-  doc.text('Date', margin + 115, y);
-  doc.text('Montant HT', W - margin, y, { align: 'right' });
-  y += 3;
-  doc.setDrawColor(30, 30, 30);
-  doc.setLineWidth(0.4);
-  doc.line(margin, y, W - margin, y);
-  y += 5;
-
+  const totalNum = typeof total === 'number' ? total : parseFloat(total) || 0;
+  const totalNet = calcTotalNet(totalNum, ristourneType, ristourneVal);
+  const hasRemise = ristourneType && ristourneVal > 0;
+  const totalsHeight = hasRemise ? 18 : 6;
+  const reglementLines = [
+    '- En liquide',
+    '- Par chèque à l\'ordre de ' + cfg.nom,
+    cfg.iban ? '- Par virement bancaire :' : null,
+    cfg.iban ? '       - IBAN : ' + cfg.iban : null,
+    cfg.titulaireCompte ? '       - Titulaire du compte : ' + cfg.titulaireCompte : null,
+  ].filter(Boolean);
   const sortedPrests = [...prestations].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+  // Stratégie de mise en page : on tente d'abord l'espacement normal, puis un
+  // espacement resserré (police + interlignes réduits) pour faire tenir le tout
+  // sur une seule page. Au-delà d'un certain nombre de lignes de prestations
+  // (moins si remise, qui ajoute des lignes de total), même resserré ce serait
+  // illisible : on bascule alors le bloc totaux/règlement sur une 2e page.
+  const NORMAL = { addrGap: 10, tableGap: 10, reglFont: 9, reglLine: 5 };
+  const TIGHT = { addrGap: 3, tableGap: 3, reglFont: 7.5, reglLine: 4 };
+  const MAX_LINES_SINGLE_PAGE = hasRemise ? 14 : 16;
+  const n = sortedPrests.length;
+  const baseY = y + 6 + emetteurLines.length * 5;
+  const TABLE_HEADER_H = 8; // hauteur fixe de l'en-tête du tableau (texte + ligne)
+  const fitsWith = (lay) => baseY + lay.addrGap + TABLE_HEADER_H + n * 7 + lay.tableGap
+    + totalsHeight + 16 + 6 + reglementLines.length * lay.reglLine + 10 <= FOOTER_Y;
+
+  let layout = NORMAL;
+  if (n <= MAX_LINES_SINGLE_PAGE && !fitsWith(NORMAL) && fitsWith(TIGHT)) layout = TIGHT;
+
+  y = baseY + layout.addrGap;
+
+  function drawTableHeader() {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(30, 30, 30);
+    doc.text('Prestations', margin, y);
+    doc.text('Date', margin + 115, y);
+    doc.text('Montant HT', W - margin, y, { align: 'right' });
+    y += 3;
+    doc.setDrawColor(30, 30, 30);
+    doc.setLineWidth(0.4);
+    doc.line(margin, y, W - margin, y);
+    y += 5;
+  }
+  drawTableHeader();
+
   sortedPrests.forEach((p, idx) => {
+    if (y + 7 > TABLE_BOTTOM) {
+      doc.addPage();
+      y = 20;
+      drawTableHeader();
+    }
     if (idx % 2 === 1) {
       doc.setFillColor(245, 245, 245);
       doc.rect(margin, y - 3, W - 2*margin, 7, 'F');
@@ -1277,12 +1317,14 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
     y += 7;
   });
 
-  y += 10;
+  y += layout.tableGap;
 
-  // Totaux
-  const totalNum = typeof total === 'number' ? total : parseFloat(total) || 0;
-  const totalNet = calcTotalNet(totalNum, ristourneType, ristourneVal);
-  const hasRemise = ristourneType && ristourneVal > 0;
+  // Les totaux restent sur la page du tableau (cas extrême seulement : si même
+  // eux ne tiennent plus, on les bascule avec le reste sur une nouvelle page)
+  if (y + totalsHeight + 10 > FOOTER_Y) {
+    doc.addPage();
+    y = 20;
+  }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
@@ -1312,28 +1354,39 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   doc.text('TOTAL TTC* :', W - margin - 22, y, { align: 'right' });
   doc.text(totalNet.toFixed(2) + ' €', W - margin, y, { align: 'right' });
 
-  // Règlement
-  y += 16;
+  // Règlement + note TVA : ensemble, sur la même page que les totaux si ça
+  // tient, sinon les deux basculent ensemble en haut d'une nouvelle page
+  // (et non plus règlement en haut / note ancrée tout en bas)
+  const reglBlockHeight = 16 + 6 + reglementLines.length * layout.reglLine + 10;
+  let reglLayout = layout;
+  let reglOnNewPage = false;
+  if (y + reglBlockHeight > FOOTER_Y) {
+    doc.addPage();
+    y = 20;
+    reglLayout = NORMAL; // pleine place disponible sur la nouvelle page
+    reglOnNewPage = true;
+  } else {
+    y += 16;
+  }
+
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
+  doc.setFontSize(reglLayout.reglFont);
   doc.setTextColor(30, 30, 30);
   doc.text('RÈGLEMENT DÛ SOUS 15 JOURS :', margin, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(80, 80, 80);
-  [
-    '- En liquide',
-    '- Par chèque à l\'ordre de ' + cfg.nom,
-    cfg.iban ? '- Par virement bancaire :' : null,
-    cfg.iban ? '       - IBAN : ' + cfg.iban : null,
-    cfg.titulaireCompte ? '       - Titulaire du compte : ' + cfg.titulaireCompte : null,
-  ].filter(Boolean).forEach((line, i) => doc.text(line, margin + 3, y + i * 5));
+  reglementLines.forEach((line, i) => doc.text(line, margin + 3, y + i * reglLayout.reglLine));
 
-  // Note TVA
+  // Note TVA : juste sous le règlement si les deux viennent de basculer en
+  // haut d'une nouvelle page, sinon ancrée en bas de page comme d'habitude
+  const noteY = reglOnNewPage
+    ? y + reglementLines.length * reglLayout.reglLine + 8
+    : FOOTER_Y;
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(8);
   doc.setTextColor(120, 120, 120);
-  doc.text('*TVA non applicable, art. 293 B du code général des impôts', margin, 285);
+  doc.text('*TVA non applicable, art. 293 B du code général des impôts', margin, noteY);
 
   doc.save(`Facture_${ref}_${client.replace(/ /g,'_')}.pdf`);
 }

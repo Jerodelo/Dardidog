@@ -108,6 +108,77 @@
   <!-- GoatCounter Analytics -->
   <script data-goatcounter="https://jerodelo.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
+
+  <style>
+    .contact-form-label {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin: var(--spacing-xl) auto 8px;
+      max-width: 66%;
+    }
+    .contact-form {
+      max-width: 66%;
+      margin: 0 auto;
+      text-align: left;
+    }
+    @media (max-width: 768px) {
+      .contact-form {
+        max-width: 100%;
+      }
+    }
+    .contact-form-group {
+      margin-bottom: var(--spacing-s);
+    }
+    .contact-form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+    }
+    .contact-form-group input,
+    .contact-form-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border: 1.5px solid var(--color-primary-light);
+      border-radius: var(--border-radius-sm);
+      font-family: inherit;
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--color-text);
+      transition: var(--transition);
+    }
+    .contact-form-group input:focus,
+    .contact-form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .contact-form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .contact-form button {
+      display: block;
+      margin: 0 auto;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 10px 22px;
+    }
+    .contact-form button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .contact-form-status {
+      margin-top: var(--spacing-xs);
+      font-weight: 600;
+    }
+    .contact-form-status.success { color: var(--color-primary); }
+    .contact-form-status.error { color: #b3261e; }
+  </style>
 </head>
 <body>
   <!-- HEADER -->
@@ -115,14 +186,7 @@
 
   <!-- CONTENU PRINCIPAL -->
   <main>
-    <!-- SECTION CONTACT -->
-    <section class="section-spacing-bottom">
-      <h1>CONTACT</h1>
-      <div class="contact-buttons">
-        <a href="tel:+33750913177" class="contact-btn">☎  +33 7 50 91 31 77</a>
-        <a href="mailto:contact@dardidog.fr" class="contact-btn">contact@dardidog.fr</a>
-      </div>
-    </section>
+  
 
     <!-- SECTION AVIS GOOGLE -->
     <section>
@@ -143,7 +207,7 @@
 Cerise sur le gâteau : votre chienne est devenue sa meilleure copine ! Notre toutou passe toujours de très bons moments à vos côtés et, à notre retour, nous le retrouvons calme, serein et visiblement comblé.
 Nous vous le confierons à nouveau avec le plus grand plaisir. Grâce à vous, nous pouvons partir l’esprit tranquille en sachant qu’il est entre de bonnes mains.
 Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur animal de compagnie à une personne de confiance, qui lui apportera beaucoup d’attention, de bienveillance et d’amour. ⭐⭐⭐⭐⭐</p>
-              <div class="avis-date">Publié en juin 2025</div>
+              <div class="avis-date">Publié en juin 2026</div>
             </div>
            
 
@@ -172,6 +236,27 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 Nous recommandons bien évidemment et reviendrons. Merci Jeromine.
               </p>
               <div class="avis-date">Publié en septembre 2025</div>
+            </div>
+              <!-- Avis 7 -->
+            <div class="avis-card">
+              <div class="avis-header">
+                <strong class="avis-nom">Camille Marciano</strong>
+                <div class="avis-stars">★★★★★</div>
+              </div>
+              <p class="avis-texte">
+               Suite à une mauvaise expérience avec une personne trouvée sur Animaute, on m’a recommandé Dardidog et j’en suis pleinement satisfaite. Merci à vous pour avoir su me mettre en confiance après cette mauvaise expérience et pour vous être occupée de mon chat avec amour et professionalisme ! A bientôt !
+              </p>
+              <div class="avis-date">Publié en juin 2026</div>
+            </div>
+            <!-- Avis 8-->
+            <div class="avis-card">
+              <div class="avis-header">
+                <strong class="avis-nom">Simon</strong>
+                <div class="avis-stars">★★★★★</div>
+              </div>
+              <p class="avis-texte">
+              Nous cherchions quelqu’un de confiance pour promener notre jeune chienne deux fois par semaine lorsque nous travaillons et nous avons eu la chance de tomber sur Jéromine qui propose encore mieux que ce qu’on espérait ! Elle nous envoie régulièrement des vidéos de notre chien qui s'éclate en balade pour notre plus grand bonheur. Vous pouvez lui faire confiance les yeux fermés. </p>
+              <div class="avis-date">Publié en juin 2026</div>
             </div>
               <!-- Avis 5 -->
             <div class="avis-card">
@@ -209,10 +294,6 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
               </p>
               <div class="avis-date">Publié en septembre 2025</div>
             </div>
-
-            
-          
-
             <!-- Avis 6 -->
             <div class="avis-card">
               <div class="avis-header">
@@ -224,6 +305,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
               </p>
               <div class="avis-date">Publié en novembre 2025</div>
             </div>
+          
              <!-- Avis 0 -->
             <div class="avis-card">
               <div class="avis-header">
@@ -233,7 +315,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
               <p class="avis-texte">
                 J'accorde toute ma confiance a Jeromine elle balade ma chienne 1 semaine sur 2, a l'écoute de vos besoins et celui de vos animaux
               </p>
-              <div class="avis-date">Publié en juin 2025</div>
+              <div class="avis-date">Publié en juin 2026</div>
             </div>
           </div>
         </div>
@@ -247,6 +329,36 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
         </a>
       </div>
     </section>
+      <!-- SECTION CONTACT -->
+    <section class="section-spacing-bottom" id="contact">
+      <h1>CONTACT</h1>
+      <div class="contact-buttons">
+        <a href="tel:+33750913177" class="contact-btn">☎  +33 7 50 91 31 77</a>
+        <a href="mailto:contact@dardidog.fr" class="contact-btn">contact@dardidog.fr</a>
+      </div>
+
+      <p class="contact-form-label">Formulaire de contact</p>
+      <form id="contact-form" class="contact-form">
+        <div class="contact-form-group">
+          <label for="contact-nom">Nom et prénom</label>
+          <input type="text" id="contact-nom" name="nom" autocomplete="name" required>
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-email">Adresse mail</label>
+          <input type="email" id="contact-email" name="email" autocomplete="email" required>
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-tel">Numéro de téléphone</label>
+          <input type="tel" id="contact-tel" name="telephone" autocomplete="tel">
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-message">Votre message</label>
+          <textarea id="contact-message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="contact-btn" id="contact-submit-btn">Envoyer votre demande</button>
+        <p id="contact-form-status" class="contact-form-status"></p>
+      </form>
+    </section>
   </main>
 
   <!-- FOOTER -->
@@ -254,5 +366,55 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
 
   <!-- SCRIPTS -->
   <script src="script.js"></script>
+
+  <!-- Formulaire de contact (EmailJS) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    const EMAILJS_SERVICE_ID = 'service_dwl1xmb';
+    const EMAILJS_CONTACT_TEMPLATE_ID = 'template_24atsr9';
+    const EMAILJS_PUBLIC_KEY = '4xOShhDbIP50Z1RUo';
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('contact-submit-btn');
+      const status = document.getElementById('contact-form-status');
+      const nom = document.getElementById('contact-nom').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const telephone = document.getElementById('contact-tel').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+
+      if (!nom || !email || !message) {
+        status.textContent = 'Merci de renseigner votre nom, votre email et votre message.';
+        status.className = 'contact-form-status error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Envoi en cours...';
+      status.textContent = '';
+      status.className = 'contact-form-status';
+
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, {
+          contact_nom: nom,
+          contact_email: email,
+          contact_tel: telephone || '—',
+          contact_message: message,
+        });
+        status.textContent = 'Message envoyé, je reviens vers vous au plus vite 😊';
+        status.className = 'contact-form-status success';
+        document.getElementById('contact-form').reset();
+      } catch (err) {
+        status.textContent = "Une erreur s'est produite. Merci de réessayer ou de m'appeler/écrire directement.";
+        status.className = 'contact-form-status error';
+        console.error('EmailJS error:', err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Envoyer';
+      }
+    });
+  </script>
 </body>
 </html>
