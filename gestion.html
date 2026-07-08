@@ -313,7 +313,7 @@
           <thead>
             <tr>
               <th></th><th>Réf.</th><th>Client</th><th>Type</th>
-              <th>Date</th><th>Montant</th><th>Mode</th><th>Statut</th><th></th>
+              <th>Date</th><th>Montant</th><th>Mode</th><th>Statut</th><th>Date paiement</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-recettes"></tbody>
@@ -494,77 +494,6 @@
           <textarea id="fiche-animal-notes" rows="3" placeholder="Ajouter des notes…"
             style="width:100%;border:1.5px solid #ddd6c8;border-radius:8px;padding:10px 12px;font-size:0.84rem;font-family:'DM Sans',sans-serif;resize:vertical;background:#faf7f2;box-sizing:border-box"
             oninput="saveAnimalNotes(this.value)"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL ACTION PRESTATION (appui long agenda) -->
-    <div class="modal-overlay" id="modal-action-presta" onclick="closeModal('modal-action-presta')">
-      <div class="modal" style="max-width:320px;padding:24px;text-align:center" onclick="event.stopPropagation()">
-        <p id="modal-action-presta-label" style="font-weight:600;color:var(--color-primary);margin-bottom:20px;font-size:0.95rem"></p>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <button class="btn btn-primary" onclick="ouvrirEditionPrestation()">Modifier</button>
-          <button class="btn btn-danger" onclick="supprimerPrestationDepuisMenu()">Supprimer</button>
-          <button class="btn btn-secondary" onclick="closeModal('modal-action-presta')">Annuler</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL ÉDITION PRESTATION -->
-    <div class="modal-overlay" id="modal-edit-presta" onclick="closeModal('modal-edit-presta')">
-      <div class="modal" style="max-width:480px;padding:24px;overflow-y:auto;max-height:90vh" onclick="event.stopPropagation()">
-        <div style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier la prestation</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Animal</label>
-            <select id="ep-animal" onchange="onAnimalChange('ep')">
-              <option value="">-- Choisir --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Client (auto)</label>
-            <input type="text" id="ep-client" placeholder="Auto-rempli" readonly style="background:var(--surface2)">
-          </div>
-          <div class="form-group">
-            <label>Prestation</label>
-            <select id="ep-prestation" onchange="onPrestationChange('ep')">
-              <option value="">-- Choisir --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Montant (€)</label>
-            <input type="number" id="ep-montant" step="0.5" min="0" placeholder="0.00">
-          </div>
-          <div class="form-group full">
-            <label>Date</label>
-            <input type="date" id="ep-date">
-          </div>
-          <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:20px">
-            <div class="form-group">
-              <label>Heure début</label>
-              <input type="time" id="ep-hdebut" oninput="autoFillHeureFin('ep')">
-            </div>
-            <div class="form-group">
-              <label>Heure fin</label>
-              <input type="time" id="ep-hfin">
-            </div>
-          </div>
-        </div>
-        <div id="ep-slot2" style="display:none">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
-            <div class="form-group">
-              <label>2ᵉ heure début</label>
-              <input type="time" id="ep-hdebut2" oninput="autoFillHeureFin2('ep')">
-            </div>
-            <div class="form-group">
-              <label>2ᵉ heure fin</label>
-              <input type="time" id="ep-hfin2">
-            </div>
-          </div>
-        </div>
-        <div class="btn-row" style="margin-top:20px">
-          <button class="btn btn-secondary" onclick="closeModal('modal-edit-presta')">Annuler</button>
-          <button class="btn btn-primary" onclick="sauvegarderEditionPrestation()">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -776,6 +705,77 @@
   </div>
 
 </main>
+</div>
+
+<!-- MODAL ACTION PRESTATION (appui long agenda) -->
+<div class="modal-overlay" id="modal-action-presta" onclick="closeModal('modal-action-presta')">
+  <div class="modal" style="max-width:320px;padding:24px;text-align:center" onclick="event.stopPropagation()">
+    <p id="modal-action-presta-label" style="font-weight:600;color:var(--color-primary);margin-bottom:20px;font-size:0.95rem"></p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" onclick="ouvrirEditionPrestation()">Modifier</button>
+      <button class="btn btn-danger" onclick="supprimerPrestationDepuisMenu()">Supprimer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-action-presta')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ÉDITION PRESTATION -->
+<div class="modal-overlay" id="modal-edit-presta" onclick="closeModal('modal-edit-presta')">
+  <div class="modal" style="max-width:480px;padding:24px;overflow-y:auto;max-height:90vh" onclick="event.stopPropagation()">
+    <div style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier la prestation</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Animal</label>
+        <select id="ep-animal" onchange="onAnimalChange('ep')">
+          <option value="">-- Choisir --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Client (auto)</label>
+        <input type="text" id="ep-client" placeholder="Auto-rempli" readonly style="background:var(--surface2)">
+      </div>
+      <div class="form-group">
+        <label>Prestation</label>
+        <select id="ep-prestation" onchange="onPrestationChange('ep')">
+          <option value="">-- Choisir --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Montant (€)</label>
+        <input type="number" id="ep-montant" step="0.5" min="0" placeholder="0.00">
+      </div>
+      <div class="form-group full">
+        <label>Date</label>
+        <input type="date" id="ep-date">
+      </div>
+      <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="form-group">
+          <label>Heure début</label>
+          <input type="time" id="ep-hdebut" oninput="autoFillHeureFin('ep')">
+        </div>
+        <div class="form-group">
+          <label>Heure fin</label>
+          <input type="time" id="ep-hfin">
+        </div>
+      </div>
+    </div>
+    <div id="ep-slot2" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+        <div class="form-group">
+          <label>2ᵉ heure début</label>
+          <input type="time" id="ep-hdebut2" oninput="autoFillHeureFin2('ep')">
+        </div>
+        <div class="form-group">
+          <label>2ᵉ heure fin</label>
+          <input type="time" id="ep-hfin2">
+        </div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:20px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-presta')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderEditionPrestation()">Enregistrer</button>
+    </div>
+  </div>
 </div>
 
 <!-- DATE RANGE PICKER -->

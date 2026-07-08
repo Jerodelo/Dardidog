@@ -1193,10 +1193,8 @@ function renderRecettes() {
       <td>${formatDate(r.date)}</td>
       <td><strong>${r.montant}€</strong></td>
       <td style="color:var(--text2);font-size:0.82rem">${r.mode}</td>
-      <td>
-        <span class="badge ${r.statut==='Payé'?'badge-green':'badge-red'}">${r.statut}</span>
-        ${r.statut==='Payé' && r.datePaiement ? `<br><small style="color:var(--text2);font-size:0.75rem">le ${formatDate(r.datePaiement)}</small>` : ''}
-      </td>
+      <td><span class="badge ${r.statut==='Payé'?'badge-green':'badge-red'}">${r.statut}</span></td>
+      <td style="color:var(--text2);font-size:0.82rem">${r.datePaiement ? formatDate(r.datePaiement) : '—'}</td>
       <td><button class="btn-icon btn-danger-icon" onclick="supprimerRecette('${r.id}');event.stopPropagation()" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></td>
     </tr>
   `; }).join('');
