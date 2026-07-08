@@ -586,10 +586,81 @@ function jourPrecedent() { jourDate.setDate(jourDate.getDate() - 1); renderJour(
 function jourSuivant()   { jourDate.setDate(jourDate.getDate() + 1); renderJour(); }
 
 let _lpTimer = null;
+let _lpContextId = null;
 function startLongPress(id) {
-  _lpTimer = setTimeout(() => { _lpTimer = null; supprimerPrestation(id); }, 600);
+  _lpTimer = setTimeout(() => { _lpTimer = null; openPrestationContextMenu(id); }, 600);
 }
 function cancelLongPress() { if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; } }
+
+function openPrestationContextMenu(id) {
+  const p = state.prestations.find(x => x.id === id);
+  if (!p) return;
+  _lpContextId = id;
+  document.getElementById('modal-action-presta-label').textContent = `${p.animal} — ${p.prestation}`;
+  document.getElementById('modal-action-presta').classList.add('open');
+}
+
+function supprimerPrestationDepuisMenu() {
+  closeModal('modal-action-presta');
+  if (_lpContextId) supprimerPrestation(_lpContextId);
+}
+
+function ouvrirEditionPrestation() {
+  closeModal('modal-action-presta');
+  const p = state.prestations.find(x => x.id === _lpContextId);
+  if (!p) return;
+
+  const animaux = getAllAnimaux();
+  document.getElementById('ep-animal').innerHTML = '<option value="">-- Choisir --</option>' +
+    animaux.map(a => `<option${a.nom === p.animal ? ' selected' : ''}>${a.nom}</option>`).join('');
+  document.getElementById('ep-client').value = p.client || '';
+  document.getElementById('ep-prestation').innerHTML = '<option value="">-- Choisir --</option>' +
+    state.prestationsTypes.map(t => `<option${t === p.prestation ? ' selected' : ''}>${t}</option>`).join('');
+  document.getElementById('ep-montant').value = p.montant || '';
+  document.getElementById('ep-date').value = p.date || '';
+  document.getElementById('ep-hdebut').value = p.hdebut || '';
+  document.getElementById('ep-hfin').value = p.hfin || '';
+  document.getElementById('ep-hdebut2').value = p.hdebut2 || '';
+  document.getElementById('ep-hfin2').value = p.hfin2 || '';
+  onPrestationChange('ep');
+
+  document.getElementById('modal-edit-presta').classList.add('open');
+}
+
+function sauvegarderEditionPrestation() {
+  const p = state.prestations.find(x => x.id === _lpContextId);
+  if (!p) return;
+
+  const date = document.getElementById('ep-date').value;
+  const animal = document.getElementById('ep-animal').value;
+  const prestation = document.getElementById('ep-prestation').value;
+  const montant = parseFloat(document.getElementById('ep-montant').value);
+  const hdebut = document.getElementById('ep-hdebut').value;
+  const hfin = document.getElementById('ep-hfin').value;
+
+  if (!date || !animal || !prestation || isNaN(montant) || !hdebut || !hfin) {
+    showAlert('', 'Veuillez remplir tous les champs obligatoires.', 'error');
+    return;
+  }
+
+  p.date = date;
+  p.mois = getMoisFromDate(date);
+  p.animal = animal;
+  p.client = document.getElementById('ep-client').value;
+  p.prestation = prestation;
+  p.montant = montant;
+  p.hdebut = hdebut;
+  p.hfin = hfin;
+  p.hdebut2 = document.getElementById('ep-hdebut2').value;
+  p.hfin2 = document.getElementById('ep-hfin2').value;
+
+  state.prestations.sort((a, b) => a.date.localeCompare(b.date));
+  saveState();
+  renderPrestations();
+  renderPlanning();
+  closeModal('modal-edit-presta');
+  showAlert('', 'Prestation modifiée.', 'success');
+}
 
 let _lpEvTimer = null;
 function startLongPressEv(id) {
@@ -623,7 +694,7 @@ function renderJour() {
     <div class="gj-cell" style="height:auto;padding:4px 6px;display:flex;flex-wrap:wrap;gap:4px;border-left:1px solid var(--border);border-top:1px solid var(--border)">
       ${sansTps.map(p => {
         const ci = Math.abs(p.animal.charCodeAt(0)) % colors.length;
-        return `<div class="gj-event" data-id="${p.id}" style="position:relative;left:0;right:0;background:${colors[ci]}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="supprimerPrestation('${p.id}');return false;">${p.animal} — ${p.prestation}</div>`;
+        return `<div class="gj-event" data-id="${p.id}" style="position:relative;left:0;right:0;background:${colors[ci]}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="openPrestationContextMenu('${p.id}');return false;">${p.animal} — ${p.prestation}</div>`;
       }).join('')}
       ${evPersoAllDay.map(e => `<div class="gj-event" data-id="${e.id}" style="position:relative;left:0;right:0;background:#D4BC9E" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="supprimerEvenement('${e.id}');return false;">${e.nom}</div>`).join('')}
     </div>`;
@@ -671,7 +742,7 @@ function renderJour() {
       if (evt._kind === 'presta') {
         const p = evt._ref;
         const ci = Math.abs(p.animal.charCodeAt(0)) % gjColors.length;
-        evtHtml += `<div class="gj-event" data-id="${p.id}" title="${p.animal} — ${p.prestation} (${p.montant}€)" style="top:${topPct}%;height:${heightPx}px;background:${gjColors[ci]};${posStyle}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="supprimerPrestation('${p.id}');return false;">
+        evtHtml += `<div class="gj-event" data-id="${p.id}" title="${p.animal} — ${p.prestation} (${p.montant}€)" style="top:${topPct}%;height:${heightPx}px;background:${gjColors[ci]};${posStyle}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="openPrestationContextMenu('${p.id}');return false;">
           ${p.animal} — ${p.prestation}
         </div>`;
       } else {
@@ -1045,7 +1116,13 @@ function genererFacture() {
 function toggleStatutRecette(id) {
   const r = state.recettes.find(x => x.id === id);
   if (!r) return;
-  r.statut = r.statut === 'Payé' ? 'Dû' : 'Payé';
+  if (r.statut === 'Payé') {
+    r.statut = 'Dû';
+    r.datePaiement = null;
+  } else {
+    r.statut = 'Payé';
+    r.datePaiement = dateToISO(new Date());
+  }
   saveState(); renderRecettes();
 }
 
@@ -1081,9 +1158,12 @@ function renderRecettes() {
   const moisF  = document.getElementById('filter-mois-r').value;
   const fcEl   = document.getElementById('filter-client-r');
 
+  const statutF = (document.getElementById('filter-statut-r')||{}).value || '';
+
   let items = state.recettes.slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  if (anneeF) items = items.filter(r => r.date && r.date.startsWith(anneeF));
-  if (moisF)  items = items.filter(r => r.date && getMoisFromDate(r.date) === moisF);
+  if (anneeF)  items = items.filter(r => r.date && r.date.startsWith(anneeF));
+  if (moisF)   items = items.filter(r => r.date && getMoisFromDate(r.date) === moisF);
+  if (statutF) items = items.filter(r => r.statut === statutF);
 
   // Mettre à jour le filtre client selon les factures visibles
   const clientsDispo = [...new Set(items.map(r => r.client).filter(Boolean))].sort();
@@ -1115,6 +1195,7 @@ function renderRecettes() {
       <td style="color:var(--text2);font-size:0.82rem">${r.mode}</td>
       <td>
         <span class="badge ${r.statut==='Payé'?'badge-green':'badge-red'}">${r.statut}</span>
+        ${r.statut==='Payé' && r.datePaiement ? `<br><small style="color:var(--text2);font-size:0.75rem">le ${formatDate(r.datePaiement)}</small>` : ''}
       </td>
       <td><button class="btn-icon btn-danger-icon" onclick="supprimerRecette('${r.id}');event.stopPropagation()" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></td>
     </tr>
@@ -1459,7 +1540,9 @@ function renderBilan() {
   const chargesFiltrees  = (state.depenses || []).filter(d => inPeriode(d.date));
 
   const ca         = recettesFiltrees.reduce((s,r) => s + (r.montant||0), 0);
-  const caEncaisse = recettesFiltrees.filter(r => r.statut === 'Payé').reduce((s,r) => s + (r.montant||0), 0);
+  const caEncaisse = state.recettes
+    .filter(r => r.statut === 'Payé' && inPeriode(r.datePaiement || r.date))
+    .reduce((s,r) => s + (r.montant||0), 0);
   const charges    = chargesFiltrees.filter(d => d.type !== 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
   const impots     = chargesFiltrees.filter(d => d.type === 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
   const benefice   = caEncaisse - charges - impots;
@@ -1594,7 +1677,17 @@ function renderFicheClientView(client) {
       <div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">${label}</div>
       <div style="font-size:0.9rem;color:${v ? '#2d3b2f' : '#bbb'};font-weight:${v ? '500' : '400'}">${v || '—'}</div>
     </div>`;
-  const adresse = [client.adresse, client.complement, client.cp, client.ville].filter(Boolean).join(', ') || null;
+  const adresseDisplay = [client.adresse, client.complement, client.cp, client.ville].filter(Boolean).join(', ') || null;
+  const adresseMaps = [client.adresse, client.cp, client.ville].filter(Boolean).join(' ');
+  const adresseRow = `
+    <div style="margin-bottom:12px">
+      <div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Adresse</div>
+      <div style="font-size:0.9rem;color:${adresseDisplay ? '#2d3b2f' : '#bbb'};font-weight:${adresseDisplay ? '500' : '400'}">
+        ${adresseDisplay && adresseMaps
+          ? `<a href="https://maps.google.com/?q=${encodeURIComponent(adresseMaps)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">${adresseDisplay}</a>`
+          : '—'}
+      </div>
+    </div>`;
   const animaux = client.animaux || [];
   const animauxHTML = animaux.length === 0
     ? `<div style="font-size:0.85rem;color:#bbb;margin-top:4px">Aucun animal enregistré</div>`
@@ -1609,7 +1702,7 @@ function renderFicheClientView(client) {
 
   document.getElementById('fiche-client-content').innerHTML =
     row('Numéro', client.tel) +
-    row('Adresse', adresse) +
+    adresseRow +
     `<div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Animaux</div>
     ${animauxHTML}`;
 }

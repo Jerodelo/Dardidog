@@ -19,7 +19,7 @@ async function loadPartials() {
 
 // Indiquer la page active dans la navigation
 function setActivePage() {
-  const currentPage = window.location.pathname.split('/').pop() || 'accueil.html';
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
   // Sélectionner tous les liens de navigation (desktop et mobile) SAUF les toggles
   const navLinks = document.querySelectorAll('nav a, .mobile-nav a:not(.mobile-dropdown-toggle)');
@@ -32,8 +32,8 @@ function setActivePage() {
 
     // Vérifier si c'est la page actuelle
     const isActive = linkPage === currentPage ||
-                     (currentPage === '' && linkPage === 'accueil.html') ||
-                     (currentPage === 'accueil.html' && linkPage === 'accueil.html');
+                     (currentPage === '' && linkPage === 'index.html') ||
+                     (currentPage === 'index.html' && linkPage === 'index.html');
 
     if (isActive) {
       link.classList.add('active');
