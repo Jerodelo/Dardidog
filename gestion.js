@@ -129,6 +129,7 @@ function showPage(name) {
     a.classList.toggle('active', a.dataset.page === name);
   });
   if (name === 'bilan') renderBilan();
+  if (name === 'notes') renderNotes();
   if (name === 'recettes') switchFacturesTab('form');
   if (name === 'prestations') switchPrestationsTab('indiv');
   if (name === 'depenses') {
@@ -2405,6 +2406,49 @@ function showAlert(containerId, msg, type) {
 function seDeconnecter() {
   localStorage.removeItem('dardidog_auth');
   window.location.replace('suivi-2m0x.html');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════════════════════════
+
+function loadNotes() {
+  try { return JSON.parse(localStorage.getItem('petsitter_notes') || '[]'); } catch(e) { return []; }
+}
+
+function saveNotes(notes) {
+  localStorage.setItem('petsitter_notes', JSON.stringify(notes));
+}
+
+function renderNotes() {
+  const notes = loadNotes();
+  const list = document.getElementById('notes-list');
+  if (!list) return;
+  list.innerHTML = notes.map((txt, idx) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--border)">
+      <input type="checkbox" onchange="removeNoteItem(${idx})"
+        style="width:18px;height:18px;cursor:pointer;accent-color:var(--color-primary);flex-shrink:0">
+      <span style="font-size:0.95rem;line-height:1.4">${txt.replace(/</g,'&lt;')}</span>
+    </div>`).join('');
+}
+
+function addNoteItem() {
+  const input = document.getElementById('notes-input');
+  const txt = (input.value || '').trim();
+  if (!txt) return;
+  const notes = loadNotes();
+  notes.push(txt);
+  saveNotes(notes);
+  input.value = '';
+  renderNotes();
+  input.focus();
+}
+
+function removeNoteItem(idx) {
+  const notes = loadNotes();
+  notes.splice(idx, 1);
+  saveNotes(notes);
+  setTimeout(renderNotes, 200);
 }
 
 function closeModal(id) {
