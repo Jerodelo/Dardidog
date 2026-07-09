@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <script>if (false/* MAINTENANCE */) location.replace('/maintenance.html');</script>
-  <title>Contact | Avis 5 étoiles pet-sitter Dardilly et ouest lyonnais</title>
+  <title>Dardidog | Contactez votre pet-sitter sur Dardilly et Ecully</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Pet-sitter 5 étoiles à Dardilly. Promenade de chien, garde de chats et NAC. Consultez les avis Google">
+  <meta name="description" content="Avis 5 étoiles de clients satisfaits. Contactez Dardidog pour une garde de chien, chat ou visite à domicile dans l'ouest lyonnais.">
   <meta name="keywords" content="contact pet-sitter Dardilly, avis Dardidog, promenade chien Écully avis, garde animaux Limonest, dog-sitter Mont-d'or contact, pet-sitting Lyon ouest">
   <meta name="author" content="Dardidog">
   <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dardidog.fr/contact.html">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -91,7 +92,19 @@
     },
     "sameAs": [
       "https://maps.app.goo.gl/R6BkngYzbHcGwdAR7"
-    ]
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Prestations Dardidog",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Promenade 30 min" }, "price": "16", "priceCurrency": "EUR" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Promenade 45 min" }, "price": "20", "priceCurrency": "EUR" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Promenade 1h" }, "price": "22", "priceCurrency": "EUR" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visite à domicile 30 min" }, "price": "16", "priceCurrency": "EUR" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visite à domicile 45 min" }, "price": "21", "priceCurrency": "EUR" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visite à domicile 1h" }, "price": "25", "priceCurrency": "EUR" }
+      ]
+    }
   }
   </script>
   <script type="application/ld+json">
@@ -188,9 +201,39 @@
   <main>
   
 
+    <!-- SECTION CONTACT -->
+    <section class="section-spacing-bottom" id="contact">
+      <h1>CONTACTEZ VOTRE PET-SITTER</h1>
+      <div class="contact-buttons">
+        <a href="tel:+33750913177" class="contact-btn">☎  +33 7 50 91 31 77</a>
+        <a href="mailto:contact@dardidog.fr" class="contact-btn">contact@dardidog.fr</a>
+      </div>
+
+      <p class="contact-form-label">Formulaire de contact</p>
+      <form id="contact-form" class="contact-form">
+        <div class="contact-form-group">
+          <label for="contact-nom">Nom et prénom</label>
+          <input type="text" id="contact-nom" name="nom" autocomplete="name" required>
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-email">Adresse mail</label>
+          <input type="email" id="contact-email" name="email" autocomplete="email" required>
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-tel">Numéro de téléphone</label>
+          <input type="tel" id="contact-tel" name="telephone" autocomplete="tel">
+        </div>
+        <div class="contact-form-group">
+          <label for="contact-message">Votre message</label>
+          <textarea id="contact-message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="contact-btn" id="contact-submit-btn">Envoyer votre demande</button>
+        <p id="contact-form-status" class="contact-form-status"></p>
+      </form>
+    </section>
     <!-- SECTION AVIS GOOGLE -->
     <section>
-      <h2 class="text-center" style="margin-bottom:30px;">AVIS GOOGLE</h2>
+      <h2 class="text-center" style="margin-bottom:30px;">LES AVIS DES CLIENTS DARDIDOG</h2>
       <div class="avis-carousel-container">
         <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)"></button>
 
@@ -209,7 +252,7 @@ Nous vous le confierons à nouveau avec le plus grand plaisir. Grâce à vous, n
 Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur animal de compagnie à une personne de confiance, qui lui apportera beaucoup d’attention, de bienveillance et d’amour. ⭐⭐⭐⭐⭐</p>
               <div class="avis-date">Publié en juin 2026</div>
             </div>
-           
+
 
             <!-- Avis 2 -->
             <div class="avis-card">
@@ -218,7 +261,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                Un grand merci à Jéromine pour sa gentillesse, sa patience et l'amour qu'elle porte aux animaux.
+                Un grand merci à Jéromine pour sa gentillesse, sa patience et l’amour qu’elle porte aux animaux.
                 Milou boy a passé de belles vacances et nous sommes partis en toute confiance.
                 Je recommande avec plaisir.
               </p>
@@ -231,7 +274,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                Jeromine a fait preuve d'une grande patience avec Grenadine, qui venait de perdre la vue.
+                Jeromine a fait preuve d’une grande patience avec Grenadine, qui venait de perdre la vue.
                 Elle a le souci du bien-être de nos animaux à quatre pattes, et est extrêmement professionnelle et attentionnée.
                 Nous recommandons bien évidemment et reviendrons. Merci Jeromine.
               </p>
@@ -266,7 +309,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-              Nous cherchions quelqu’un de confiance pour promener notre jeune chienne deux fois par semaine lorsque nous travaillons et nous avons eu la chance de tomber sur Jéromine qui propose encore mieux que ce qu’on espérait ! Elle nous envoie régulièrement des vidéos de notre chien qui s'éclate en balade pour notre plus grand bonheur. Vous pouvez lui faire confiance les yeux fermés. </p>
+              Nous cherchions quelqu’un de confiance pour promener notre jeune chienne deux fois par semaine lorsque nous travaillons et nous avons eu la chance de tomber sur Jéromine qui propose encore mieux que ce qu’on espérait ! Elle nous envoie régulièrement des vidéos de notre chien qui s’éclate en balade pour notre plus grand bonheur. Vous pouvez lui faire confiance les yeux fermés. </p>
               <div class="avis-date">Publié en juin 2026</div>
             </div>
               <!-- Avis 5 -->
@@ -276,7 +319,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                Jéromine est une personne sérieuse et attentionnée. Elle sait prendre des initiatives lorsqu'il le faut. Très bon contact avec notre chat très craintif.
+                Jéromine est une personne sérieuse et attentionnée. Elle sait prendre des initiatives lorsqu’il le faut. Très bon contact avec notre chat très craintif.
               </p>
               <div class="avis-date">Publié en décembre 2025</div>
             </div>
@@ -297,8 +340,8 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                J'ai confié mon chien à Jeromine tous les lundi pendant presque 1 an.
-                Tout s'est très bien passé. Mon chien l'adore et on sent qu'il a été très bien traité.
+                J’ai confié mon chien à Jeromine tous les lundi pendant presque 1 an.
+                Tout s’est très bien passé. Mon chien l’adore et on sent qu’il a été très bien traité.
                 Je recommande vivement Jeromine pour garder votre chien.
               </p>
               <div class="avis-date">Publié en septembre 2025</div>
@@ -310,8 +353,8 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                Jeromine a gardé notre chien cet été et cela s'est très bien passé. On sent qu'elle a l'habitude
-                de s'occuper des animaux. Merci !
+                Jeromine a gardé notre chien cet été et cela s’est très bien passé. On sent qu’elle a l’habitude
+                de s’occuper des animaux. Merci !
               </p>
               <div class="avis-date">Publié en septembre 2025</div>
             </div>
@@ -322,11 +365,11 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                Nous avons laissé notre lapin 2 semaines l'été dernier chez Jeromine pendant un voyage à l'étranger et nous l'avons retrouvé en pleine forme à notre retour !! Je recommande vivement Jeromine si vous souhaitez faire garder votre animal !
+                Nous avons laissé notre lapin 2 semaines l’été dernier chez Jeromine pendant un voyage à l’étranger et nous l’avons retrouvé en pleine forme à notre retour !! Je recommande vivement Jeromine si vous souhaitez faire garder votre animal !
               </p>
               <div class="avis-date">Publié en novembre 2025</div>
             </div>
-          
+
              <!-- Avis 0 -->
             <div class="avis-card">
               <div class="avis-header">
@@ -334,7 +377,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
                 <div class="avis-stars">★★★★★</div>
               </div>
               <p class="avis-texte">
-                J'accorde toute ma confiance a Jeromine elle balade ma chienne 1 semaine sur 2, a l'écoute de vos besoins et celui de vos animaux
+                J’accorde toute ma confiance a Jeromine elle balade ma chienne 1 semaine sur 2, a l’écoute de vos besoins et celui de vos animaux
               </p>
               <div class="avis-date">Publié en juin 2026</div>
             </div>
@@ -349,36 +392,6 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
           Consulter la page Google de Dardidog
         </a>
       </div>
-    </section>
-      <!-- SECTION CONTACT -->
-    <section class="section-spacing-bottom" id="contact">
-      <h1>CONTACT</h1>
-      <div class="contact-buttons">
-        <a href="tel:+33750913177" class="contact-btn">☎  +33 7 50 91 31 77</a>
-        <a href="mailto:contact@dardidog.fr" class="contact-btn">contact@dardidog.fr</a>
-      </div>
-
-      <p class="contact-form-label">Formulaire de contact</p>
-      <form id="contact-form" class="contact-form">
-        <div class="contact-form-group">
-          <label for="contact-nom">Nom et prénom</label>
-          <input type="text" id="contact-nom" name="nom" autocomplete="name" required>
-        </div>
-        <div class="contact-form-group">
-          <label for="contact-email">Adresse mail</label>
-          <input type="email" id="contact-email" name="email" autocomplete="email" required>
-        </div>
-        <div class="contact-form-group">
-          <label for="contact-tel">Numéro de téléphone</label>
-          <input type="tel" id="contact-tel" name="telephone" autocomplete="tel">
-        </div>
-        <div class="contact-form-group">
-          <label for="contact-message">Votre message</label>
-          <textarea id="contact-message" name="message" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="contact-btn" id="contact-submit-btn">Envoyer votre demande</button>
-        <p id="contact-form-status" class="contact-form-status"></p>
-      </form>
     </section>
   </main>
 
