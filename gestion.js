@@ -1021,6 +1021,15 @@ function calcTotalNet(totalBrut, ristourneType, ristourneVal) {
   return totalBrut;
 }
 
+function onDocTypeChange() {
+  const isDevis = document.getElementById('r-doc-type-devis').checked;
+  document.getElementById('r-doc-type-facture-label').style.background = isDevis ? 'transparent' : 'var(--accent)';
+  document.getElementById('r-doc-type-facture-label').style.color = isDevis ? 'var(--text2)' : '#fff';
+  document.getElementById('r-doc-type-devis-label').style.background = isDevis ? 'var(--accent)' : 'transparent';
+  document.getElementById('r-doc-type-devis-label').style.color = isDevis ? '#fff' : 'var(--text2)';
+  resetFactureForm();
+}
+
 function onMois1Change() {
   resetFactureForm();
   if (document.getElementById('r-multi-mois').checked) autoFillMois2();
@@ -1114,16 +1123,29 @@ function previewFacture() {
 }
 
 function onBtnCreer() {
+  const isDevis = document.getElementById('r-doc-type-devis').checked;
   if (!lastFactureData) {
     previewFacture();
     if (lastFactureData) {
       const btn = document.getElementById('btn-creer');
-      btn.textContent = 'Créer la facture';
+      btn.textContent = isDevis ? 'Créer le devis' : 'Créer la facture';
       btn.className = 'btn btn-primary';
     }
   } else {
-    genererFacture();
+    if (isDevis) genererDevis();
+    else genererFacture();
   }
+}
+
+async function genererDevis() {
+  if (!lastFactureData) return;
+  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, dateFacture } = lastFactureData;
+  const clientData = state.clients.find(c => c.nom === proprio);
+  const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
+  const d = new Date();
+  const devisRef = 'D-' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  await _buildPDF(devisRef, proprio, adresseLines, periodeLabel, dateFacture, prestsMois, total, clientData?.mode || 'Liquide', ristourneType || '', ristourneVal || 0, 'DEVIS');
+  resetFactureForm();
 }
 
 function resetFactureForm() {
@@ -1309,7 +1331,7 @@ async function genererPDFFromRecette(id) {
   await _buildPDF(rec.ref, rec.client, adresseLines, periodeLabel, new Date(rec.date), prestsMois, totalBrut, rec.mode, rec.ristourneType || '', rec.ristourneVal || 0);
 }
 
-async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, total, mode, ristourneType = '', ristourneVal = 0) {
+async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, total, mode, ristourneType = '', ristourneVal = 0, docType = 'FACTURE') {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
   const W = 210, margin = 20;
@@ -1357,7 +1379,7 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(34);
   doc.setTextColor(21, 71, 52);
-  doc.text('FACTURE', W/2, 46, { align: 'center' });
+  doc.text(docType, W/2, 46, { align: 'center' });
 
   // Date + N° facture
   let y = 60;
@@ -1366,7 +1388,7 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   doc.setTextColor(30, 30, 30);
   doc.text("DATE D'EMISSION : " + formatDate(dateFacture), margin, y);
   doc.setFont('helvetica', 'bold');
-  doc.text('N° DE FACTURE : ' + ref, W - margin, y, { align: 'right' });
+  doc.text((docType === 'DEVIS' ? 'N° DEVIS : ' : 'N° DE FACTURE : ') + ref, W - margin, y, { align: 'right' });
 
   // Ligne verte séparatrice sous date/ref
   y += 4;

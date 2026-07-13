@@ -256,6 +256,16 @@
     <div id="facture-vue-form">
     <div class="card">
       <div id="alert-recettes-form"></div>
+      <div style="display:flex;gap:0;margin-bottom:14px;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content">
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="r-doc-type" id="r-doc-type-facture" value="facture" checked onchange="onDocTypeChange()" style="display:none">
+          <span id="r-doc-type-facture-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:var(--accent);color:#fff;transition:.15s">Facture</span>
+        </label>
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="r-doc-type" id="r-doc-type-devis" value="devis" onchange="onDocTypeChange()" style="display:none">
+          <span id="r-doc-type-devis-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:transparent;color:var(--text2);transition:.15s">Devis</span>
+        </label>
+      </div>
       <div class="form-grid">
         <div class="form-group">
           <label>Client</label>
