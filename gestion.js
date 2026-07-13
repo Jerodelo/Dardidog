@@ -272,6 +272,13 @@ function populateSelects() {
     rMois.innerHTML = '<option value="">-- Choisir --</option>' +
       MOIS_LIST.map(m => `<option ${m===val?'selected':''}>${m}</option>`).join('');
   }
+  const rMois2 = document.getElementById('r-mois2');
+  if (rMois2) {
+    const cur = rMois2.value;
+    rMois2.innerHTML = '<option value="">-- Choisir --</option>' +
+      MOIS_LIST.map(m => `<option ${m===cur?'selected':''}>${m}</option>`).join('');
+    if (!cur && rMois && rMois.value) autoFillMois2();
+  }
 
   const rAnnee = document.getElementById('r-annee');
   if (rAnnee) {
@@ -1014,24 +1021,62 @@ function calcTotalNet(totalBrut, ristourneType, ristourneVal) {
   return totalBrut;
 }
 
+function onMois1Change() {
+  resetFactureForm();
+  if (document.getElementById('r-multi-mois').checked) autoFillMois2();
+}
+
+function onMultiMoisChange() {
+  const checked = document.getElementById('r-multi-mois').checked;
+  document.getElementById('r-mois2-wrap').style.display = checked ? '' : 'none';
+  if (checked) autoFillMois2();
+  resetFactureForm();
+}
+
+function autoFillMois2() {
+  const mois1 = document.getElementById('r-mois').value;
+  if (!mois1) return;
+  const nextIdx = (MOIS_LIST.indexOf(mois1) + 1) % 12;
+  const sel2 = document.getElementById('r-mois2');
+  if (sel2) sel2.value = MOIS_LIST[nextIdx];
+}
+
 function previewFacture() {
   const proprio = document.getElementById('r-client').value;
   const mois = document.getElementById('r-mois').value;
   const annee = document.getElementById('r-annee').value;
+  const multiMois = document.getElementById('r-multi-mois').checked;
+  const mois2 = multiMois ? document.getElementById('r-mois2').value : null;
 
   if (!proprio || !mois || !annee) {
     showAlert('alert-recettes-form', 'Choisissez un propriétaire, un mois et une année.', 'error');
     return;
   }
+  if (multiMois && !mois2) {
+    showAlert('alert-recettes-form', 'Choisissez le 2ème mois.', 'error');
+    return;
+  }
 
-  const prestsMois = state.prestations.filter(p =>
+  // Si le 2ème mois est avant le 1er (ex: déc → jan), l'année avance
+  const annee2 = mois2 && MOIS_LIST.indexOf(mois2) < MOIS_LIST.indexOf(mois)
+    ? String(parseInt(annee) + 1) : annee;
+
+  let prestsMois = state.prestations.filter(p =>
     p.client.toLowerCase() === proprio.toLowerCase() &&
     p.date && p.date.startsWith(annee) &&
     getMoisFromDate(p.date) === mois
   );
+  if (mois2) {
+    prestsMois = [...prestsMois, ...state.prestations.filter(p =>
+      p.client.toLowerCase() === proprio.toLowerCase() &&
+      p.date && p.date.startsWith(annee2) &&
+      getMoisFromDate(p.date) === mois2
+    )];
+  }
 
   if (prestsMois.length === 0) {
-    showAlert('alert-recettes-form', `Aucune prestation trouvée pour ${proprio} en ${mois} ${annee}.`, 'error');
+    const periode = mois2 ? `${mois} – ${mois2} ${annee2 !== annee ? annee+'/'+annee2 : annee}` : `${mois} ${annee}`;
+    showAlert('alert-recettes-form', `Aucune prestation trouvée pour ${proprio} en ${periode}.`, 'error');
     document.getElementById('r-preview').style.display = 'none';
     return;
   }
@@ -1043,8 +1088,11 @@ function previewFacture() {
   const ristourneType = document.getElementById('r-ristourne-type').value;
   const ristourneVal  = parseFloat(document.getElementById('r-ristourne-val').value) || 0;
   const totalNet = calcTotalNet(totalBrut, ristourneType, ristourneVal);
+  const periodeLabel = mois2
+    ? `${mois} – ${mois2} ${annee2 !== annee ? annee+'/'+annee2 : annee}`
+    : `${mois} ${annee}`;
 
-  lastFactureData = { proprio, mois, annee, prestsMois, total: totalBrut, totalNet, ristourneType, ristourneVal, ref, dateFacture, animauxConcernes };
+  lastFactureData = { proprio, mois, annee, mois2: mois2||null, annee2: mois2?annee2:null, prestsMois, total: totalBrut, totalNet, ristourneType, ristourneVal, ref, dateFacture, animauxConcernes, periodeLabel };
 
   const remiseLigne = ristourneType && ristourneVal > 0
     ? `<div><strong>Remise :</strong> ${ristourneType === 'pct' ? ristourneVal + '%' : ristourneVal + '€'}</div>
@@ -1056,7 +1104,7 @@ function previewFacture() {
       <div><strong>Référence :</strong> ${ref}</div>
       <div><strong>Date :</strong> ${formatDate(dateFacture)}</div>
       <div><strong>Propriétaire :</strong> ${proprio}</div>
-      <div><strong>Mois :</strong> ${mois} ${annee}</div>
+      <div><strong>Période :</strong> ${periodeLabel}</div>
       <div><strong>Animaux :</strong> ${animauxConcernes.join(', ')}</div>
       <div><strong>Total HT :</strong> ${ristourneType && ristourneVal > 0 ? totalBrut.toFixed(2) + '€' : `<span style="color:var(--accent2);font-weight:700">${totalBrut.toFixed(2)}€</span>`}</div>
       ${remiseLigne}
@@ -1087,7 +1135,7 @@ function resetFactureForm() {
 }
 
 function genererFacture() {
-  const { proprio, mois, annee, total, totalNet, ristourneType, ristourneVal, ref, dateFacture } = lastFactureData;
+  const { proprio, mois, annee, mois2, annee2, total, totalNet, ristourneType, ristourneVal, ref, dateFacture } = lastFactureData;
 
   const clientData = state.clients.find(c => c.nom === proprio);
   const mode = clientData ? clientData.mode : 'Liquide';
@@ -1100,9 +1148,21 @@ function genererFacture() {
     return;
   }
 
+  let moisCle2 = null;
+  if (mois2) {
+    const moisNum2 = String(MOIS_LIST.indexOf(mois2) + 1).padStart(2, '0');
+    moisCle2 = `${annee2}-${moisNum2}`;
+    const exists2 = state.recettes.find(r => r.client === proprio && r.moisCle === moisCle2);
+    if (exists2) {
+      showAlert('alert-recettes-form', `Une facture existe déjà pour ${proprio} en ${mois2} ${annee2} (${exists2.ref}).`, 'error');
+      return;
+    }
+  }
+
   const dateISO = dateToISO(dateFacture);
   state.recettes.push({
     id: uid(), ref, client: proprio, date: dateISO, moisCle: yearMoisCle,
+    ...(moisCle2 ? { moisCle2 } : {}),
     montant: totalNet ?? total, montantBrut: total,
     ristourneType: ristourneType || '', ristourneVal: ristourneVal || 0,
     mode, statut: 'Dû'
@@ -1128,19 +1188,29 @@ function toggleStatutRecette(id) {
 }
 
 function getPrestsForRecette(r) {
-  let annee, moisNom;
-  if (r.moisCle) {
-    annee = r.moisCle.slice(0, 4);
-    moisNom = MOIS_LIST[parseInt(r.moisCle.slice(5, 7)) - 1];
-  } else {
-    annee = r.date ? r.date.slice(0, 4) : '';
-    moisNom = r.date ? getMoisFromDate(r.date) : '';
+  function prestsForCle(moisCle) {
+    const annee = moisCle.slice(0, 4);
+    const moisNom = MOIS_LIST[parseInt(moisCle.slice(5, 7)) - 1];
+    return state.prestations.filter(p =>
+      p.client.toLowerCase() === r.client.toLowerCase() &&
+      p.date && p.date.startsWith(annee) &&
+      getMoisFromDate(p.date) === moisNom
+    );
   }
-  return state.prestations.filter(p =>
-    p.client.toLowerCase() === r.client.toLowerCase() &&
-    p.date && p.date.startsWith(annee) &&
-    getMoisFromDate(p.date) === moisNom
-  );
+  let prests;
+  if (r.moisCle) {
+    prests = prestsForCle(r.moisCle);
+  } else {
+    const annee = r.date ? r.date.slice(0, 4) : '';
+    const moisNom = r.date ? getMoisFromDate(r.date) : '';
+    prests = state.prestations.filter(p =>
+      p.client.toLowerCase() === r.client.toLowerCase() &&
+      p.date && p.date.startsWith(annee) &&
+      getMoisFromDate(p.date) === moisNom
+    );
+  }
+  if (r.moisCle2) prests = [...prests, ...prestsForCle(r.moisCle2)];
+  return prests;
 }
 
 function getTypePrestation(prests) {
@@ -1207,33 +1277,36 @@ function renderRecettes() {
 
 async function genererPDF() {
   if (!lastFactureData) return;
-  const { proprio, mois, prestsMois, total, ristourneType, ristourneVal, ref, dateFacture } = lastFactureData;
+  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, ref, dateFacture } = lastFactureData;
   const clientData = state.clients.find(c => c.nom === proprio);
   const mode = clientData ? clientData.mode : 'Liquide';
   const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
-  await _buildPDF(ref, proprio, adresseLines, mois, dateFacture, prestsMois, total, mode, ristourneType || '', ristourneVal || 0);
+  await _buildPDF(ref, proprio, adresseLines, periodeLabel, dateFacture, prestsMois, total, mode, ristourneType || '', ristourneVal || 0);
 }
 
 async function genererPDFFromRecette(id) {
   const rec = state.recettes.find(r => r.id === id);
   if (!rec) return;
+  function getMoisAnneeFromCle(moisCle) {
+    return { annee: moisCle.slice(0, 4), moisNom: MOIS_LIST[parseInt(moisCle.slice(5, 7)) - 1] };
+  }
   let annee, moisNom;
   if (rec.moisCle) {
-    annee = rec.moisCle.slice(0, 4);
-    moisNom = MOIS_LIST[parseInt(rec.moisCle.slice(5, 7)) - 1];
+    ({ annee, moisNom } = getMoisAnneeFromCle(rec.moisCle));
   } else {
     annee = rec.date.slice(0, 4);
     moisNom = getMoisFromDate(rec.date);
   }
-  const prestsMois = state.prestations.filter(p =>
-    p.client.toLowerCase() === rec.client.toLowerCase() &&
-    p.date && p.date.startsWith(annee) &&
-    getMoisFromDate(p.date) === moisNom
-  );
+  const prestsMois = getPrestsForRecette(rec);
+  let periodeLabel = `${moisNom} ${annee}`;
+  if (rec.moisCle2) {
+    const { annee: annee2, moisNom: moisNom2 } = getMoisAnneeFromCle(rec.moisCle2);
+    periodeLabel = `${moisNom} – ${moisNom2} ${annee2 !== annee ? annee+'/'+annee2 : annee}`;
+  }
   const clientData = state.clients.find(c => c.nom === rec.client);
   const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
   const totalBrut = rec.montantBrut || prestsMois.reduce((s,p) => s + p.montant, 0);
-  await _buildPDF(rec.ref, rec.client, adresseLines, moisNom, new Date(rec.date), prestsMois, totalBrut, rec.mode, rec.ristourneType || '', rec.ristourneVal || 0);
+  await _buildPDF(rec.ref, rec.client, adresseLines, periodeLabel, new Date(rec.date), prestsMois, totalBrut, rec.mode, rec.ristourneType || '', rec.ristourneVal || 0);
 }
 
 async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, total, mode, ristourneType = '', ristourneVal = 0) {

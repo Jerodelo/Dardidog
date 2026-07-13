@@ -262,12 +262,22 @@
           <select id="r-client" onchange="resetFactureForm()"><option value="">-- Choisir --</option></select>
         </div>
         <div class="form-group">
-          <label>Mois</label>
-          <select id="r-mois" onchange="resetFactureForm()"></select>
-        </div>
-        <div class="form-group">
           <label>Année</label>
           <select id="r-annee" onchange="resetFactureForm()"></select>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="r-multi-mois" onchange="onMultiMoisChange()">
+        <label for="r-multi-mois" style="cursor:pointer;font-size:0.9rem;margin:0">Facturer sur 2 mois</label>
+      </div>
+      <div class="form-grid" style="margin-top:10px">
+        <div class="form-group">
+          <label>Mois</label>
+          <select id="r-mois" onchange="onMois1Change()"></select>
+        </div>
+        <div class="form-group" id="r-mois2-wrap" style="display:none">
+          <label>2ème mois</label>
+          <select id="r-mois2" onchange="resetFactureForm()"></select>
         </div>
       </div>
       <div class="form-grid" style="margin-top:14px">
