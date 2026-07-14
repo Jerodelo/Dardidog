@@ -1298,7 +1298,7 @@ footer {
   font-weight: 600;
   font-size: 1.05rem;
   border-radius: var(--border-radius-sm);
-  transition: var(--transition);
+  transition: background-color 0.3s ease, transform 0.3s ease;
   background-color: rgba(21, 71, 52, 0.05);
   border-left: 3px solid var(--color-primary);
 }
