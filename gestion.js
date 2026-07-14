@@ -12,8 +12,6 @@ const DEFAULT_CONFIG = {
   ape: '',
   adresse1: '',
   adresse2: '',
-  iban: '',
-  titulaireCompte: '',
 };
 
 const DEFAULT_PRESTATIONS_TYPES = [
@@ -1421,20 +1419,15 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   adresse.forEach((line, i) => doc.text(line, W - margin, y + 11 + i * 5, { align: 'right' }));
 
   // Tableau des prestations
-  const FOOTER_Y = 285;
-  const TABLE_BOTTOM = 270;
+  const NOTES_Y = 272;     // position fixe des notes en bas de chaque page
+  const FOOTER_Y = 269;    // le règlement doit se terminer avant ici
+  const TABLE_BOTTOM = 254;
 
   const totalNum = typeof total === 'number' ? total : parseFloat(total) || 0;
   const totalNet = calcTotalNet(totalNum, ristourneType, ristourneVal);
   const hasRemise = ristourneType && ristourneVal > 0;
-  const totalsHeight = hasRemise ? 18 : 6;
-  const reglementLines = [
-    '- En liquide',
-    '- Par chèque à l\'ordre de ' + cfg.nom,
-    cfg.iban ? '- Par virement bancaire :' : null,
-    cfg.iban ? '       - IBAN : ' + cfg.iban : null,
-    cfg.titulaireCompte ? '       - Titulaire du compte : ' + cfg.titulaireCompte : null,
-  ].filter(Boolean);
+  const totalsHeight = hasRemise ? 24 : 12;
+  const reglementLines = ['RÈGLEMENT DÛ SOUS 15 JOURS EN LIQUIDE OU PAR VIREMENT BANCAIRE.'];
   const sortedPrests = [...prestations].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
   // Stratégie de mise en page : on tente d'abord l'espacement normal, puis un
@@ -1443,13 +1436,13 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   // (moins si remise, qui ajoute des lignes de total), même resserré ce serait
   // illisible : on bascule alors le bloc totaux/règlement sur une 2e page.
   const NORMAL = { addrGap: 10, tableGap: 10, reglFont: 9, reglLine: 5 };
-  const TIGHT = { addrGap: 3, tableGap: 3, reglFont: 7.5, reglLine: 4 };
-  const MAX_LINES_SINGLE_PAGE = hasRemise ? 14 : 16;
+  const TIGHT = { addrGap: 1, tableGap: 4, reglFont: 7.5, reglLine: 3.5 };
+  const MAX_LINES_SINGLE_PAGE = hasRemise ? 18 : 22;
   const n = sortedPrests.length;
   const baseY = y + 6 + emetteurLines.length * 5;
   const TABLE_HEADER_H = 8; // hauteur fixe de l'en-tête du tableau (texte + ligne)
-  const fitsWith = (lay) => baseY + lay.addrGap + TABLE_HEADER_H + n * 7 + lay.tableGap
-    + totalsHeight + 16 + 6 + reglementLines.length * lay.reglLine + 10 <= FOOTER_Y;
+  const fitsWith = (lay) => baseY + lay.addrGap + TABLE_HEADER_H + n * 6 + lay.tableGap
+    + totalsHeight + 5 + reglementLines.length * lay.reglLine <= FOOTER_Y;
 
   let layout = NORMAL;
   if (n <= MAX_LINES_SINGLE_PAGE && !fitsWith(NORMAL) && fitsWith(TIGHT)) layout = TIGHT;
@@ -1472,14 +1465,14 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   drawTableHeader();
 
   sortedPrests.forEach((p, idx) => {
-    if (y + 7 > TABLE_BOTTOM) {
+    if (y + 6 > TABLE_BOTTOM) {
       doc.addPage();
       y = 20;
       drawTableHeader();
     }
     if (idx % 2 === 1) {
       doc.setFillColor(245, 245, 245);
-      doc.rect(margin, y - 3, W - 2*margin, 7, 'F');
+      doc.rect(margin, y - 3, W - 2*margin, 6, 'F');
     }
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
@@ -1489,7 +1482,7 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
     const m = typeof p.montant === 'number' ? p.montant : parseFloat(p.montant) || 0;
     doc.setFont('helvetica', 'normal');
     doc.text(m.toFixed(2) + '€', W - margin, y + 2, { align: 'right' });
-    y += 7;
+    y += 6;
   });
 
   y += layout.tableGap;
@@ -1528,11 +1521,12 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   }
   doc.text('TOTAL TTC* :', W - margin - 22, y, { align: 'right' });
   doc.text(totalNet.toFixed(2) + ' €', W - margin, y, { align: 'right' });
+  y += 6;
 
   // Règlement + note TVA : ensemble, sur la même page que les totaux si ça
   // tient, sinon les deux basculent ensemble en haut d'une nouvelle page
   // (et non plus règlement en haut / note ancrée tout en bas)
-  const reglBlockHeight = 16 + 6 + reglementLines.length * layout.reglLine + 10;
+  const reglBlockHeight = 5 + reglementLines.length * layout.reglLine;
   let reglLayout = layout;
   let reglOnNewPage = false;
   if (y + reglBlockHeight > FOOTER_Y) {
@@ -1541,27 +1535,24 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
     reglLayout = NORMAL; // pleine place disponible sur la nouvelle page
     reglOnNewPage = true;
   } else {
-    y += 16;
+    y += 5;
   }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(reglLayout.reglFont);
   doc.setTextColor(30, 30, 30);
-  doc.text('RÈGLEMENT DÛ SOUS 15 JOURS :', margin, y);
-  y += 6;
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(80, 80, 80);
-  reglementLines.forEach((line, i) => doc.text(line, margin + 3, y + i * reglLayout.reglLine));
+  reglementLines.forEach((line, i) => doc.text(line, margin, y + i * reglLayout.reglLine));
 
-  // Note TVA : juste sous le règlement si les deux viennent de basculer en
-  // haut d'une nouvelle page, sinon ancrée en bas de page comme d'habitude
-  const noteY = reglOnNewPage
-    ? y + reglementLines.length * reglLayout.reglLine + 8
-    : FOOTER_Y;
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(8);
+  const mediationIntro = doc.splitTextToSize("Conformément aux dispositions du Code de la consommation concernant le règlement amiable des litiges, le client consommateur a la possibilité, en cas de litige non résolu avec Dardidog, de recourir gratuitement au service de médiation suivant :", W - 2 * margin);
+  const mediationCoords = doc.splitTextToSize("Société Médiation Professionnelle (SMP) — Site : www.mediateur-consommation-smp.fr — Alteritae, 5 rue Salvaing, 12000 Rodez.", W - 2 * margin);
+  const mLH = 4;
+  const noteY = NOTES_Y; // position fixe en bas de la page courante
   doc.setTextColor(120, 120, 120);
   doc.text('*TVA non applicable, art. 293 B du code général des impôts', margin, noteY);
+  doc.text(mediationIntro, margin, noteY + 8);
+  doc.text(mediationCoords, margin, noteY + 8 + mediationIntro.length * mLH);
 
   doc.save(`Facture_${ref}_${client.replace(/ /g,'_')}.pdf`);
 }
@@ -2233,20 +2224,16 @@ function renderConfig() {
   document.getElementById('cfg-ape').value         = cfg.ape || '';
   document.getElementById('cfg-adresse1').value    = cfg.adresse1 || '';
   document.getElementById('cfg-adresse2').value    = cfg.adresse2 || '';
-  document.getElementById('cfg-iban').value        = cfg.iban || '';
-  document.getElementById('cfg-titulaire').value   = cfg.titulaireCompte || '';
 }
 
 function saveConfig() {
   state.config = {
-    nom:             document.getElementById('cfg-nom').value.trim(),
-    statut:          document.getElementById('cfg-statut').value.trim(),
-    siret:           document.getElementById('cfg-siret').value.trim(),
-    ape:             document.getElementById('cfg-ape').value.trim(),
-    adresse1:        document.getElementById('cfg-adresse1').value.trim(),
-    adresse2:        document.getElementById('cfg-adresse2').value.trim(),
-    iban:            document.getElementById('cfg-iban').value.trim(),
-    titulaireCompte: document.getElementById('cfg-titulaire').value.trim(),
+    nom:      document.getElementById('cfg-nom').value.trim(),
+    statut:   document.getElementById('cfg-statut').value.trim(),
+    siret:    document.getElementById('cfg-siret').value.trim(),
+    ape:      document.getElementById('cfg-ape').value.trim(),
+    adresse1: document.getElementById('cfg-adresse1').value.trim(),
+    adresse2: document.getElementById('cfg-adresse2').value.trim(),
   };
   saveState();
   showAlert('alert-donnees', 'Profil enregistré.', 'success');
