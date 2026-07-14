@@ -239,7 +239,7 @@
     <section>
       <h2 class="text-center" style="margin-bottom:30px;">LES AVIS DES CLIENTS DARDIDOG</h2>
       <div class="avis-carousel-container">
-        <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)"></button>
+        <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)" aria-label="Avis précédent"></button>
 
         <div class="avis-carousel">
           <div class="avis-track">
@@ -388,7 +388,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
           </div>
         </div>
 
-        <button class="carousel-btn next-btn" onclick="moveCarousel(1)"></button>
+        <button class="carousel-btn next-btn" onclick="moveCarousel(1)" aria-label="Avis suivant"></button>
       </div>
 
       <div style="text-align: center; margin-top: 40px;">
@@ -403,7 +403,7 @@ Nous recommandons vivement vos services à tous ceux qui souhaitent confier leur
   <div id="footer-placeholder"></div>
 
   <!-- SCRIPTS -->
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 
   <!-- Formulaire de contact (EmailJS) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
