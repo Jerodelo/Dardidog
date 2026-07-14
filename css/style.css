@@ -595,6 +595,7 @@ footer {
 }
 
 /* Titre dans une card */
+.card h2,
 .card h3 {
   color: var(--color-primary);
   font-size: 1.35rem;

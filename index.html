@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -29,8 +29,12 @@
 <meta name="google-site-verification" content="43EQASmr8TSiGLSdvGyMRSP4T7tAcCnjevMgp3b9qd0" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preload" href="partials/header.html" as="fetch" crossorigin>
+  <link rel="preload" href="partials/footer.html" as="fetch" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:wght@400;500;600;700&display=swap"></noscript>
   <link rel="preload" as="image" type="image/webp" href="images/photo-portrait-medium.webp" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/style.min.css">
 
@@ -129,7 +133,7 @@
       <!-- Présentation à gauche, Photo à droite -->
       <div class="container-with-photo">
         <div class="card" style="padding-top:20px; padding-bottom:20px;">
-          <h3 style="margin-top:0;">QUI EST DARDIDOG ?</h3>
+          <h2>QUI EST DARDIDOG ?</h2>
           <p style="margin-bottom:0;">
            Passionnée par les animaux depuis toujours, j'ai commencé par garder chiens, chats et lapins à mon domicile de manière occasionnelle pour finalement décider de faire de cette passion mon métier à temps plein. Ingénieure reconvertie, j'ai suivi une formation en éducation canine positive qui me permet d'assurer un accompagnement de qualité, toujours bienveillant et adapté aux besoins spécifiques de chaque animal.
            Forte de cette expérience, j'étais enfin prête à adopter Selva, une jeune chienne croisée pleine d'énergie et très sociable, qui m'accompagne désormais autant que possible sur le terrain lors des promenades canines. Ensemble, nous accueillons chaque animal avec toute l'attention, la patience et l'affection qu'il mérite.</p>
@@ -145,6 +149,7 @@
             <img
               src="images/photo-portrait.jpg"
               alt="Pet-sitteuse Dardidog dans un pré à La-Tour-De-Salvagny avec un golden doodle couché et un dalmatien assis sur ses pattes arrière — garde chien à La-Tour-De-Salvagny"
+              width="1200" height="1198"
               fetchpriority="high">
           </picture>
         </div>
@@ -162,11 +167,12 @@
               sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 450px">
             <img
               src="images/photo-portrait-2.jpg"
-              alt="Pet-sitter Dardidog au bois de Serres à Dardilly donnant une friandise à un beagle dressé sur ses pattes arrière">
+              alt="Pet-sitter Dardidog au bois de Serres à Dardilly donnant une friandise à un beagle dressé sur ses pattes arrière"
+              width="1200" height="1681">
           </picture>
         </div>
         <div class="card">
-          <h3>LES ENGAGEMENTS DARDIDOG</h3>
+          <h2>LES ENGAGEMENTS DARDIDOG</h2>
           <ul class="detailed-list">
             <li>
               <strong>Première rencontre gratuite</strong>
@@ -234,7 +240,7 @@
               <source type="image/webp"
                 srcset="images/athos-2-small.webp 600w, images/athos-2-medium.webp 900w, images/athos-2-large.webp 1200w"
                 sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 600px">
-              <img src="images/athos-2.jpg" alt="Golden doodle et dalmatien jouant ensemble dans l'herbe lors d'une promenade de chien Dardidog à Ecully" loading="lazy">
+              <img src="images/athos-2.jpg" alt="Golden doodle et dalmatien jouant ensemble dans l'herbe lors d'une promenade de chien Dardidog à Ecully" width="1200" height="999" loading="lazy">
             </picture>
           </div>
            <div class="photo-item">
@@ -242,7 +248,7 @@
               <source type="image/webp"
                 srcset="images/maze-small.webp 600w, images/maze-medium.webp 900w, images/maze-large.webp 1200w"
                 sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 600px">
-              <img src="images/maze.jpg" alt="Golden doodle et un beagle courant ensemble dans les feuilles mortes en forêt à Champagne-au-Mont-d'Or — promenade chien Dardidog" loading="lazy">
+              <img src="images/maze.jpg" alt="Golden doodle et un beagle courant ensemble dans les feuilles mortes en forêt à Champagne-au-Mont-d'Or — promenade chien Dardidog" width="1200" height="1076" loading="lazy">
             </picture>
           </div>
            <div class="photo-item">
@@ -250,7 +256,7 @@
               <source type="image/webp"
                 srcset="images/tate-small.webp 600w, images/tate-medium.webp 900w, images/tate-large.webp 1200w"
                 sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 600px">
-              <img src="images/tate.jpg" alt="Deux chiens jouant lors d'une promenade à La-Tour-de-Salvagny — golden doodle et chien blanc tacheté en garde chien Dardidog" loading="lazy">
+              <img src="images/tate.jpg" alt="Deux chiens jouant lors d'une promenade à La-Tour-de-Salvagny — golden doodle et chien blanc tacheté en garde chien Dardidog" width="1200" height="800" loading="lazy">
             </picture>
           </div>
            <div class="photo-item">
@@ -258,7 +264,7 @@
               <source type="image/webp"
                 srcset="images/inox-small.webp 600w, images/inox-medium.webp 900w, images/inox-large.webp 1200w"
                 sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 600px">
-              <img src="images/inox.jpg" alt="Chat tigré gris avec une collerette élisabéthaine — garde chat à domicile Dardidog sur Limonest" loading="lazy">
+              <img src="images/inox.jpg" alt="Chat tigré gris avec une collerette élisabéthaine — garde chat à domicile Dardidog sur Limonest" width="1200" height="800" loading="lazy">
             </picture>
           </div>
          
@@ -267,7 +273,7 @@
               <source type="image/webp"
                 srcset="images/athos-small.webp 600w, images/athos-medium.webp 900w, images/athos-large.webp 1200w"
                 sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 600px">
-              <img src="images/athos.jpg" alt="Dalmatien et golden doodle jouant ensemble dans l'herbe lors d'une promenade de chien Dardidog à Charbonnières" loading="lazy">
+              <img src="images/athos.jpg" alt="Dalmatien et golden doodle jouant ensemble dans l'herbe lors d'une promenade de chien Dardidog à Charbonnières" width="1200" height="800" loading="lazy">
             </picture>
           </div>
         </div>
