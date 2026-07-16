@@ -48,11 +48,17 @@
       box-shadow: 0 6px 24px rgba(0,0,0,.13);
     }
 
+    .blog-card picture {
+      display: block;
+      padding: 12px 12px 0;
+    }
+
     .blog-card-img {
       width: 100%;
       aspect-ratio: 16/9;
       object-fit: cover;
       background: var(--surface2);
+      border-radius: 8px;
     }
 
     .blog-card-img-placeholder {
@@ -134,16 +140,17 @@
              CARTE ARTICLE — dupliquer pour chaque article
              ═══════════════════════════════════════════ -->
         <a href="articles/promenades-fortes-chaleurs.html" class="blog-card">
-          <div class="blog-card-img-placeholder">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="#154734" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 14.76V3.5a2 2 0 0 0-4 0v11.26a4 4 0 1 0 4 0z"/>
-              <line x1="12" y1="9" x2="12" y2="15" stroke-width="2.5"/>
-            </svg>
-          </div>
+          <picture>
+            <source type="image/webp" srcset="images/chien-canicule-3-small.webp">
+            <img src="images/chien-canicule-3.jpg"
+                 alt="Chien lors d'une promenade en période de fortes chaleurs"
+                 class="blog-card-img"
+                 loading="lazy">
+          </picture>
           <div class="blog-card-body">
             <span class="blog-card-date">16 juillet 2026</span>
-            <h2 class="blog-card-title">Les promenades chez Dardidog en cas de fortes chaleurs</h2>
-            <p class="blog-card-excerpt">Sécurité, hydratation, horaires adaptés… comment les sorties sont organisées pour que votre chien profite de chaque balade même quand il fait très chaud.</p>
+            <h2 class="blog-card-title">Les promenades canines avec Dardidog lors des fortes chaleurs</h2>
+            <p class="blog-card-excerpt">Hydratation, horaires adaptés... Comment les sorties sont organisées pour pallier les risques liés à la chaleur.</p>
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
         </a>

@@ -29,4 +29,18 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://dardidog.fr/blog.html</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://dardidog.fr/articles/promenades-fortes-chaleurs.html</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>
