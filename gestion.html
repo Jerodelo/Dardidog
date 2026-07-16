@@ -805,6 +805,67 @@
   </div>
 </div>
 
+<!-- MODAL ACTION ÉVÉNEMENT (appui long agenda) -->
+<div class="modal-overlay" id="modal-action-ev" onclick="closeModal('modal-action-ev')">
+  <div class="modal" style="max-width:320px;padding:24px;text-align:center" onclick="event.stopPropagation()">
+    <p id="modal-action-ev-label" style="font-weight:600;color:var(--color-primary);margin-bottom:20px;font-size:0.95rem"></p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" onclick="ouvrirEditionEvenement()">Modifier</button>
+      <button class="btn btn-danger" onclick="supprimerEvenementDepuisMenu()">Supprimer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-action-ev')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ÉDITION ÉVÉNEMENT -->
+<div class="modal-overlay" id="modal-edit-ev" onclick="closeModal('modal-edit-ev')">
+  <div class="modal" style="max-width:420px;padding:24px;overflow-y:auto;max-height:90vh" onclick="event.stopPropagation()">
+    <div style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier l'événement</div>
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Nom</label>
+        <input type="text" id="ee-nom">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Type</label>
+        <div style="display:flex;gap:20px;align-items:center;margin-top:6px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+            <input type="radio" name="ee-type" value="heure" onchange="updateEvEditForm()"> Ponctuel
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+            <input type="radio" name="ee-type" value="journee" onchange="updateEvEditForm()"> Journée entière
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+            <input type="radio" name="ee-type" value="periode" onchange="updateEvEditForm()"> Période
+          </label>
+        </div>
+      </div>
+      <div class="form-group" id="ee-grp-date" style="grid-column:1/-1">
+        <label>Date</label>
+        <input type="date" id="ee-date">
+      </div>
+      <div class="form-group" id="ee-grp-hdebut">
+        <label>Début</label>
+        <input type="time" id="ee-hdebut" oninput="autoFillHeureFinEvEdit()">
+      </div>
+      <div class="form-group" id="ee-grp-hfin">
+        <label>Fin</label>
+        <input type="time" id="ee-hfin">
+      </div>
+      <div class="form-group" id="ee-grp-periode" style="display:none;grid-column:1/-1">
+        <label>Période</label>
+        <input type="hidden" id="ee-datedebut">
+        <input type="hidden" id="ee-datefin">
+        <button type="button" class="btn btn-secondary btn-sm" id="ee-drp-btn" onclick="ouvrirDateRange('ee-datedebut','ee-datefin','ee-drp-btn')">Sélectionner les dates</button>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:20px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-ev')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderEditionEvenement()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- DATE RANGE PICKER -->
 <div id="drp-overlay" onclick="drpOverlayClick(event)">
   <div class="drp-modal">

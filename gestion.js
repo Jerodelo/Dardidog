@@ -72,6 +72,7 @@ function getDefaultState() {
     prestations,
     recettes,
     depenses: [],
+    evenements: [],
     clients: DEFAULT_CLIENTS.map(c => ({...c, id: uid()})),
     prestationsTypes: [...DEFAULT_PRESTATIONS_TYPES],
     lastFactureNum: 2,
@@ -351,7 +352,7 @@ function autoFillHeureFin(prefix) {
   const duree = parseDureeMinutes(prest.value);
   if (!duree) return;
   const [h, m] = hdebut.value.split(':').map(Number);
-  const totalMin = h * 60 + m + duree;
+  const totalMin = h * 60 + m + duree + 30;
   const fh = String(Math.floor(totalMin / 60) % 24).padStart(2, '0');
   const fm = String(totalMin % 60).padStart(2, '0');
   hfin.value = `${fh}:${fm}`;
@@ -669,10 +670,99 @@ function sauvegarderEditionPrestation() {
 }
 
 let _lpEvTimer = null;
+let _lpEvContextId = null;
 function startLongPressEv(id) {
-  _lpEvTimer = setTimeout(() => { _lpEvTimer = null; supprimerEvenement(id); }, 600);
+  _lpEvTimer = setTimeout(() => { _lpEvTimer = null; openEvenementContextMenu(id); }, 600);
 }
 function cancelLongPressEv() { if (_lpEvTimer) { clearTimeout(_lpEvTimer); _lpEvTimer = null; } }
+
+function openEvenementContextMenu(id) {
+  const e = (state.evenements || []).find(x => x.id === id);
+  if (!e) return;
+  _lpEvContextId = id;
+  document.getElementById('modal-action-ev-label').textContent = e.nom;
+  document.getElementById('modal-action-ev').classList.add('open');
+}
+
+function supprimerEvenementDepuisMenu() {
+  closeModal('modal-action-ev');
+  if (_lpEvContextId) supprimerEvenement(_lpEvContextId);
+}
+
+function ouvrirEditionEvenement() {
+  closeModal('modal-action-ev');
+  const e = (state.evenements || []).find(x => x.id === _lpEvContextId);
+  if (!e) return;
+
+  document.getElementById('ee-nom').value = e.nom;
+  document.querySelector(`input[name="ee-type"][value="${e.type}"]`).checked = true;
+  updateEvEditForm();
+
+  if (e.type === 'heure' || e.type === 'journee') {
+    document.getElementById('ee-date').value = e.date || '';
+    document.getElementById('ee-hdebut').value = e.heureDebut || '';
+    document.getElementById('ee-hfin').value = e.heureFin || '';
+  } else {
+    document.getElementById('ee-datedebut').value = e.dateDebut || '';
+    document.getElementById('ee-datefin').value = e.dateFin || '';
+    const d1 = e.dateDebut ? new Date(e.dateDebut).toLocaleDateString('fr-FR') : '';
+    const d2 = e.dateFin ? new Date(e.dateFin).toLocaleDateString('fr-FR') : '';
+    document.getElementById('ee-drp-btn').textContent = d1 && d2 ? `${d1} → ${d2}` : 'Sélectionner les dates';
+  }
+
+  document.getElementById('modal-edit-ev').classList.add('open');
+}
+
+function updateEvEditForm() {
+  const type = document.querySelector('input[name="ee-type"]:checked').value;
+  document.getElementById('ee-grp-date').style.display    = (type === 'heure' || type === 'journee') ? '' : 'none';
+  document.getElementById('ee-grp-hdebut').style.display  = type === 'heure' ? '' : 'none';
+  document.getElementById('ee-grp-hfin').style.display    = type === 'heure' ? '' : 'none';
+  document.getElementById('ee-grp-periode').style.display = type === 'periode' ? '' : 'none';
+}
+
+function autoFillHeureFinEvEdit() {
+  const hdebut = document.getElementById('ee-hdebut');
+  const hfin   = document.getElementById('ee-hfin');
+  if (!hdebut.value) return;
+  const [h, m] = hdebut.value.split(':').map(Number);
+  const total = h * 60 + m + 60;
+  hfin.value = `${String(Math.floor(total / 60) % 24).padStart(2,'0')}:${String(total % 60).padStart(2,'0')}`;
+}
+
+function sauvegarderEditionEvenement() {
+  const e = (state.evenements || []).find(x => x.id === _lpEvContextId);
+  if (!e) return;
+
+  const nom = document.getElementById('ee-nom').value.trim();
+  if (!nom) { showAlert('', 'Entrez un nom pour l\'événement.', 'error'); return; }
+  const type = document.querySelector('input[name="ee-type"]:checked').value;
+
+  e.nom  = nom;
+  e.type = type;
+  delete e.date; delete e.heureDebut; delete e.heureFin; delete e.dateDebut; delete e.dateFin;
+
+  if (type === 'heure' || type === 'journee') {
+    const date = document.getElementById('ee-date').value;
+    if (!date) { showAlert('', 'Sélectionnez une date.', 'error'); return; }
+    e.date = date;
+    if (type === 'heure') {
+      e.heureDebut = document.getElementById('ee-hdebut').value;
+      e.heureFin   = document.getElementById('ee-hfin').value;
+    }
+  } else {
+    const dateDebut = document.getElementById('ee-datedebut').value;
+    const dateFin   = document.getElementById('ee-datefin').value;
+    if (!dateDebut || !dateFin) { showAlert('', 'Sélectionnez une période.', 'error'); return; }
+    e.dateDebut = dateDebut;
+    e.dateFin   = dateFin;
+  }
+
+  saveState();
+  renderPlanning();
+  closeModal('modal-edit-ev');
+  showAlert('', 'Événement modifié.', 'success');
+}
 
 function renderJour() {
   const today = new Date(); today.setHours(0,0,0,0);
@@ -702,7 +792,7 @@ function renderJour() {
         const ci = Math.abs(p.animal.charCodeAt(0)) % colors.length;
         return `<div class="gj-event" data-id="${p.id}" style="position:relative;left:0;right:0;background:${colors[ci]}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="openPrestationContextMenu('${p.id}');return false;">${p.animal} — ${p.prestation}</div>`;
       }).join('')}
-      ${evPersoAllDay.map(e => `<div class="gj-event" data-id="${e.id}" style="position:relative;left:0;right:0;background:#D4BC9E" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="supprimerEvenement('${e.id}');return false;">${e.nom}</div>`).join('')}
+      ${evPersoAllDay.map(e => `<div class="gj-event" data-id="${e.id}" style="position:relative;left:0;right:0;background:#D4BC9E" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</div>`).join('')}
     </div>`;
   }
 
@@ -753,7 +843,7 @@ function renderJour() {
         </div>`;
       } else {
         const e = evt._ref;
-        evtHtml += `<div class="gj-event" data-id="${e.id}" style="top:${topPct}%;height:${heightPx}px;background:#D4BC9E;${posStyle}" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="supprimerEvenement('${e.id}');return false;">
+        evtHtml += `<div class="gj-event" data-id="${e.id}" style="top:${topPct}%;height:${heightPx}px;background:#D4BC9E;${posStyle}" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">
           ${e.nom}
         </div>`;
       }
@@ -841,7 +931,7 @@ function renderSemaine() {
       const iso = isoJours[i];
       const dayAllDay = evPersoByDay[iso].filter(e => e.type === 'journee' || e.type === 'periode');
       html += `<div class="gs-allday-cell">
-        ${dayAllDay.map(e => `<div class="gs-allday-event" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="supprimerEvenement('${e.id}');return false;">${e.nom}</div>`).join('')}
+        ${dayAllDay.map(e => `<div class="gs-allday-event" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</div>`).join('')}
       </div>`;
     });
   }
@@ -898,7 +988,7 @@ function renderSemaine() {
           </div>`;
         } else {
           const e = evt._ref;
-          evtHtml += `<div class="gs-event" title="${e.nom}" style="top:${topPct}%;height:${heightPx}px;background:#D4BC9E;${posStyle}" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="supprimerEvenement('${e.id}');return false;">
+          evtHtml += `<div class="gs-event" title="${e.nom}" style="top:${topPct}%;height:${heightPx}px;background:#D4BC9E;${posStyle}" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">
             ${e.nom}
           </div>`;
         }
@@ -1427,7 +1517,9 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   const totalNet = calcTotalNet(totalNum, ristourneType, ristourneVal);
   const hasRemise = ristourneType && ristourneVal > 0;
   const totalsHeight = hasRemise ? 24 : 12;
-  const reglementLines = ['RÈGLEMENT DÛ SOUS 15 JOURS EN LIQUIDE OU PAR VIREMENT BANCAIRE.'];
+  const reglementLines = [docType === 'DEVIS'
+    ? 'RÈGLEMENT EN LIQUIDE, PAR CHÈQUE OU PAR VIREMENT BANCAIRE.'
+    : 'RÈGLEMENT DÛ SOUS 15 JOURS EN LIQUIDE, PAR CHÈQUE OU PAR VIREMENT BANCAIRE.'];
   const sortedPrests = [...prestations].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
   // Stratégie de mise en page : on tente d'abord l'espacement normal, puis un
@@ -2296,6 +2388,7 @@ function importerDonnees(event) {
       state.evenements = data.evenements || [];
       state.prestationsTypes = data.prestationsTypes || [...DEFAULT_PRESTATIONS_TYPES];
       state.lastFactureNum = data.lastFactureNum || 1;
+      if (data.config) state.config = data.config;
       saveState();
       populateSelects();
       renderPrestations();
@@ -2387,11 +2480,14 @@ function hardReset() {
 function resetDonnees() {
   if (!confirm('⚠️ Effacer TOUTES les données ? Cette action est irréversible.')) return;
   localStorage.removeItem('petsitter_data');
-  state.prestations = getDefaultState().prestations;
-  state.recettes = getDefaultState().recettes;
-  state.clients = getDefaultState().clients;
-  state.prestationsTypes = getDefaultState().prestationsTypes;
-  state.lastFactureNum = getDefaultState().lastFactureNum;
+  const def = getDefaultState();
+  state.prestations = def.prestations;
+  state.recettes = def.recettes;
+  state.depenses = def.depenses;
+  state.evenements = def.evenements;
+  state.clients = def.clients;
+  state.prestationsTypes = def.prestationsTypes;
+  state.lastFactureNum = def.lastFactureNum;
   saveState();
   populateSelects();
   renderPrestations();
