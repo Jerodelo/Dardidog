@@ -31,12 +31,17 @@ async function registerPushNotifications() {
   if (!PUSH_WORKER_URL) return;
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
   try {
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.register('/sw.js');
+    const reg = await navigator.serviceWorker.ready;
+
+    if (Notification.permission === 'denied') return;
+    if (Notification.permission === 'default') {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return;
+    }
+
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') return;
       sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(PUSH_VAPID_KEY),
@@ -44,7 +49,7 @@ async function registerPushNotifications() {
       await fetch(`${PUSH_WORKER_URL}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sub),
+        body: JSON.stringify(sub.toJSON()),
       });
     }
     syncEventsPush();
