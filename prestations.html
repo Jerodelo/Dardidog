@@ -82,6 +82,25 @@
     @media (max-width: 600px) {
       .insta-cta-card, .fb-cta-card { width: 44%; box-sizing: border-box; }
     }
+    .cta-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: var(--spacing-sm);
+      padding: 9px 18px;
+      background: var(--color-card);
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius-lg);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .cta-outline:hover {
+      background: var(--color-primary);
+      color: var(--color-card);
+    }
   </style>
 
   <!-- Favicons -->
@@ -216,8 +235,7 @@
           <p>Sauf demande spécifique du propriétaire, les balades ont lieu dans des espaces naturels soigneusement sélectionnés où les chiens peuvent évoluer en semi-liberté et en toute sécurité pour de réels moments d'exploration et de jeux.
             Une grande importance est accordée à la diversité des balades pour davantage de stimulation. 
           </p>
-           <p>En cas de fortes chaleurs, les balades ont lieu en dehors des heures les plus chaudes dans des lieux ombragés avec accès à l'eau.
-          </p>
+           <a href="/articles/promenades-fortes-chaleurs.html" class="cta-outline">Consultez mon article sur les promenades en cas de fortes chaleurs →</a>
         </div>
       </div>
       
@@ -272,7 +290,7 @@
           <h3>Adaptées à tous</h3>
           <ul class="simple-list">
             <li>Visite à domicile pour tous types d'animaux (chats, rongeurs, oiseaux, reptiles, poissons, etc.)</li>
-            <li>Idéal pour les animaux préférant rester dans leur environnement habituel ou peu sociables</li>
+            <li>Idéal pour les animaux préférant rester dans leur environnement habituel</li>
           </ul>
         </div>
         <div class="card">
@@ -296,7 +314,7 @@
           <ul class="simple-list">
             <li>Arrosage et entretien des plantes</li>
             <li>Ouverture et fermeture des volets</li>
-            <li>Toute prestation qui pourra vous rendre service</li>
+            <li>Toute prestation qui pourra vous rendre service, n'hésitez pas à demander !</li>
           </ul>
         </div>
       </div>

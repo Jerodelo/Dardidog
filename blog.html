@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <script>if (false/* MAINTENANCE */) location.replace('/maintenance.html');</script>
+  <title>Le Blog | Dardidog — Pet-sitter ouest lyonnais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conseils, actualités et histoires de Dardidog, pet-sitter dans l'ouest lyonnais. Promenades, bien-être animal et vie quotidienne avec nos compagnons.">
+  <meta name="author" content="Dardidog">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dardidog.fr/blog.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dardidog.fr/blog.html">
+  <meta property="og:title" content="Le Blog — Dardidog">
+  <meta property="og:description" content="Conseils, actualités et histoires de Dardidog, pet-sitter dans l'ouest lyonnais.">
+  <meta property="og:image" content="https://dardidog.fr/images/logo_512.png">
+  <meta property="og:locale" content="fr_FR">
+
+  <link rel="preload" href="partials/header.html" as="fetch" crossorigin>
+  <link rel="preload" href="partials/footer.html" as="fetch" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="fonts/open-sans-latin.woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.min.css">
+
+  <style>
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+      justify-content: center;
+      gap: 28px;
+      margin-top: var(--spacing-md);
+    }
+
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 24px rgba(0,0,0,.13);
+    }
+
+    .blog-card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+
+    .blog-card-img-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    .blog-card-body {
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .blog-card-date {
+      font-size: 0.78rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .blog-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text1);
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .blog-card-excerpt {
+      font-size: 0.88rem;
+      color: var(--text2);
+      line-height: 1.55;
+      margin: 0;
+      flex: 1;
+    }
+
+    .blog-card-lire {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent2);
+    }
+
+    .blog-empty {
+      text-align: center;
+      color: var(--text2);
+      padding: 48px 0;
+      font-size: 1rem;
+    }
+  </style>
+
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/logo_32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/logo_16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/logo_180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/logo_192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="images/logo_512.png">
+
+  <script data-goatcounter="https://jerodelo.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <section class="section-spacing-bottom">
+      <h1>LE BLOG</h1>
+
+      <div class="blog-grid">
+
+        <!-- ═══════════════════════════════════════════
+             CARTE ARTICLE — dupliquer pour chaque article
+             ═══════════════════════════════════════════ -->
+        <a href="articles/promenades-fortes-chaleurs.html" class="blog-card">
+          <div class="blog-card-img-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="#154734" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 14.76V3.5a2 2 0 0 0-4 0v11.26a4 4 0 1 0 4 0z"/>
+              <line x1="12" y1="9" x2="12" y2="15" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="blog-card-body">
+            <span class="blog-card-date">16 juillet 2026</span>
+            <h2 class="blog-card-title">Les promenades chez Dardidog en cas de fortes chaleurs</h2>
+            <p class="blog-card-excerpt">Sécurité, hydratation, horaires adaptés… comment les sorties sont organisées pour que votre chien profite de chaque balade même quand il fait très chaud.</p>
+            <span class="blog-card-lire">Lire l'article →</span>
+          </div>
+        </a>
+
+        <!-- ═══ MODÈLE CARTE — copier-coller pour chaque nouvel article ═══
+        <a href="articles/nom-article.html" class="blog-card">
+          <div class="blog-card-img-placeholder">🐾</div>
+          <div class="blog-card-body">
+            <span class="blog-card-date">JJ mois AAAA</span>
+            <h2 class="blog-card-title">Titre de l'article</h2>
+            <p class="blog-card-excerpt">Court extrait donnant envie de lire la suite.</p>
+            <span class="blog-card-lire">Lire l'article →</span>
+          </div>
+        </a>
+        ════════════════════════════════════════════════════════════ -->
+
+        <!-- Ajouter les prochaines cartes ici -->
+
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="script.js" defer></script>
+</body>
+</html>

@@ -4,11 +4,11 @@
 
 // Charger le header et le footer
 async function loadPartials() {
-  const headerResponse = await fetch('partials/header.html');
+  const headerResponse = await fetch('/partials/header.html');
   const headerData = await headerResponse.text();
   document.getElementById('header-placeholder').innerHTML = headerData;
 
-  const footerResponse = await fetch('partials/footer.html');
+  const footerResponse = await fetch('/partials/footer.html');
   const footerData = await footerResponse.text();
   document.getElementById('footer-placeholder').innerHTML = footerData;
 
