@@ -1,4 +1,59 @@
 ﻿// ═══════════════════════════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════════
+
+const PUSH_WORKER_URL  = 'https://dardidog-push.jeromine-deloffre.workers.dev';
+const PUSH_VAPID_KEY   = 'BKWBZk6fttcxjtGGTm2WmIapg1nnYoLaMZ_MlogG098mvgSXycyZzC8QiRUVfX0KIeJh5Wz2XJync3YnyEi0eus';
+
+function urlBase64ToUint8Array(base64String) {
+  const pad = (4 - (base64String.length % 4)) % 4;
+  const base64 = (base64String + '='.repeat(pad)).replace(/-/g, '+').replace(/_/g, '/');
+  return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+}
+
+async function syncEventsPush() {
+  if (!PUSH_WORKER_URL) return;
+  const sw = await navigator.serviceWorker.ready;
+  const sub = await sw.pushManager.getSubscription();
+  if (!sub) return;
+  const futureEvents = (state.evenements || []).filter(ev => {
+    const refDate = ev.date || ev.dateDebut || '';
+    return refDate >= new Date().toISOString().split('T')[0];
+  });
+  fetch(`${PUSH_WORKER_URL}/sync-events`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(futureEvents),
+  }).catch(() => {});
+}
+
+async function registerPushNotifications() {
+  if (!PUSH_WORKER_URL) return;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(PUSH_VAPID_KEY),
+      });
+      await fetch(`${PUSH_WORKER_URL}/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub),
+      });
+    }
+    syncEventsPush();
+  } catch (e) {
+    console.warn('Push setup failed:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════════════
 
@@ -768,6 +823,7 @@ function sauvegarderEditionEvenement() {
   }
 
   saveState();
+  syncEventsPush();
   renderPlanning();
   closeModal('modal-edit-ev');
   showAlert('', 'Événement modifié.', 'success');
@@ -2569,6 +2625,7 @@ function ajouterEvenement() {
   if (!state.evenements) state.evenements = [];
   state.evenements.push(ev);
   saveState();
+  syncEventsPush();
   document.getElementById('ev-nom').value = '';
   document.getElementById('ev-date').value = '';
   document.getElementById('ev-hdebut').value = '';
@@ -2586,6 +2643,7 @@ function supprimerEvenement(id) {
   if (!confirm('Supprimer cet événement ?')) return;
   state.evenements = (state.evenements || []).filter(e => e.id !== id);
   saveState();
+  syncEventsPush();
   renderPlanning();
 }
 
@@ -2778,6 +2836,7 @@ function init() {
   populateSelects();
   renderPrestations();
   renderClients();
+  registerPushNotifications();
 }
 
 init();
