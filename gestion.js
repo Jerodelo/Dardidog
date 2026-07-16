@@ -380,7 +380,7 @@ function ajouterPrestation() {
   const mois = getMoisFromDate(date);
   const hdebut2 = document.getElementById('p-hdebut2').value;
   const hfin2   = document.getElementById('p-hfin2').value;
-  state.prestations.push({ id:uid(), date, mois, animal, client, prestation, montant, statut:'Dû', hdebut, hfin, hdebut2, hfin2 });
+  state.prestations.push({ id:uid(), date, mois, animal, client, prestation, montant, statut:'Dû', facture: null, hdebut, hfin, hdebut2, hfin2 });
   state.prestations.sort((a,b) => a.date.localeCompare(b.date));
   saveState();
   renderPrestations();
@@ -423,7 +423,7 @@ function ajouterLot() {
   while (d <= dFin) {
     if (joursOk[d.getDay()]) {
       const iso = dateToISO(d);
-      state.prestations.push({ id:uid(), date:iso, mois:getMoisFromDate(iso), animal, client, prestation, montant, statut:'Dû', hdebut, hfin, hdebut2, hfin2 });
+      state.prestations.push({ id:uid(), date:iso, mois:getMoisFromDate(iso), animal, client, prestation, montant, statut:'Dû', facture: null, hdebut, hfin, hdebut2, hfin2 });
       count++;
     }
     d.setDate(d.getDate() + 1);
@@ -459,14 +459,18 @@ function toggleStatutPrestation(id) {
   if (p) { p.statut = p.statut === 'Payé' ? 'Dû' : 'Payé'; saveState(); renderPrestations(); }
 }
 
+
 function renderPrestations() {
-  const anneeF = document.getElementById('filter-annee-p').value;
-  const moisF  = document.getElementById('filter-mois').value;
-  const faEl   = document.getElementById('filter-animal');
+  const anneeF    = document.getElementById('filter-annee-p').value;
+  const moisF     = document.getElementById('filter-mois').value;
+  const factureF  = document.getElementById('filter-facture-p').value;
+  const faEl      = document.getElementById('filter-animal');
 
   let items = state.prestations.slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
   if (anneeF) items = items.filter(p => p.date && p.date.startsWith(anneeF));
   if (moisF)  items = items.filter(p => p.date && getMoisFromDate(p.date) === moisF);
+  if (factureF === 'non') items = items.filter(p => !p.facture);
+  if (factureF === 'oui') items = items.filter(p => !!p.facture);
 
   // Mettre à jour le filtre animal selon les prestations visibles
   const animauxDispo = [...new Set(items.map(p => p.animal).filter(Boolean))].sort();
@@ -496,20 +500,25 @@ function renderPrestations() {
   thDel.innerHTML = `<button class="btn-icon btn-danger-icon" title="Supprimer les prestations affichées" onclick="supprimerPrestationsFiltrees()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>`;
 
   const total = items.reduce((s, p) => s + (p.montant || 0), 0);
-  tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;font-weight:600;padding-right:8px">Total</td><td><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td></td></tr>`;
+  tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;font-weight:600;padding-right:8px">Total</td><td><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td></td><td></td></tr>`;
 
-  tbody.innerHTML = items.map(p => `
+  tbody.innerHTML = items.map(p => {
+    const factureBadge = p.facture
+      ? `<span style="background:var(--accent2);color:#fff;border-radius:4px;padding:2px 7px;font-size:0.72rem;font-weight:600;white-space:nowrap">✓ ${p.facture}</span>`
+      : `<span style="border:1px solid #bbb;border-radius:4px;padding:2px 7px;font-size:0.72rem;color:#999;background:transparent;white-space:nowrap">—</span>`;
+    return `
     <tr>
       <td>${formatDate(p.date)}</td>
       <td><strong>${p.animal}</strong></td>
       <td style="color:#4a6355">${p.client}</td>
       <td>${p.prestation}</td>
       <td><strong>${p.montant}€</strong></td>
+      <td style="text-align:center">${factureBadge}</td>
       <td>
         <button class="btn-icon btn-danger-icon" onclick="supprimerPrestation('${p.id}')" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1245,7 +1254,7 @@ function resetFactureForm() {
 }
 
 function genererFacture() {
-  const { proprio, mois, annee, mois2, annee2, total, totalNet, ristourneType, ristourneVal, ref, dateFacture } = lastFactureData;
+  const { proprio, mois, annee, mois2, annee2, total, totalNet, ristourneType, ristourneVal, ref, dateFacture, prestsMois } = lastFactureData;
 
   const clientData = state.clients.find(c => c.nom === proprio);
   const mode = clientData ? clientData.mode : 'Liquide';
@@ -1276,6 +1285,10 @@ function genererFacture() {
     montant: totalNet ?? total, montantBrut: total,
     ristourneType: ristourneType || '', ristourneVal: ristourneVal || 0,
     mode, statut: 'Dû'
+  });
+  prestsMois.forEach(pm => {
+    const sp = state.prestations.find(x => x.id === pm.id);
+    if (sp) sp.facture = ref;
   });
   saveState();
   exportBackup();
@@ -1358,10 +1371,15 @@ function renderRecettes() {
   const tbody = document.getElementById('tbody-recettes');
   const empty = document.getElementById('empty-recettes');
 
+  const tfoot = document.getElementById('tfoot-recettes');
+
   if (items.length === 0) {
-    tbody.innerHTML = ''; empty.style.display = 'block'; return;
+    tbody.innerHTML = ''; tfoot.innerHTML = ''; empty.style.display = 'block'; return;
   }
   empty.style.display = 'none';
+
+  const total = items.reduce((s, r) => s + (r.montant || 0), 0);
+  tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;font-weight:600;padding-right:8px">Total</td><td><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td colspan="4"></td></tr>`;
 
   tbody.innerHTML = items.map(r => {
     const type = getTypePrestation(getPrestsForRecette(r));
@@ -2195,8 +2213,12 @@ function exporterFacturePDF(id) { genererPDFFromRecette(id); }
 
 function supprimerRecette(id) {
   if (!confirm('Supprimer cette facture ?')) return;
+  const r = state.recettes.find(x => x.id === id);
+  if (r) {
+    state.prestations.forEach(p => { if (p.facture === r.ref) p.facture = null; });
+  }
   state.recettes = state.recettes.filter(x => x.id !== id);
-  saveState(); renderRecettes();
+  saveState(); renderRecettes(); renderPrestations();
 }
 
 // ═══════════════════════════════════════════════════════════════
