@@ -221,12 +221,8 @@ nav ul li a{
   .next-btn::before {
     right: 19px;
   }
-}
-/* ========================================
-   TABLETTES (max 940px)
-   ======================================== */
-@media (max-width: 940px) {
-/* Card avec photo : empiler verticalement */
+
+  /* Card avec photo : empiler verticalement */
   .container-with-photo {
     flex-direction: column;
   }
@@ -242,15 +238,18 @@ nav ul li a{
     width: 100%;
     height: auto;
   }
-    .container-with-photo .card .detailed-list li .description {
-   font-size: 1.05rem;
-}
- .container-with-photo .card .detailed-list li strong  {
-   font-size: 1.05rem;
-}
-.container-with-photo .card p {
-   font-size: 1.05rem;
-}
+
+  .container-with-photo .card .detailed-list li .description {
+    font-size: 1.05rem;
+  }
+
+  .container-with-photo .card .detailed-list li strong {
+    font-size: 1.05rem;
+  }
+
+  .container-with-photo .card p {
+    font-size: 1.05rem;
+  }
 }
 
 /* ========================================

@@ -97,6 +97,23 @@
       margin: 0 0 28px;
     }
 
+    .article-card picture {
+      display: block;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .article-hero {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      border-radius: 12px;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      object-position: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
+
     .article-body {
       font-size: 1rem;
       line-height: 1.75;
@@ -172,7 +189,19 @@
         <div class="card article-card">
 
           <h1 class="article-title">Où promener son chien dans l'ouest lyonnais ? Mes spots préférés</h1>
-          <p class="article-date">16 juillet 2026</p>
+          <p class="article-date">8 février 2026</p>
+
+          <picture>
+            <source type="image/webp"
+                    srcset="/images/spots-balade-small.webp 480w,
+                            /images/spots-balade-medium.webp 900w,
+                            /images/spots-balade-large.webp 1200w"
+                    sizes="(max-width: 640px) 100vw, 720px">
+            <img src="/images/spots-balade.jpg"
+                 alt="Promenade canine dans l'ouest lyonnais"
+                 class="article-hero"
+                 loading="eager">
+          </picture>
 
           <div class="article-body">
 

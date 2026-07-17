@@ -1799,6 +1799,10 @@ function renderBilan() {
   const caEncaisse = state.recettes
     .filter(r => r.statut === 'Payé' && inPeriode(r.datePaiement || r.date))
     .reduce((s,r) => s + (r.montant||0), 0);
+  const flyerNoms = new Set(state.clients.filter(c => c.flyer).map(c => c.nom));
+  const caFlyers = state.recettes
+    .filter(r => r.statut === 'Payé' && inPeriode(r.datePaiement || r.date) && flyerNoms.has(r.client))
+    .reduce((s,r) => s + (r.montant||0), 0);
   const charges    = chargesFiltrees.filter(d => d.type !== 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
   const impots     = chargesFiltrees.filter(d => d.type === 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
   const benefice   = caEncaisse - charges - impots;
@@ -1832,6 +1836,10 @@ function renderBilan() {
       <div class="stat-val">${fmt(beneficeMois)}</div>
       <div class="stat-label">Bénéfice net moyen / mois</div>
     </div>` : ''}
+    <div class="stat-card full">
+      <div class="stat-val">${fmt(caFlyers)}</div>
+      <div class="stat-label">Revenus générés par les flyers</div>
+    </div>
   `;
 }
 
@@ -2202,6 +2210,7 @@ function renderClients() {
           <tr>
             <th>Client</th>
             <th>Règlement</th>
+            <th title="Client venu via flyer">Flyer</th>
             <th></th>
           </tr>
         </thead>
@@ -2218,6 +2227,9 @@ function renderClients() {
                   ${['Liquide','Virement','Chèque'].map(m=>`<option ${c.mode===m?'selected':''}>${m}</option>`).join('')}
                 </select>
               </td>
+              <td onclick="event.stopPropagation()" style="text-align:center">
+                <input type="checkbox" ${c.flyer?'checked':''} onchange="toggleFlyerClient('${c.id}',this.checked)" title="Client venu via flyer" style="width:16px;height:16px;cursor:pointer;accent-color:#154734">
+              </td>
               <td onclick="event.stopPropagation()">
                 <button class="btn-icon btn-danger-icon" onclick="supprimerClient('${c.id}')" title="Supprimer">${svgTrash}</button>
               </td>
@@ -2232,6 +2244,11 @@ function renderClients() {
 function updateModeClient(clientId, mode) {
   const c = state.clients.find(x => x.id === clientId);
   if (c) { c.mode = mode; saveState(); }
+}
+
+function toggleFlyerClient(clientId, checked) {
+  const c = state.clients.find(x => x.id === clientId);
+  if (c) { c.flyer = checked; saveState(); }
 }
 
 function updateClientField(clientId, field, value) {
