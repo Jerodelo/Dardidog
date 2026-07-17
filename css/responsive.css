@@ -135,9 +135,9 @@
 
 
 /* ========================================
-   TABLETTES ET PETITS ÉCRANS (max 1250px)
+   TABLETTES ET PETITS ÉCRANS (max 1350px)
    ======================================== */
-@media (max-width: 1250px) {
+@media (max-width: 1350px) {
   /* Navigation desktop */
   nav ul {
     gap: 5px;
@@ -154,9 +154,9 @@
 }
 
 /* ========================================
-   TABLETTES ET PETITS ÉCRANS (max 1100px)
+   TABLETTES ET PETITS ÉCRANS (max 1200px)
    ======================================== */
-  @media (max-width: 1100px) {
+  @media (max-width: 1200px) {
 /* Passer à une card visite sur toute la largeur */
   .features-grid-3 {
     grid-template-columns: repeat(auto-fit, minmax(min(500px, 100%), 1fr));
@@ -176,9 +176,9 @@ nav ul li a{
 }
 
 /* ========================================
-   TABLETTES (max 990px)
+   TABLETTES (max 1100px)
    ======================================== */
-@media (max-width: 990px) {
+@media (max-width: 1100px) {
    
   /* Basculer vers le menu mobile */
   nav {

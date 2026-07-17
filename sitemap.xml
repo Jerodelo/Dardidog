@@ -43,4 +43,12 @@
     <priority>0.6</priority>
   </url>
 
+
+  <url>
+    <loc>https://dardidog.fr/articles/spots-promenades-ouest-lyonnais.html</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>
