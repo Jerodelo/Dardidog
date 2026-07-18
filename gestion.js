@@ -13,14 +13,24 @@ function urlBase64ToUint8Array(base64String) {
 
 async function syncEventsPush() {
   if (!PUSH_WORKER_URL) return;
+  const today = new Date().toISOString().split('T')[0];
   const futureEvents = (state.evenements || []).filter(ev => {
     const refDate = ev.date || ev.dateDebut || '';
-    return refDate >= new Date().toISOString().split('T')[0];
+    return refDate >= today;
   });
+  const futurePrestations = (state.prestations || [])
+    .filter(p => p.date >= today)
+    .map(p => ({
+      id: p.id,
+      type: p.hdebut ? 'heure' : 'journee',
+      date: p.date,
+      heureDebut: p.hdebut || undefined,
+      nom: `${p.animal} — ${p.prestation || 'Prestation'}`,
+    }));
   fetch(`${PUSH_WORKER_URL}/sync-events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(futureEvents),
+    body: JSON.stringify([...futureEvents, ...futurePrestations]),
   }).catch(() => {});
 }
 
@@ -440,6 +450,7 @@ function ajouterPrestation() {
   state.prestations.push({ id:uid(), date, mois, animal, client, prestation, montant, statut:'Dû', facture: null, hdebut, hfin, hdebut2, hfin2 });
   state.prestations.sort((a,b) => a.date.localeCompare(b.date));
   saveState();
+  syncEventsPush();
   renderPrestations();
   renderPlanning();
   showAlert('alert-prestations', 'Prestation ajoutée.', 'success');
@@ -488,6 +499,7 @@ function ajouterLot() {
 
   state.prestations.sort((a,b) => a.date.localeCompare(b.date));
   saveState();
+  syncEventsPush();
   renderPrestations();
   showAlert('alert-prestations', `${count} prestation(s) ajoutée(s).`, 'success');
 }
@@ -496,6 +508,7 @@ function supprimerPrestation(id) {
   if (!confirm('Supprimer cette prestation ?')) return;
   state.prestations = state.prestations.filter(p => p.id !== id);
   saveState();
+  syncEventsPush();
   renderPrestations();
   renderPlanning();
 }
