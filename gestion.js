@@ -13,9 +13,6 @@ function urlBase64ToUint8Array(base64String) {
 
 async function syncEventsPush() {
   if (!PUSH_WORKER_URL) return;
-  const sw = await navigator.serviceWorker.ready;
-  const sub = await sw.pushManager.getSubscription();
-  if (!sub) return;
   const futureEvents = (state.evenements || []).filter(ev => {
     const refDate = ev.date || ev.dateDebut || '';
     return refDate >= new Date().toISOString().split('T')[0];
@@ -1836,11 +1833,16 @@ function renderBilan() {
       <div class="stat-val">${fmt(beneficeMois)}</div>
       <div class="stat-label">Bénéfice net moyen / mois</div>
     </div>` : ''}
-    <div class="stat-card full">
-      <div class="stat-val">${fmt(caFlyers)}</div>
-      <div class="stat-label">Revenus générés par les flyers</div>
-    </div>
   `;
+  document.getElementById('flyer-bilan').innerHTML = `
+    <div class="card">
+      <div class="stats-row">
+        <div class="stat-card full">
+          <div class="stat-val">${fmt(caFlyers)}</div>
+          <div class="stat-label">Revenus générés par les flyers</div>
+        </div>
+      </div>
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
