@@ -25,12 +25,21 @@ async function syncEventsPush() {
       type: p.hdebut ? 'heure' : 'journee',
       date: p.date,
       heureDebut: p.hdebut || undefined,
+      datetimeISO: p.hdebut ? new Date(`${p.date}T${p.hdebut}:00`).toISOString() : new Date(`${p.date}T08:00:00`).toISOString(),
       nom: `${p.animal} — ${p.prestation || 'Prestation'}`,
     }));
+  const allEvents = [...futureEvents, ...futurePrestations].map(ev => ({
+    ...ev,
+    datetimeISO: ev.datetimeISO || (
+      ev.type === 'heure' && ev.date && ev.heureDebut ? new Date(`${ev.date}T${ev.heureDebut}:00`).toISOString() :
+      ev.type === 'journee' && ev.date ? new Date(`${ev.date}T08:00:00`).toISOString() :
+      ev.type === 'periode' && ev.dateDebut ? new Date(`${ev.dateDebut}T08:00:00`).toISOString() : undefined
+    ),
+  }));
   fetch(`${PUSH_WORKER_URL}/sync-events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify([...futureEvents, ...futurePrestations]),
+    body: JSON.stringify(allEvents),
   }).catch(() => {});
 }
 

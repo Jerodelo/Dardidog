@@ -136,17 +136,10 @@ async function sendPush(subscription, title, body) {
 // ── Cron: envoyer les notifications en attente ──────────────
 
 function parseDatetime(ev) {
-  if (ev.type === 'heure' && ev.date && ev.heureDebut) {
-    const [h, m] = ev.heureDebut.split(':').map(Number);
-    const dt = new Date(`${ev.date}T00:00:00`);
-    dt.setHours(h, m, 0, 0);
-    return { target: new Date(dt.getTime() - MINUTES_BEFORE * 60000), body: `${ev.nom} à ${ev.heureDebut}` };
-  }
-  if (ev.type === 'journee' && ev.date) {
-    return { target: new Date(`${ev.date}T08:00:00`), body: `${ev.nom} — toute la journée` };
-  }
-  if (ev.type === 'periode' && ev.dateDebut) {
-    return { target: new Date(`${ev.dateDebut}T08:00:00`), body: `${ev.nom} — début aujourd'hui` };
+  if (ev.datetimeISO) {
+    const dt = new Date(ev.datetimeISO);
+    const body = ev.heureDebut ? `${ev.nom} à ${ev.heureDebut}` : ev.nom;
+    return { target: new Date(dt.getTime() - MINUTES_BEFORE * 60000), body };
   }
   return null;
 }
