@@ -163,7 +163,7 @@ async function sendPendingNotifications() {
     const parsed = parseDatetime(ev);
     if (!parsed) continue;
     const diff = parsed.target.getTime() - now;
-    if (diff < 0 || diff > windowMs) continue;
+    if (diff < -windowMs || diff > windowMs) continue;
 
     const key = `${ev.id}_${parsed.target.toISOString()}`;
     if (sent[key]) continue;
