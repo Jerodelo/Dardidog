@@ -2874,6 +2874,7 @@ function init() {
   renderPrestations();
   renderClients();
   registerPushNotifications();
+  syncEventsPush();
 }
 
 init();
