@@ -167,7 +167,7 @@ function exportBackup() {
   const stamp = date.getFullYear() + '-' +
     String(date.getMonth()+1).padStart(2,'0') + '-' +
     String(date.getDate()).padStart(2,'0');
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ ...state, notes: loadNotes() }, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -2194,7 +2194,7 @@ function renderAnimaux() {
             <tr style="cursor:pointer" onclick="voirFicheAnimal('${c.id}','${a.nom.replace(/'/g,"\\'")}')">
               <td onclick="event.stopPropagation()" style="white-space:nowrap">
                 ${c.tel ? `<a href="sms:${c.tel.replace(/\s/g,'')}" class="btn-icon" title="SMS à ${c.nom}" style="color:#4a6355;display:inline-flex;align-items:center;vertical-align:middle;margin-right:6px" onclick="event.stopPropagation()">${svgSms}</a>` : ''}
-                <strong onclick="voirFicheAnimal('${c.id}','${a.nom.replace(/'/g,"\\'")}');event.stopPropagation()" style="cursor:pointer">${a.nom}</strong>
+                <strong onclick="voirFicheAnimal('${c.id}','${a.nom.replace(/'/g,"\\'")}');event.stopPropagation()" style="cursor:pointer">${a.nom}</strong>${c.consent_photos === 'non' ? ' <span style="text-decoration:line-through;font-size:0.85em">📷</span>' : ''}
               </td>
               <td onclick="event.stopPropagation()">
                 <select style="border:1px solid #ddd6c8;border-radius:6px;padding:4px 8px;font-size:0.82rem"
@@ -2456,7 +2456,7 @@ function saveConfig() {
 }
 
 function exporterDonnees() {
-  const json = JSON.stringify(state, null, 2);
+  const json = JSON.stringify({ ...state, notes: loadNotes() }, null, 2);
   const blob = new Blob([json], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2513,6 +2513,7 @@ function importerDonnees(event) {
       state.prestationsTypes = data.prestationsTypes || [...DEFAULT_PRESTATIONS_TYPES];
       state.lastFactureNum = data.lastFactureNum || 1;
       if (data.config) state.config = data.config;
+      if (data.notes) saveNotes(data.notes);
       saveState();
       populateSelects();
       renderPrestations();
@@ -2542,6 +2543,7 @@ function importerFicheClient(data) {
     existant.complement = proprio.complement || existant.complement;
     existant.cp = proprio.cp || existant.cp;
     existant.ville = proprio.ville || existant.ville;
+    if (proprio.consent_photos) existant.consent_photos = proprio.consent_photos;
     animaux.forEach(a => {
       if (!existant.animaux.find(ea => ea.nom.toLowerCase() === a.nom.toLowerCase())) {
         existant.animaux.push({ ...a, prestation:'', tarif:0 });
@@ -2555,6 +2557,7 @@ function importerFicheClient(data) {
   state.clients.push({
     id: uid(), nom: proprio.nom, tel: proprio.tel||'', adresse: proprio.adresse||'',
     complement: proprio.complement||'', cp: proprio.cp||'', ville: proprio.ville||'',
+    consent_photos: proprio.consent_photos||'',
     mode: '',
     animaux: animaux.map(a => ({
       nom:a.nom||'', race:a.race||'', sexe:a.sexe||'', naissance:a.naissance||'',

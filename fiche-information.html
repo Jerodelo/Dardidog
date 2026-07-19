@@ -356,7 +356,7 @@ footer {
         <input type="tel" id="proprio-tel" autocomplete="tel">
       </div>
       <div class="form-group">
-        <label>Adresse</label>
+        <label class="required">Adresse</label>
         <input type="text" id="proprio-adresse" autocomplete="street-address">
       </div>
       <div class="form-group">
@@ -365,12 +365,25 @@ footer {
       </div>
       <div class="form-group" style="display:flex;gap:10px">
         <div style="flex:0 0 110px">
-          <label>Code postal</label>
+          <label class="required">Code postal</label>
           <input type="text" id="proprio-cp" autocomplete="postal-code" inputmode="numeric">
         </div>
         <div style="flex:1">
-          <label>Ville</label>
+          <label class="required">Ville</label>
           <input type="text" id="proprio-ville" autocomplete="address-level2">
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(21,71,52,0.1)">
+        <div style="font-size:0.8rem;font-weight:600;color:var(--color-text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Photos & réseaux sociaux</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label style="display:inline-flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text2);line-height:1.5">
+            <input type="radio" name="consent-photos" value="oui" style="margin-top:3px;accent-color:var(--color-primary);flex-shrink:0;width:15px;height:15px">
+            J'autorise Dardidog à publier des photos ou vidéos de mes animaux sur ses réseaux sociaux et supports de communication.
+          </label>
+          <label style="display:inline-flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text2);line-height:1.5">
+            <input type="radio" name="consent-photos" value="non" style="margin-top:3px;accent-color:var(--color-primary);flex-shrink:0;width:15px;height:15px">
+            Je refuse que les photos de mes animaux soient publiées sur de quelconques supports.
+          </label>
         </div>
       </div>
     </div>
@@ -381,6 +394,7 @@ footer {
 
     <div style="margin-top:16px;font-size:0.78rem;color:var(--text2);line-height:1.6;text-align:center">
       🔒 <strong>Vos données sont protégées.</strong> Ces informations sont transmises directement et uniquement à Dardidog, sans passer par un serveur tiers ni être stockées en ligne. Elles sont utilisées exclusivement pour assurer la garde de votre animal, conformément au RGPD. Vous pouvez demander leur suppression à tout moment à <a href="mailto:contact@dardidog.fr" style="color:var(--color-primary);font-weight:600">contact@dardidog.fr</a>
+      <br><br>En soumettant ce formulaire, vous acceptez les <a href="/cgv.html" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600">conditions générales de vente</a> de Dardidog.
     </div>
   </div>
 
@@ -600,12 +614,18 @@ function validerProprietaire() {
   const cp = document.getElementById('proprio-cp').value.trim();
   const ville = document.getElementById('proprio-ville').value.trim();
 
-  if (!nom || !tel) {
-    showAlert('Veuillez renseigner votre nom et votre téléphone.', 'error');
+  const consentPhotos = getRadio('consent-photos');
+
+  if (!nom || !tel || !adresse || !cp || !ville) {
+    showAlert('Veuillez renseigner votre nom, téléphone et adresse complète.', 'error');
+    return;
+  }
+  if (!consentPhotos) {
+    showAlert('Veuillez indiquer votre préférence concernant les photos.', 'error');
     return;
   }
 
-  state.proprietaire = { nom, tel, adresse, complement, cp, ville };
+  state.proprietaire = { nom, tel, adresse, complement, cp, ville, consent_photos: consentPhotos };
   clearAlert();
   resetAnimalForm();
   showSection('animal');
