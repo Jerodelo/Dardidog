@@ -211,8 +211,13 @@ async function handleFetch(request) {
   }
 
   if (url.pathname === '/sync-events' && request.method === 'POST') {
-    const events = await request.json();
-    await KV.put('events', JSON.stringify(events));
+    const incoming = await request.json();
+    const existingStr = await KV.get('events');
+    const existing = existingStr ? JSON.parse(existingStr) : [];
+    const merged = new Map();
+    for (const ev of existing) merged.set(ev.id, ev);
+    for (const ev of incoming) merged.set(ev.id, ev);
+    await KV.put('events', JSON.stringify([...merged.values()]));
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: corsHeaders(origin) });
   }
 
