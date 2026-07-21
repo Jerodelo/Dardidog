@@ -1,0 +1,20 @@
+# Dardidog
+
+> Pet-sitter professionnelle dans l'Ouest Lyonnais. Promenades canines, visites à domicile et garderie pour chiens, chats et NAC (nouveaux animaux de compagnie).
+
+Dardidog est une entreprise individuelle fondée par Jéromine Deloffre, basée à Dardilly (69570). Elle intervient sur Dardilly, Limonest, Écully, Tassin-la-Demi-Lune, Charbonnières-les-Bains, La Tour-de-Salvagny, Marcy-l'Étoile, Dommartin, Lentilly, Saint-Didier-au-Mont-d'Or, Champagne-au-Mont-d'Or et Lyon 9e.
+
+## Pages principales
+
+- [Accueil](https://dardidog.fr/) : Présentation de Dardidog et des services proposés
+- [Prestations](https://dardidog.fr/prestations.html) : Détail des prestations (visites à domicile, balades canines, garderie) et tarifs
+- [Secteur d'intervention](https://dardidog.fr/secteur-dintervention.html) : Zone géographique couverte dans l'Ouest Lyonnais
+- [Contact](https://dardidog.fr/contact.html) : Formulaire de contact et coordonnées
+- [Blog](https://dardidog.fr/blog.html) : Articles sur le pet-sitting, les balades canines et le bien-être animal
+- [CGV](https://dardidog.fr/cgv.html) : Conditions générales de vente
+- [Mentions légales](https://dardidog.fr/mentions-legales.html) : Mentions légales et conditions d'utilisation
+
+## Articles de blog
+
+- [Promenades canines lors des fortes chaleurs](https://dardidog.fr/articles/promenades-fortes-chaleurs.html) : Comment Dardidog adapte les sorties en période de canicule
+- [Mes spots préférés pour promener les chiens dans l'Ouest Lyonnais](https://dardidog.fr/articles/spots-promenades-ouest-lyonnais.html) : Sélection de lieux de balade autour de Dardilly et des Monts d'Or
