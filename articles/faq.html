@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <script>if (false/* MAINTENANCE */) location.replace('/maintenance.html');</script>
+  <title>Foire aux questions | Le Blog Dardidog</title>
+  <meta name="description" content="Retrouvez les réponses à vos questions sur les prestations Dardidog : pré-visite, promenades canines, visites à domicile, remise des clefs, assurance, tarifs et conditions d'annulation.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Dardidog">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dardidog.fr/articles/faq.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://dardidog.fr/articles/faq.html">
+  <meta property="og:title" content="Foire aux questions — Dardidog">
+  <meta property="og:description" content="Retrouvez les réponses à toutes vos questions sur les prestations de pet-sitting Dardidog : pré-visite, promenades, tarifs et conditions d'annulation.">
+  <meta property="og:image" content="https://dardidog.fr/images/logo_512.png">
+  <meta property="og:locale" content="fr_FR">
+
+  <link rel="preload" href="/partials/header.html" as="fetch" crossorigin>
+  <link rel="preload" href="/partials/footer.html" as="fetch" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="../fonts/open-sans-latin.woff2" crossorigin>
+  <link rel="stylesheet" href="../css/style.min.css">
+
+  <style>
+    .article-container {
+      position: relative;
+    }
+
+    .article-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .article-back-btn {
+      position: absolute;
+      left: 20px;
+      top: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      background: var(--color-card);
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius-lg);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .article-back-btn:hover {
+      background: var(--color-primary);
+      color: var(--color-card);
+    }
+
+    @media (max-width: 1350px) {
+      .article-back-btn {
+        position: static;
+        display: inline-flex;
+        margin: 0 0 var(--spacing-md) 0;
+      }
+    }
+
+    .article-card {
+      cursor: default;
+    }
+
+    .article-card:hover {
+      transform: none;
+      box-shadow: var(--shadow-sm);
+      border-color: rgba(21, 71, 52, 0.08);
+    }
+
+    .article-card h1,
+    .article-card h2 {
+      text-align: left;
+    }
+
+    .article-title {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 10px;
+      color: var(--color-primary);
+    }
+
+    .article-date {
+      font-size: 0.8rem;
+      color: var(--color-text-light, #888);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin: 0 0 28px;
+    }
+
+    .article-body {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--color-text);
+    }
+
+    .article-body h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 2.2em 0 0;
+      color: var(--color-primary);
+    }
+
+    /* ── FAQ accordion ── */
+
+    .faq-item {
+      border-bottom: 1px solid rgba(21, 71, 52, 0.1);
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-item > summary.faq-q {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 36px 18px 0;
+      position: relative;
+      margin: 0;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-size: 1rem;
+      line-height: 1.5;
+      user-select: none;
+    }
+
+    .faq-item > summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-item > summary.faq-q::marker { content: none; }
+
+    .faq-item > summary.faq-q::after {
+      content: '+';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+
+    .faq-item[open] > summary.faq-q::after {
+      content: '−';
+    }
+
+    .faq-a {
+      padding-bottom: 18px;
+    }
+
+    .faq-a p {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin: 0 0 8px;
+      color: var(--color-text);
+    }
+
+    .faq-a p:last-child {
+      margin-bottom: 0;
+    }
+
+    .faq-a a {
+      color: var(--color-primary);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: rgba(21, 71, 52, 0.3);
+      text-underline-offset: 2px;
+    }
+
+    .faq-a a:hover {
+      text-decoration-color: var(--color-primary);
+    }
+  </style>
+
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/logo_32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../images/logo_16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../images/logo_180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../images/logo_192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../images/logo_512.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://dardidog.fr/" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://dardidog.fr/blog.html" },
+      { "@type": "ListItem", "position": 3, "name": "Foire aux questions", "item": "https://dardidog.fr/articles/faq.html" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "La pré-visite est-elle obligatoire ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, et elle est entièrement gratuite. Elle me permet de faire connaissance avec vous et avec l'animal, qui doit impérativement être présent : il est essentiel qu'il se familiarise avec moi avant toute prestation. Pour les promenades canines, je peux, avec votre accord, venir avec ma chienne afin de vérifier si le courant passe entre les chiens et si une promenade commune est pertinente. Cette visite est également l'occasion de définir ensemble vos besoins et les modalités de la prestation, et de me poser toutes vos questions. Les clés du domicile peuvent éventuellement être remises à ce moment-là, pour éviter un déplacement supplémentaire. À l'issue de la visite, je vous fais parvenir un court formulaire en ligne pour recueillir vos coordonnées pour la facturation et les informations importantes sur l'animal afin de m'en occuper dans les meilleures conditions, de même qu'un devis si vous le souhaitez."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Combien de temps à l'avance faut-il réserver une prestation ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le plus tôt est toujours le mieux ! Mais je fais aussi mon possible pour répondre aux demandes de dernière minute lorsque mon planning le permet. Si nous avons déjà effectué une pré-visite, je n'impose pas de délai minimum pour effectuer une demande de prestation. Si nous ne nous connaissons pas encore, les délais doivent permettre à minima d'organiser une pré-visite avant le début de la prestation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment se passe la remise des clefs ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lorsque cela est possible, la remise des clefs a lieu lors de la pré-visite afin d'éviter tout déplacement inutile a posteriori. Lorsque cela n'est pas possible, soit je me déplace à votre domicile pour récupérer les clefs (déplacement offert pour la ville de Dardilly ou facturé 5 € sinon), soit vous pouvez venir me déposer les clefs à mon domicile vous-même afin d'éviter les frais. Pour des prestations régulières, il est possible de me laisser un jeu de clefs sur le long terme pour éviter les déplacements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quels sont les horaires d'intervention ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Je n'ai pas vraiment d'horaires fixes. Je travaille la semaine aussi bien que le week-end et j'adapte les horaires de mes prestations en fonction de vos besoins. Toutefois, il m'arrive de partir en vacances ou en week-end, je ne peux donc pas garantir une disponibilité complète toute l'année."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Une prestation en dehors de la zone d'intervention est-elle possible ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, mais les demandes situées en dehors de mon secteur d'intervention sont étudiées au cas par cas et peuvent donner lieu à des frais kilométriques supplémentaires."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quel matériel prévoir pour les promenades ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pour les promenades, vous devez mettre à disposition de préférence un harnais ou à défaut un collier et éventuellement une longe même si j'utilise de préférence les miennes afin de ne pas salir les vôtres. De mon côté, je fournis l'eau, les sacs à crottes, les friandises, les ceintures de sécurité pour la voiture et les jouets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Où ont lieu les promenades canines ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Les promenades canines ont lieu dans des espaces naturels soigneusement sélectionnés où les chiens peuvent évoluer en toute sécurité pour de réels moments d'exploration et de jeux. Pour plus d'infos sur les lieux de promenade, lisez mon article sur mes spots de promenade préférés dans l'Ouest Lyonnais."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Les chiens sont-ils promenés en laisse ou détachés ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "En premier lieu, je respecte vos consignes concernant le fait de détacher ou non le chien. Lors des premières promenades cependant, je le garde toujours en longe afin d'observer sa réaction au suivi naturel du groupe et au rappel. Si les conditions sont réunies, je peux progressivement lui offrir davantage de liberté en laissant traîner la longe, toujours dans des espaces sécurisés, loin de la circulation et d'éventuels dangers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Les promenades sont-elles maintenues lorsqu'il pleut ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Eh oui, les promenades ont lieu par tous temps ! ou presque… En tout cas, nous ne nous laissons pas arrêter par quelques gouttes de pluie. Cela dit, si la pluie s'accompagne d'intempéries dangereuses telles que de violents orages rendant une sortie risquée, la promenade pourra éventuellement être décalée, se limiter à une sortie hygiénique et des activités d'occupation à domicile, ou bien être annulée en accord avec vous."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Les promenades sont-elles maintenues en cas de fortes chaleurs ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Je me réserve également le droit de proposer un report, une adaptation ou une annulation si j'estime que les températures ne permettent pas d'effectuer la promenade en toute sécurité. Pour en savoir plus à ce sujet, consultez mon article consacré au déroulement des promenades canines en cas de fortes chaleurs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quel matériel prévoir pour les visites à domicile ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pour les visites à domicile, vous devez fournir en quantité suffisante pour toute la durée de la prestation : la nourriture, le matériel (brosses, pelle et sacs pour la litière) et les traitements le cas échéant."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Qui prend en charge en cas de pépins ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "J'ai souscrit une assurance responsabilité civile professionnelle afin de couvrir les dommages qui pourraient résulter d'une faute, d'une erreur ou d'une négligence de ma part dans le cadre de mon activité. En revanche, si un incident survient sans que ma responsabilité soit engagée (par exemple un problème de santé soudain ou un accident indépendant de ma responsabilité), les frais éventuels restent à votre charge et sont susceptibles d'être couverts par votre assurance ou votre mutuelle animale, selon les garanties souscrites."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Que se passe-t-il en cas d'urgence vétérinaire ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Que ce soit lors d'une promenade ou d'une visite à domicile, si j'estime que l'état d'un animal constitue une urgence vétérinaire, je vous contacte immédiatement afin de vous informer de la situation et d'agir selon votre décision. Si je ne parviens pas à vous joindre et que l'état de votre animal ne permet pas d'attendre, je me réserve la possibilité de l'emmener sans délai chez son vétérinaire habituel si possible ou à défaut chez le vétérinaire disponible le plus proche. Les frais vétérinaires restent à votre charge. En revanche, si ma responsabilité devait être engagée dans la survenue de l'incident, la prise en charge relèverait alors de mon assurance responsabilité civile professionnelle."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelles sont les modalités de règlement d'une prestation ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Une facture vous est systématiquement envoyée, soit à l'issue de la prestation pour une prestation ponctuelle soit à la fin du mois pour des prestations régulières. Le règlement doit être effectué dans la mesure du possible sous 15 jours en liquide, par chèque, par virement bancaire ou paiement électronique."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Les paiements en CESU sont-ils acceptés ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non, je ne suis pas en mesure d'accepter les CESU. Dardidog est une entreprise indépendante : je facture directement les prestations que je réalise et je ne suis pas employée par mes clients. Le dispositif CESU n'est donc pas applicable à mes prestations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Les prestations proposées ouvrent-elles droit à un crédit d'impôt ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Malheureusement non, les prestations de garde d'animaux (promenades, visites à domicile ou gardes à domicile) ne sont pas éligibles au crédit d'impôt prévu pour les services à la personne. Pour bénéficier de cet avantage, une entreprise doit relever du dispositif des Services à la Personne (SAP). Dans le domaine du pet-sitting, ce dispositif ne s'applique que dans des situations très spécifiques, notamment lorsque les prestations sont réalisées en majeure partie au bénéfice de personnes dépendantes (personnes âgées, en situation de handicap ou répondant aux critères prévus par la réglementation). Ce statut est donc généralement peu adapté à une activité de pet-sitting destinée au grand public."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelles sont les conditions d'annulation ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Parce que la vie est faite d'imprévus, je ne facture pas les prestations même en cas d'annulation le jour même sauf si des frais ont déjà été engagés de mon côté, autrement dit si je suis déjà en chemin vers votre domicile. Pour ma part, je me réserve également le droit d'annuler, adapter ou reporter une prestation si j'estime que les conditions pour la réaliser ne sont pas réunies, par exemple si le domicile n'est pas accessible ou si les conditions météorologiques ne permettent pas de réaliser la prestation en toute sécurité."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelles sont les conditions générales de vente ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mes conditions générales de vente sont disponibles sur le site dardidog.fr. Conformément à la loi, toute réservation effectuée auprès de Dardidog implique leur acceptation."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script data-goatcounter="https://jerodelo.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <section class="section-spacing-bottom">
+      <div class="article-container">
+
+        <a href="/blog.html" class="article-back-btn" aria-label="Retour à la page Le Blog">← Retour au blog</a>
+
+        <div class="article-wrapper">
+        <div class="card article-card">
+
+          <h1 class="article-title">Foire aux questions</h1>
+          <p class="article-date">08 mai 2026</p>
+
+          <div class="article-body">
+
+            <details class="faq-item">
+              <summary class="faq-q">La pré-visite est-elle obligatoire&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Oui, et elle est entièrement gratuite. Elle me permet de faire connaissance avec vous et avec l'animal, qui doit impérativement être présent&nbsp;: il est essentiel qu'il se familiarise avec moi avant toute prestation. Pour les promenades canines, je peux, avec votre accord, venir avec ma chienne afin de vérifier si le courant passe entre les chiens et si une promenade commune est pertinente.</p>
+                <p>Cette visite est également l'occasion de définir ensemble vos besoins et les modalités de la prestation, et de me poser toutes vos questions. Les clés du domicile peuvent éventuellement être remises à ce moment-là, pour éviter un déplacement supplémentaire.</p>
+                <p>À l'issue de la visite, je vous fais parvenir un court formulaire en ligne pour recueillir vos coordonnées pour la facturation et les informations importantes sur l'animal afin de m'en occuper dans les meilleures conditions, de même qu'un devis si vous le souhaitez.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Combien de temps à l'avance faut-il réserver une prestation&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Le plus tôt est toujours le mieux&nbsp;! Mais je fais aussi mon possible pour répondre aux demandes de dernière minute lorsque mon planning le permet. Si nous avons déjà effectué une pré-visite, je n'impose pas de délai minimum pour effectuer une demande de prestation. Si nous ne nous connaissons pas encore, les délais doivent permettre à minima d'organiser une pré-visite avant le début de la prestation.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Comment se passe la remise des clefs&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Lorsque cela est possible, la remise des clefs a lieu lors de la pré-visite afin d'éviter tout déplacement inutile a posteriori. Lorsque cela n'est pas possible, soit je me déplace à votre domicile pour récupérer les clefs (déplacement offert pour la ville de Dardilly ou facturé 5&nbsp;€ sinon), soit vous pouvez venir me déposer les clefs à mon domicile vous-même afin d'éviter les frais. Pour des prestations régulières, il est possible de me laisser un jeu de clefs sur le long terme pour éviter les déplacements.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quels sont les horaires d'intervention&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Je n'ai pas vraiment d'horaires fixes. Je travaille la semaine aussi bien que le week-end et j'adapte les horaires de mes prestations en fonction de vos besoins. Toutefois, il m'arrive de partir en vacances ou en week-end, je ne peux donc pas garantir une disponibilité complète toute l'année.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Une prestation en dehors de la zone d'intervention est-elle possible&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Oui, mais les demandes situées en dehors de <a href="/secteur-dintervention.html">mon secteur d'intervention</a> sont étudiées au cas par cas et peuvent donner lieu à des frais kilométriques supplémentaires.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quel matériel prévoir pour les promenades&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Pour les promenades, vous devez mettre à disposition de préférence un harnais ou à défaut un collier et éventuellement une longe même si j'utilise de préférence les miennes afin de ne pas salir les vôtres. De mon côté, je fournis l'eau, les sacs à crottes, les friandises, les ceintures de sécurité pour la voiture et les jouets.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Où ont lieu les promenades canines&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Les promenades canines ont lieu dans des espaces naturels soigneusement sélectionnés où les chiens peuvent évoluer en toute sécurité pour de réels moments d'exploration et de jeux. Pour plus d'infos sur les lieux de promenade, lisez mon article sur <a href="/articles/spots-promenades-ouest-lyonnais.html" rel="related">mes spots de promenade préférés dans l'Ouest Lyonnais</a>.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Les chiens sont-ils promenés en laisse ou détachés&nbsp;?</summary>
+              <div class="faq-a">
+                <p>En premier lieu, je respecte vos consignes concernant le fait de détacher ou non le chien. Lors des premières promenades cependant, je le garde toujours en longe afin d'observer sa réaction au suivi naturel du groupe et au rappel. Si les conditions sont réunies, je peux progressivement lui offrir davantage de liberté en laissant traîner la longe, toujours dans des espaces sécurisés, loin de la circulation et d'éventuels dangers.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Les promenades sont-elles maintenues lorsqu'il pleut&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Eh oui, les promenades ont lieu par tous temps&nbsp;! ou presque… En tout cas, nous ne nous laissons pas arrêter par quelques gouttes de pluie. Cela dit, si la pluie s'accompagne d'intempéries dangereuses telles que de violents orages rendant une sortie risquée, la promenade pourra éventuellement être décalée, se limiter à une sortie hygiénique et des activités d'occupation à domicile, ou bien être annulée en accord avec vous.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Les promenades sont-elles maintenues en cas de fortes chaleurs&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Je me réserve également le droit de proposer un report, une adaptation ou une annulation si j'estime que les températures ne permettent pas d'effectuer la promenade en toute sécurité. Pour en savoir plus à ce sujet, consultez mon article consacré au <a href="/articles/promenades-fortes-chaleurs.html" rel="related">déroulement des promenades canines en cas de fortes chaleurs</a>.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quel matériel prévoir pour les visites à domicile&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Pour les visites à domicile, vous devez fournir en quantité suffisante pour toute la durée de la prestation&nbsp;: la nourriture, le matériel (brosses, pelle et sacs pour la litière) et les traitements le cas échéant.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Qui prend en charge en cas de pépins&nbsp;?</summary>
+              <div class="faq-a">
+                <p>J'ai souscrit une assurance responsabilité civile professionnelle afin de couvrir les dommages qui pourraient résulter d'une faute, d'une erreur ou d'une négligence de ma part dans le cadre de mon activité. En revanche, si un incident survient sans que ma responsabilité soit engagée (par exemple un problème de santé soudain ou un accident indépendant de ma responsabilité), les frais éventuels restent à votre charge et sont susceptibles d'être couverts par votre assurance ou votre mutuelle animale, selon les garanties souscrites.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Que se passe-t-il en cas d'urgence vétérinaire&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Que ce soit lors d'une promenade ou d'une visite à domicile, si j'estime que l'état d'un animal constitue une urgence vétérinaire, je vous contacte immédiatement afin de vous informer de la situation et d'agir selon votre décision. Si je ne parviens pas à vous joindre et que l'état de votre animal ne permet pas d'attendre, je me réserve la possibilité de l'emmener sans délai chez son vétérinaire habituel si possible ou à défaut chez le vétérinaire disponible le plus proche. Les frais vétérinaires restent à votre charge. En revanche, si ma responsabilité devait être engagée dans la survenue de l'incident, la prise en charge relèverait alors de mon assurance responsabilité civile professionnelle.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quelles sont les modalités de règlement d'une prestation&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Une facture vous est systématiquement envoyée, soit à l'issue de la prestation pour une prestation ponctuelle soit à la fin du mois pour des prestations régulières. Le règlement doit être effectué dans la mesure du possible sous 15 jours en liquide, par chèque, par virement bancaire ou paiement électronique.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Les paiements en CESU sont-ils acceptés&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Non, je ne suis pas en mesure d'accepter les CESU. Dardidog est une entreprise indépendante&nbsp;: je facture directement les prestations que je réalise et je ne suis pas employée par mes clients. Le dispositif CESU n'est donc pas applicable à mes prestations.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Les prestations proposées ouvrent-elles droit à un crédit d'impôt&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Malheureusement non, les prestations de garde d'animaux (promenades, visites à domicile ou gardes à domicile) ne sont pas éligibles au crédit d'impôt prévu pour les services à la personne. Pour bénéficier de cet avantage, une entreprise doit relever du dispositif des Services à la Personne (SAP). Dans le domaine du pet-sitting, ce dispositif ne s'applique que dans des situations très spécifiques, notamment lorsque les prestations sont réalisées en majeure partie au bénéfice de personnes dépendantes (personnes âgées, en situation de handicap ou répondant aux critères prévus par la réglementation). Ce statut est donc généralement peu adapté à une activité de pet-sitting destinée au grand public.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quelles sont les conditions d'annulation&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Parce que la vie est faite d'imprévus, je ne facture pas les prestations même en cas d'annulation le jour même sauf si des frais ont déjà été engagés de mon côté, autrement dit si je suis déjà en chemin vers votre domicile.</p>
+                <p>Pour ma part, je me réserve également le droit d'annuler, adapter ou reporter une prestation si j'estime que les conditions pour la réaliser ne sont pas réunies, par exemple si le domicile n'est pas accessible ou si les conditions météorologiques ne permettent pas de réaliser la prestation en toute sécurité.</p>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-q">Quelles sont les conditions générales de vente&nbsp;?</summary>
+              <div class="faq-a">
+                <p>Mes conditions générales de vente sont disponibles <a href="/cgv.html">ici</a>. Conformément à la loi, toute réservation effectuée auprès de Dardidog implique leur acceptation.</p>
+              </div>
+            </details>
+
+          </div><!-- /.article-body -->
+
+        </div><!-- /.card -->
+        </div><!-- /.article-wrapper -->
+
+      </div><!-- /.article-container -->
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="../script.js" defer></script>
+  <script>
+    document.querySelectorAll('.faq-q').forEach(function(summary) {
+      summary.addEventListener('click', function() {
+        if (this.closest('details').open) return;
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({
+            path: 'faq/' + this.textContent.trim().replace(/ /g, ' ').replace(/\s+/g, ' ').slice(0, 80),
+            event: true
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 const VAPID_PUBLIC_KEY  = 'BKWBZk6fttcxjtGGTm2WmIapg1nnYoLaMZ_MlogG098mvgSXycyZzC8QiRUVfX0KIeJh5Wz2XJync3YnyEi0eus';
 const VAPID_SUBJECT     = 'mailto:contact@dardidog.fr';
 const MINUTES_BEFORE    = 30;
-const CRON_INTERVAL_MIN = 5;
+const CRON_INTERVAL_MIN = 1;
 const ALLOWED_ORIGINS   = ['https://dardidog.fr', 'http://localhost:8080'];
 
 // ── Crypto helpers ──────────────────────────────────────────
@@ -139,7 +139,7 @@ function parseDatetime(ev) {
   if (ev.datetimeISO) {
     const dt = new Date(ev.datetimeISO);
     const body = ev.heureDebut ? `${ev.nom} à ${ev.heureDebut}` : ev.nom;
-    return { target: new Date(dt.getTime() - MINUTES_BEFORE * 60000), body };
+    return { target: new Date(dt.getTime() - MINUTES_BEFORE * 60000), eventTime: dt, body };
   }
   return null;
 }
@@ -163,7 +163,8 @@ async function sendPendingNotifications() {
     const parsed = parseDatetime(ev);
     if (!parsed) continue;
     const diff = parsed.target.getTime() - now;
-    if (diff < -windowMs || diff > windowMs) continue;
+    if (diff > windowMs) continue;                         // trop tôt
+    if (now >= parsed.eventTime.getTime()) continue;       // événement déjà commencé
 
     const key = `${ev.id}_${parsed.target.toISOString()}`;
     if (sent[key]) continue;

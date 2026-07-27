@@ -39,7 +39,7 @@
   box-shadow: var(--shadow-sm);
   border: 2px solid var(--color-primary);
   text-align: center;
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
