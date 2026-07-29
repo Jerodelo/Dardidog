@@ -169,9 +169,15 @@ async function sendPendingNotifications() {
     const key = `${ev.id}_${parsed.target.toISOString()}`;
     if (sent[key]) continue;
 
-    await sendPush(subscription, 'Dardidog', parsed.body);
-    sent[key] = now;
-    changed = true;
+    const res = await sendPush(subscription, 'Dardidog', parsed.body);
+    if (res.status === 410 || res.status === 404) {
+      await KV.delete('subscription');
+      break;
+    }
+    if (res.ok || res.status === 201) {
+      sent[key] = now;
+      changed = true;
+    }
   }
 
   for (const k of Object.keys(sent)) {
