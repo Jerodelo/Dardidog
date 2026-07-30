@@ -132,6 +132,7 @@ function loadState() {
     if (raw) {
       const data = JSON.parse(raw);
       data.depenses = data.depenses || [];
+      data.caExtra = data.caExtra || [];
       data.evenements = data.evenements || [];
       data.config = data.config || {...DEFAULT_CONFIG};
       return data;
@@ -148,6 +149,7 @@ function getDefaultState() {
     prestations,
     recettes,
     depenses: [],
+    caExtra: [],
     evenements: [],
     clients: DEFAULT_CLIENTS.map(c => ({...c, id: uid()})),
     prestationsTypes: [...DEFAULT_PRESTATIONS_TYPES],
@@ -157,6 +159,33 @@ function getDefaultState() {
 }
 
 let state = loadState() || getDefaultState();
+
+function runMigrations() {
+  if (localStorage.getItem('migration_v1_done')) return;
+  let changed = false;
+
+  // 1. Recettes payées sans datePaiement → date + 2 jours
+  (state.recettes || []).forEach(r => {
+    if (r.statut === 'Payé' && !r.datePaiement && r.date) {
+      const d = new Date(r.date);
+      d.setDate(d.getDate() + 2);
+      r.datePaiement = d.toISOString().slice(0, 10);
+      changed = true;
+    }
+  });
+
+  // 2. Prestations sans facture → chercher la recette par client + moisCle
+  (state.prestations || []).forEach(p => {
+    if (p.facture) return;
+    const r = (state.recettes || []).find(r =>
+      r.client === p.client && (r.moisCle === p.mois || r.moisCle2 === p.mois)
+    );
+    if (r) { p.facture = r.ref; changed = true; }
+  });
+
+  if (changed) saveState();
+  localStorage.setItem('migration_v1_done', '1');
+}
 
 function saveState() {
   localStorage.setItem('petsitter_data', JSON.stringify(state));
@@ -1818,13 +1847,16 @@ function renderBilan() {
   const caEncaisse = state.recettes
     .filter(r => r.statut === 'Payé' && inPeriode(r.datePaiement || r.date))
     .reduce((s,r) => s + (r.montant||0), 0);
+  const caExtraTotal = (state.caExtra || [])
+    .filter(e => inPeriode(e.date))
+    .reduce((s,e) => s + (e.montant||0), 0);
   const flyerNoms = new Set(state.clients.filter(c => c.flyer).map(c => c.nom));
   const caFlyers = state.recettes
     .filter(r => r.statut === 'Payé' && inPeriode(r.datePaiement || r.date) && flyerNoms.has(r.client))
     .reduce((s,r) => s + (r.montant||0), 0);
   const charges    = chargesFiltrees.filter(d => d.type !== 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
   const impots     = chargesFiltrees.filter(d => d.type === 'Impôts').reduce((s,d) => s + (d.montant||0), 0);
-  const benefice   = caEncaisse - charges - impots;
+  const benefice   = caEncaisse - charges - impots + caExtraTotal;
   const nbMois     = bilanMode === 'annuel' ? 12 : bilanMode === 'trimestriel' ? 3 : 1;
   const beneficeMois = benefice / nbMois;
 
@@ -1836,7 +1868,11 @@ function renderBilan() {
     </div>
     <div class="stat-card">
       <div class="stat-val">${fmt(caEncaisse)}</div>
-      <div class="stat-label">CA encaissé</div>
+      <div class="stat-label">CA facturé encaissé</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#2d7a4f">+${fmt(caExtraTotal)}</div>
+      <div class="stat-label">CA extra</div>
     </div>
     <div class="stat-card">
       <div class="stat-val">${fmt(charges)}</div>
@@ -2327,18 +2363,41 @@ function supprimerRecette(id) {
 // DÉPENSES
 // ═══════════════════════════════════════════════════════════════
 
+let depenseMode = 'depense';
+
+function setDepenseMode(mode) {
+  depenseMode = mode;
+  const lDep = document.getElementById('btn-mode-depense-label');
+  const lCA  = document.getElementById('btn-mode-caextra-label');
+  lDep.style.background = mode === 'depense' ? 'var(--accent)' : 'transparent';
+  lDep.style.color      = mode === 'depense' ? '#fff' : 'var(--text2)';
+  lCA.style.background  = mode === 'caextra' ? 'var(--accent)' : 'transparent';
+  lCA.style.color       = mode === 'caextra' ? '#fff' : 'var(--text2)';
+  document.getElementById('dep-type-group').style.display = mode === 'depense' ? '' : 'none';
+}
+
 function ajouterDepense() {
-  const type = document.getElementById('dep-type').value;
   const label = document.getElementById('dep-label').value.trim();
   const date = document.getElementById('dep-date').value;
   const montant = parseFloat(document.getElementById('dep-montant').value) || 0;
   if (!date) { showAlert('alert-depenses', '⚠️ La date est obligatoire.', 'error'); return; }
-  state.depenses.push({ id: uid(), type, label, date, montant });
-  saveState();
-  ['dep-type','dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('dep-date').value = dateToISO(new Date());
-  renderDepenses();
-  showAlert('alert-depenses', 'Charge ajoutée.', 'success');
+
+  if (depenseMode === 'caextra') {
+    state.caExtra.push({ id: uid(), label, date, montant });
+    saveState();
+    ['dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('dep-date').value = dateToISO(new Date());
+    renderDepenses();
+    showAlert('alert-depenses', 'CA extra ajouté.', 'success');
+  } else {
+    const type = document.getElementById('dep-type').value;
+    state.depenses.push({ id: uid(), type, label, date, montant });
+    saveState();
+    ['dep-type','dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('dep-date').value = dateToISO(new Date());
+    renderDepenses();
+    showAlert('alert-depenses', 'Charge ajoutée.', 'success');
+  }
 }
 
 function renderDepenses() {
@@ -2349,7 +2408,9 @@ function renderDepenses() {
   const moisEl  = document.getElementById('filter-mois-d');
   const typeEl  = document.getElementById('filter-type-d');
 
-  const all = (state.depenses || []).slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const depenses = (state.depenses || []).map(d => ({...d, _caextra: false}));
+  const extras   = (state.caExtra  || []).map(e => ({...e, type: '__caextra__', _caextra: true}));
+  const all = [...depenses, ...extras].sort((a,b) => (b.date||'').localeCompare(a.date||''));
 
   const nowD = new Date();
   const defAnneeD = String(nowD.getFullYear());
@@ -2379,24 +2440,41 @@ function renderDepenses() {
   if (moisF)  items = items.filter(d => d.date && getMoisFromDate(d.date) === moisF);
   if (typeF)  items = items.filter(d => d.type === typeF);
 
-  const sum = items.reduce((s,d) => s + (d.montant||0), 0);
-  total.textContent = sum.toFixed(2).replace('.',',') + ' €';
+  const sumDep   = items.filter(d => !d._caextra).reduce((s,d) => s + (d.montant||0), 0);
+  const sumExtra = items.filter(d =>  d._caextra).reduce((s,d) => s + (d.montant||0), 0);
+  total.innerHTML = `${sumDep.toFixed(2).replace('.',',')} € charges${sumExtra > 0 ? ` &nbsp;|&nbsp; +${sumExtra.toFixed(2).replace('.',',')} € CA extra` : ''}`;
 
   if (!items.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   const svgTrash = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
-  tbody.innerHTML = items.map(d => `<tr>
-    <td>${d.date ? new Date(d.date+'T00:00:00').toLocaleDateString('fr-FR') : ''}</td>
-    <td style="color:var(--text2);font-size:0.82rem">${d.type||'—'}</td>
-    <td>${d.label||'—'}</td>
-    <td>${(d.montant||0).toFixed(2)} €</td>
-    <td><button class="btn-icon btn-danger-icon" onclick="supprimerDepense('${d.id}')" title="Supprimer">${svgTrash}</button></td>
-  </tr>`).join('');
+  tbody.innerHTML = items.map(d => {
+    const isExtra = d._caextra;
+    const typeLabel = isExtra ? '<span style="color:#2d7a4f;font-weight:600;font-size:0.82rem">CA extra</span>' : `<span style="color:var(--text2);font-size:0.82rem">${d.type||'—'}</span>`;
+    const montantLabel = isExtra
+      ? `<span style="color:#2d7a4f;font-weight:600">+${(d.montant||0).toFixed(2)} €</span>`
+      : `${(d.montant||0).toFixed(2)} €`;
+    const deleteBtn = isExtra
+      ? `<button class="btn-icon btn-danger-icon" onclick="supprimerCaExtra('${d.id}')" title="Supprimer">${svgTrash}</button>`
+      : `<button class="btn-icon btn-danger-icon" onclick="supprimerDepense('${d.id}')" title="Supprimer">${svgTrash}</button>`;
+    return `<tr>
+      <td>${d.date ? new Date(d.date+'T00:00:00').toLocaleDateString('fr-FR') : ''}</td>
+      <td>${typeLabel}</td>
+      <td>${d.label||'—'}</td>
+      <td>${montantLabel}</td>
+      <td>${deleteBtn}</td>
+    </tr>`;
+  }).join('');
 }
 
 function supprimerDepense(id) {
   if (!confirm('Supprimer cette charge ?')) return;
   state.depenses = state.depenses.filter(d => d.id !== id);
+  saveState(); renderDepenses();
+}
+
+function supprimerCaExtra(id) {
+  if (!confirm('Supprimer ce CA extra ?')) return;
+  state.caExtra = state.caExtra.filter(e => e.id !== id);
   saveState(); renderDepenses();
 }
 
@@ -2469,15 +2547,16 @@ function exporterRecettesCSV() {
     showAlert('alert-donnees', 'Aucune recette à exporter.', 'error');
     return;
   }
-  const cols = ['Référence', 'Client', 'Type de prestation', 'Date de facturation', 'Montant (€)', 'Mode de paiement', 'Statut'];
+  const cols = ['Référence', 'Client', 'Type de prestation', 'Date de facturation', 'Montant (€)', 'Mode de paiement', 'Statut', 'Date de paiement'];
   const rows = state.recettes
     .slice()
     .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
     .map(r => {
       const date = r.date ? new Date(r.date).toLocaleDateString('fr-FR') : '';
+      const datePaiement = r.datePaiement ? new Date(r.datePaiement).toLocaleDateString('fr-FR') : '';
       const montant = String(r.montant).replace('.', ',');
       const type = getTypePrestation(getPrestsForRecette(r));
-      return [r.ref, r.client, type, date, montant, r.mode || '', r.statut || '']
+      return [r.ref, r.client, type, date, montant, r.mode || '', r.statut || '', datePaiement]
         .map(v => `"${String(v).replace(/"/g, '""')}"`)
         .join(';');
     });
@@ -2881,6 +2960,7 @@ function drpConfirm() {
 // ═══════════════════════════════════════════════════════════════
 
 function init() {
+  runMigrations();
   document.getElementById('p-date').value = new Date().toISOString().split('T')[0];
   populateSelects();
   renderPrestations();

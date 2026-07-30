@@ -274,6 +274,8 @@
   }
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+
+  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 </script>
 </body>
 </html>
