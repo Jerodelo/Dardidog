@@ -161,30 +161,33 @@ function getDefaultState() {
 let state = loadState() || getDefaultState();
 
 function runMigrations() {
-  if (localStorage.getItem('migration_v1_done')) return;
-  let changed = false;
+  // v1 : datePaiement pour recettes payées sans date de paiement
+  if (!localStorage.getItem('migration_v1_done')) {
+    let changed = false;
+    (state.recettes || []).forEach(r => {
+      if (r.statut === 'Payé' && !r.datePaiement && r.date) {
+        const d = new Date(r.date);
+        d.setDate(d.getDate() + 2);
+        r.datePaiement = d.toISOString().slice(0, 10);
+        changed = true;
+      }
+    });
+    if (changed) saveState();
+    localStorage.setItem('migration_v1_done', '1');
+  }
 
-  // 1. Recettes payées sans datePaiement → date + 2 jours
-  (state.recettes || []).forEach(r => {
-    if (r.statut === 'Payé' && !r.datePaiement && r.date) {
-      const d = new Date(r.date);
-      d.setDate(d.getDate() + 2);
-      r.datePaiement = d.toISOString().slice(0, 10);
-      changed = true;
-    }
-  });
-
-  // 2. Prestations sans facture → chercher la recette par client + moisCle
-  (state.prestations || []).forEach(p => {
-    if (p.facture) return;
-    const r = (state.recettes || []).find(r =>
-      r.client === p.client && (r.moisCle === p.mois || r.moisCle2 === p.mois)
-    );
-    if (r) { p.facture = r.ref; changed = true; }
-  });
-
-  if (changed) saveState();
-  localStorage.setItem('migration_v1_done', '1');
+  // v2 : lier les prestations non facturées aux recettes qui les couvrent
+  // (v1 utilisait moisCle === p.mois ce qui est toujours faux — formats différents)
+  if (!localStorage.getItem('migration_v2_done')) {
+    let changed = false;
+    (state.recettes || []).forEach(r => {
+      getPrestsForRecette(r).forEach(p => {
+        if (!p.facture) { p.facture = r.ref; changed = true; }
+      });
+    });
+    if (changed) saveState();
+    localStorage.setItem('migration_v2_done', '1');
+  }
 }
 
 function saveState() {
@@ -1868,19 +1871,19 @@ function renderBilan() {
     </div>
     <div class="stat-card">
       <div class="stat-val">${fmt(caEncaisse)}</div>
-      <div class="stat-label">CA facturé encaissé</div>
+      <div class="stat-label">CA encaissé</div>
     </div>
     <div class="stat-card">
-      <div class="stat-val" style="color:#2d7a4f">+${fmt(caExtraTotal)}</div>
-      <div class="stat-label">CA extra</div>
+      <div class="stat-val">${fmt(impots)}</div>
+      <div class="stat-label">Impôts</div>
     </div>
     <div class="stat-card">
       <div class="stat-val">${fmt(charges)}</div>
       <div class="stat-label">Dépenses</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-val">${fmt(impots)}</div>
-      <div class="stat-label">Impôts</div>
+    <div class="stat-card full">
+      <div class="stat-val" style="color:#2d7a4f">+${fmt(caExtraTotal)}</div>
+      <div class="stat-label">Extra</div>
     </div>
     <div class="stat-card full">
       <div class="stat-val">${fmt(benefice)}</div>
@@ -2388,7 +2391,7 @@ function ajouterDepense() {
     ['dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     document.getElementById('dep-date').value = dateToISO(new Date());
     renderDepenses();
-    showAlert('alert-depenses', 'CA extra ajouté.', 'success');
+    showAlert('alert-depenses', 'Extra ajouté.', 'success');
   } else {
     const type = document.getElementById('dep-type').value;
     state.depenses.push({ id: uid(), type, label, date, montant });
@@ -2442,14 +2445,14 @@ function renderDepenses() {
 
   const sumDep   = items.filter(d => !d._caextra).reduce((s,d) => s + (d.montant||0), 0);
   const sumExtra = items.filter(d =>  d._caextra).reduce((s,d) => s + (d.montant||0), 0);
-  total.innerHTML = `${sumDep.toFixed(2).replace('.',',')} € charges${sumExtra > 0 ? ` &nbsp;|&nbsp; +${sumExtra.toFixed(2).replace('.',',')} € CA extra` : ''}`;
+  total.innerHTML = `${sumDep.toFixed(2).replace('.',',')} € charges${sumExtra > 0 ? ` &nbsp;|&nbsp; +${sumExtra.toFixed(2).replace('.',',')} € extra` : ''}`;
 
   if (!items.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   const svgTrash = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
   tbody.innerHTML = items.map(d => {
     const isExtra = d._caextra;
-    const typeLabel = isExtra ? '<span style="color:#2d7a4f;font-weight:600;font-size:0.82rem">CA extra</span>' : `<span style="color:var(--text2);font-size:0.82rem">${d.type||'—'}</span>`;
+    const typeLabel = isExtra ? '<span style="color:#2d7a4f;font-weight:600;font-size:0.82rem">Extra</span>' : `<span style="color:var(--text2);font-size:0.82rem">${d.type||'—'}</span>`;
     const montantLabel = isExtra
       ? `<span style="color:#2d7a4f;font-weight:600">+${(d.montant||0).toFixed(2)} €</span>`
       : `${(d.montant||0).toFixed(2)} €`;
@@ -2473,7 +2476,7 @@ function supprimerDepense(id) {
 }
 
 function supprimerCaExtra(id) {
-  if (!confirm('Supprimer ce CA extra ?')) return;
+  if (!confirm('Supprimer cet extra ?')) return;
   state.caExtra = state.caExtra.filter(e => e.id !== id);
   saveState(); renderDepenses();
 }
@@ -2587,6 +2590,7 @@ function importerDonnees(event) {
       state.prestations = data.prestations;
       state.recettes = data.recettes || [];
       state.depenses = data.depenses || [];
+      state.caExtra = data.caExtra || [];
       state.clients = data.clients || [];
       state.evenements = data.evenements || [];
       state.prestationsTypes = data.prestationsTypes || [...DEFAULT_PRESTATIONS_TYPES];
