@@ -275,7 +275,10 @@
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 
-  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+  // Recharge si les données ont changé depuis le chargement (bfcache ou retour PWA)
+  const _mtime = localStorage.getItem('petsitter_data_mtime') || '0';
+  window.addEventListener('pageshow', e => { if (e.persisted && localStorage.getItem('petsitter_data_mtime') !== _mtime) location.reload(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && localStorage.getItem('petsitter_data_mtime') !== _mtime) location.reload(); });
 </script>
 </body>
 </html>

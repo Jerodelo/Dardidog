@@ -192,6 +192,7 @@ function runMigrations() {
 
 function saveState() {
   localStorage.setItem('petsitter_data', JSON.stringify(state));
+  localStorage.setItem('petsitter_data_mtime', Date.now().toString());
 }
 
 function exportBackup() {
@@ -1776,7 +1777,8 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   doc.text(mediationIntro, margin, noteY + 8);
   doc.text(mediationCoords, margin, noteY + 8 + mediationIntro.length * mLH);
 
-  doc.save(`Facture_${ref}_${client.replace(/ /g,'_')}.pdf`);
+  const prefix = docType === 'DEVIS' ? 'Devis' : 'Facture';
+  doc.save(`${prefix}_${ref}_${client.replace(/ /g,'_')}.pdf`);
 }
 
 // ═══════════════════════════════════════════════════════════════
