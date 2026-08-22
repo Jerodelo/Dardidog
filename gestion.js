@@ -188,6 +188,19 @@ function runMigrations() {
     if (changed) saveState();
     localStorage.setItem('migration_v2_done', '1');
   }
+
+  // v3 : remplir le mode de paiement manquant sur les recettes depuis le client
+  if (!localStorage.getItem('migration_v3_done')) {
+    let changed = false;
+    (state.recettes || []).forEach(r => {
+      if (!r.mode) {
+        const client = (state.clients || []).find(c => c.nom === r.client);
+        if (client && client.mode) { r.mode = client.mode; changed = true; }
+      }
+    });
+    if (changed) saveState();
+    localStorage.setItem('migration_v3_done', '1');
+  }
 }
 
 function saveState() {
@@ -898,7 +911,11 @@ function renderJour() {
 
   const H_START = 7, H_END = 23;
   const SLOT_H = 52;
-  const prests = expandPrestations(state.prestations.filter(p => p.date === iso));
+  const prestsJour = state.prestations.filter(p => p.date === iso);
+  const caJour = prestsJour.reduce((s, p) => s + (p.montant || 0), 0);
+  const caEl = document.getElementById('label-ca-jour');
+  if (caEl) caEl.textContent = caJour > 0 ? `CA : ${caJour.toFixed(2).replace('.', ',')} €` : '';
+  const prests = expandPrestations(prestsJour);
   const evPerso = eventsForDate(iso);
   const evPersoAllDay = evPerso.filter(e => e.type === 'journee' || e.type === 'periode');
   const evPersoTimed = evPerso.filter(e => e.type === 'heure');
@@ -1453,7 +1470,7 @@ function getTypePrestation(prests) {
   const types = new Set();
   prests.forEach(p => {
     const n = (p.prestation || '').toLowerCase();
-    if (n.includes('balade')) types.add('Promenade de chien');
+    if (n.includes('balade') || n.includes('promenade')) types.add('Promenade de chien');
     else if (n.includes('visite')) types.add('Visite à domicile');
     else if (n.includes('garde')) types.add('Garde à domicile');
   });
@@ -1467,7 +1484,7 @@ function renderRecettes() {
 
   const statutF = (document.getElementById('filter-statut-r')||{}).value || '';
 
-  let items = state.recettes.slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  let items = state.recettes.slice().sort((a,b) => (b.ref||'').localeCompare(a.ref||'', undefined, { numeric: true }));
   if (anneeF)  items = items.filter(r => r.date && r.date.startsWith(anneeF));
   if (moisF)   items = items.filter(r => r.date && getMoisFromDate(r.date) === moisF);
   if (statutF) items = items.filter(r => r.statut === statutF);

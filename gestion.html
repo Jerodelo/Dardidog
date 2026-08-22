@@ -655,7 +655,10 @@
     <div class="card">
       <div class="planning-nav">
         <button class="btn btn-secondary btn-sm" onclick="jourPrecedent()">← Préc.</button>
-        <span id="label-jour" style="font-weight:600;font-size:0.95rem"></span>
+        <span style="display:flex;flex-direction:column;align-items:center;gap:2px">
+          <span id="label-jour" style="font-weight:600;font-size:0.95rem"></span>
+          <span id="label-ca-jour" style="font-size:0.78rem;color:var(--accent2);font-weight:600"></span>
+        </span>
         <button class="btn btn-secondary btn-sm" onclick="jourSuivant()">Suiv. →</button>
       </div>
       <div id="grille-jour" class="grille-jour"></div>
