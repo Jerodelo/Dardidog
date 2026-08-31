@@ -1300,13 +1300,15 @@ function previewFacture() {
   let prestsMois = state.prestations.filter(p =>
     p.client.toLowerCase() === proprio.toLowerCase() &&
     p.date && p.date.startsWith(annee) &&
-    getMoisFromDate(p.date) === mois
+    getMoisFromDate(p.date) === mois &&
+    !p.facture
   );
   if (mois2) {
     prestsMois = [...prestsMois, ...state.prestations.filter(p =>
       p.client.toLowerCase() === proprio.toLowerCase() &&
       p.date && p.date.startsWith(annee2) &&
-      getMoisFromDate(p.date) === mois2
+      getMoisFromDate(p.date) === mois2 &&
+      !p.facture
     )];
   }
 
@@ -1391,21 +1393,11 @@ function genererFacture() {
 
   const moisNum = String(MOIS_LIST.indexOf(mois) + 1).padStart(2, '0');
   const yearMoisCle = `${annee}-${moisNum}`;
-  const exists = state.recettes.find(r => r.client === proprio && r.moisCle === yearMoisCle);
-  if (exists) {
-    showAlert('alert-recettes-form', `Une facture existe déjà pour ${proprio} en ${mois} ${annee} (${exists.ref}).`, 'error');
-    return;
-  }
 
   let moisCle2 = null;
   if (mois2) {
     const moisNum2 = String(MOIS_LIST.indexOf(mois2) + 1).padStart(2, '0');
     moisCle2 = `${annee2}-${moisNum2}`;
-    const exists2 = state.recettes.find(r => r.client === proprio && r.moisCle === moisCle2);
-    if (exists2) {
-      showAlert('alert-recettes-form', `Une facture existe déjà pour ${proprio} en ${mois2} ${annee2} (${exists2.ref}).`, 'error');
-      return;
-    }
   }
 
   const dateISO = dateToISO(dateFacture);

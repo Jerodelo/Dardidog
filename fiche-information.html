@@ -388,13 +388,17 @@ footer {
       </div>
     </div>
 
-    <div class="btn-row">
+    <label style="display:flex;align-items:flex-start;gap:10px;margin-top:16px;cursor:pointer;font-size:0.88rem;color:var(--color-text);line-height:1.5">
+      <input type="checkbox" id="cgv-check" style="margin-top:2px;accent-color:var(--color-primary);flex-shrink:0;width:16px;height:16px">
+      <span>J'ai lu et j'accepte les <a href="/cgv.html" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600">conditions générales de vente</a> de Dardidog.</span>
+    </label>
+
+    <div class="btn-row" style="margin-top:16px">
       <button class="btn btn-primary" onclick="validerProprietaire()">Suivant →</button>
     </div>
 
     <div style="margin-top:16px;font-size:0.78rem;color:var(--text2);line-height:1.6;text-align:center">
       🔒 <strong>Vos données sont protégées.</strong> Ces informations sont transmises directement et uniquement à Dardidog, sans passer par un serveur tiers ni être stockées en ligne. Elles sont utilisées exclusivement pour assurer la garde de votre animal, conformément au RGPD. Vous pouvez demander leur suppression à tout moment à <a href="mailto:contact@dardidog.fr" style="color:var(--color-primary);font-weight:600">contact@dardidog.fr</a>
-      <br><br>En soumettant ce formulaire, vous acceptez les <a href="/cgv.html" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600">conditions générales de vente</a> de Dardidog.
     </div>
   </div>
 
@@ -622,6 +626,10 @@ function validerProprietaire() {
   }
   if (!consentPhotos) {
     showAlert('Veuillez indiquer votre préférence concernant les photos.', 'error');
+    return;
+  }
+  if (!document.getElementById('cgv-check').checked) {
+    showAlert('Veuillez accepter les conditions générales de vente pour continuer.', 'error');
     return;
   }
 
