@@ -374,6 +374,24 @@ border-radius: var(--radius);
 overflow: hidden;
 box-shadow: var(--shadow);
 font-size: 0.78rem;
+position: relative;
+}
+.gs-period-overlay {
+position: absolute;
+top: 0; bottom: 0;
+background: rgba(212,188,158,0.12);
+border-left: 3px solid #D4BC9E;
+pointer-events: none;
+z-index: 3;
+}
+.gs-period-label {
+display: block;
+padding: 2px 5px;
+font-size: 0.62rem; font-weight: 700;
+color: white; background: #D4BC9E;
+pointer-events: auto; cursor: pointer;
+user-select: none;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .gs-header {
 background: var(--accent2); color: white;
@@ -452,6 +470,23 @@ border-radius: var(--radius);
 overflow: hidden;
 box-shadow: var(--shadow);
 font-size: 0.82rem;
+position: relative;
+}
+.gj-period-overlay {
+position: absolute;
+left: 48px; right: 0; top: 0; bottom: 0;
+background: rgba(212,188,158,0.12);
+border-left: 3px solid #D4BC9E;
+pointer-events: none;
+z-index: 3;
+}
+.gj-period-label {
+display: block;
+padding: 3px 8px;
+font-size: 0.7rem; font-weight: 700;
+color: white; background: #D4BC9E;
+pointer-events: auto; cursor: pointer;
+user-select: none;
 }
 .gj-cell {
 border-top: 1px solid var(--border);

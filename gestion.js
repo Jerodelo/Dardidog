@@ -920,10 +920,10 @@ function renderJour() {
   const evPersoAllDay = evPerso.filter(e => e.type === 'journee' || e.type === 'periode');
   const evPersoTimed = evPerso.filter(e => e.type === 'heure');
 
-  // Prestations sans heure + événements perso journée/période
+  // Prestations sans heure
   const sansTps = prests.filter(p => !p.hdebut);
   let html = '';
-  if (sansTps.length || evPersoAllDay.length) {
+  if (sansTps.length) {
     const colors = ['#2d5a3d','#3d7a55','#1e3d2a','#4a8c5c','#5a6e3d'];
     html += `<div class="gs-hour" style="height:auto;background:var(--surface)"></div>
     <div class="gj-cell" style="height:auto;padding:4px 6px;display:flex;flex-wrap:wrap;gap:4px;border-left:1px solid var(--border);border-top:1px solid var(--border)">
@@ -931,7 +931,6 @@ function renderJour() {
         const ci = Math.abs(p.animal.charCodeAt(0)) % colors.length;
         return `<div class="gj-event" data-id="${p.id}" style="position:relative;left:0;right:0;background:${colors[ci]}" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="openPrestationContextMenu('${p.id}');return false;">${p.animal} — ${p.prestation}</div>`;
       }).join('')}
-      ${evPersoAllDay.map(e => `<div class="gj-event" data-id="${e.id}" style="position:relative;left:0;right:0;background:#D4BC9E" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</div>`).join('')}
     </div>`;
   }
 
@@ -989,6 +988,13 @@ function renderJour() {
     });
     html += `<div class="gs-hour gj-hour">${h === H_START ? '' : `<span>${h}h</span>`}</div>
     <div class="gj-cell${isToday?' today':''}${h%2===1?' half':''}">${evtHtml}</div>`;
+  }
+
+  // Overlays pleine hauteur pour événements journée/période
+  if (evPersoAllDay.length) {
+    html += evPersoAllDay.map(e =>
+      `<div class="gj-period-overlay"><span class="gj-period-label" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</span></div>`
+    ).join('');
   }
 
   document.getElementById('grille-jour').innerHTML = html;
@@ -1062,19 +1068,6 @@ function renderSemaine() {
     </div>`;
   });
 
-  // Ligne journée entière (événements perso allday)
-  const hasAnyAllDay = isoJours.some(iso => evPersoByDay[iso].some(e => e.type === 'journee' || e.type === 'periode'));
-  if (hasAnyAllDay) {
-    html += '<div class="gs-allday-corner"></div>';
-    jours.forEach((d,i) => {
-      const iso = isoJours[i];
-      const dayAllDay = evPersoByDay[iso].filter(e => e.type === 'journee' || e.type === 'periode');
-      html += `<div class="gs-allday-cell">
-        ${dayAllDay.map(e => `<div class="gs-allday-event" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</div>`).join('')}
-      </div>`;
-    });
-  }
-
   // Calcul global des colonnes par jour (gère les chevauchements multi-heures)
   const _pMinS = t => { if (!t) return null; const [hh,mm] = t.split(':').map(Number); return hh*60+mm; };
   const allTimedByDay = {};
@@ -1136,6 +1129,14 @@ function renderSemaine() {
     });
   }
 
+  // Overlays pleine hauteur pour événements journée/période
+  isoJours.forEach((iso, i) => {
+    const dayAllDay = evPersoByDay[iso].filter(e => e.type === 'journee' || e.type === 'periode');
+    dayAllDay.forEach(e => {
+      html += `<div class="gs-period-overlay" style="left:calc(48px + ${i} * (100% - 48px) / 7);right:calc(${6-i} * (100% - 48px) / 7)"><span class="gs-period-label" ontouchstart="startLongPressEv('${e.id}')" ontouchend="cancelLongPressEv()" ontouchmove="cancelLongPressEv()" oncontextmenu="openEvenementContextMenu('${e.id}');return false;">${e.nom}</span></div>`;
+    });
+  });
+
   document.getElementById('grille-semaine').innerHTML = html;
 }
 
@@ -1188,13 +1189,13 @@ function renderMois() {
     const MAX_VISIBLE = 3;
     const totalItems = dayPrests.length + dayEvPerso.length;
     let shown = 0;
-    dayPrests.slice(0, MAX_VISIBLE).forEach(p => {
-      const ci = Math.abs((p.animal||'').charCodeAt(0)) % colors.length;
-      eventsHtml += `<div class="gm-event" title="${p.animal} — ${p.prestation}${p.hdebut?' — '+p.hdebut+(p.hfin?' → '+p.hfin:''):''}" style="background:${colors[ci]}">${p.animal}</div>`;
+    dayEvPerso.slice(0, MAX_VISIBLE).forEach(e => {
+      eventsHtml += `<div class="gm-event" title="${e.nom}" style="background:#D4BC9E">${e.nom}</div>`;
       shown++;
     });
-    dayEvPerso.slice(0, MAX_VISIBLE - shown).forEach(e => {
-      eventsHtml += `<div class="gm-event" title="${e.nom}" style="background:#D4BC9E">${e.nom}</div>`;
+    dayPrests.slice(0, MAX_VISIBLE - shown).forEach(p => {
+      const ci = Math.abs((p.animal||'').charCodeAt(0)) % colors.length;
+      eventsHtml += `<div class="gm-event" title="${p.animal} — ${p.prestation}${p.hdebut?' — '+p.hdebut+(p.hfin?' → '+p.hfin:''):''}" style="background:${colors[ci]}">${p.animal}</div>`;
       shown++;
     });
     if (totalItems > MAX_VISIBLE) {
