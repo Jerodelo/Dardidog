@@ -1566,6 +1566,32 @@ nav ul li a{
     transform: none;
   }
 
+  /* Galerie photo plein écran */
+  .photo-gallery {
+    gap: 8px;
+  }
+
+  .photo-item {
+    width: 100vw;
+    height: 75vw;
+    box-shadow: none;
+  }
+
+  .photo-item:hover {
+    transform: none;
+  }
+
+  .photo-item picture {
+    width: 100%;
+    height: 100%;
+  }
+
+  .photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
 }
 
 

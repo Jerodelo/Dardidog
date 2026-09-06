@@ -141,6 +141,20 @@
       border-top: 1px solid rgba(21, 71, 52, 0.12);
       margin: 2em 0 1.5em;
     }
+
+    .article-card picture {
+      display: block;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .article-hero {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
   </style>
 
   <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
@@ -190,7 +204,7 @@
         <div class="article-wrapper">
         <div class="card article-card">
 
-          <h1 class="article-title">Combien gagne réellement une pet-sitter ?</h1>
+          <h1 class="article-title">Combien gagne réellement une pet-sitter&nbsp;?</h1>
           <p class="article-date">2 septembre 2026</p>
 
           <div class="article-body">
@@ -200,6 +214,19 @@
             </p>
             <p>À première vue, le calcul paraît logique. Pourtant, la réalité du métier est bien différente.
             </p>
+
+            <picture>
+            <source type="image/webp"
+                    srcset="/images/selva-small.webp 480w,
+                            /images/selva-medium.webp 900w,
+                            /images/selva-large.webp 1200w"
+                    sizes="(max-width: 640px) 100vw, 720px">
+            <img src="/images/selva.jpg"
+                 alt="Chien avec des lunettes de soleil et des billets"
+                 class="article-hero"
+                 loading="eager">
+          </picture>
+
 
             <h2>Derrière 30 minutes de prestation, il y a bien plus que 30 minutes de travail</h2>
 
@@ -278,8 +305,6 @@
             <p>
               Mais les temps de trajets eux ne sont pas mutualisés, puisqu'il faut récupérer puis raccompagner chaque chien à des domiciles souvent éloignés. Par conséquent, bien que meilleur, le taux horaire est loin d'être multiplié par le nombre de chiens comme on pourrait le penser.
             </p>
-
-            <hr class="article-divider">
 
             <h2>Pourquoi cet article&nbsp;?</h2>
 

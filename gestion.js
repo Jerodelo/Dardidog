@@ -1138,6 +1138,15 @@ function renderSemaine() {
   });
 
   document.getElementById('grille-semaine').innerHTML = html;
+
+  // Décaler les overlays sous le header (hauteur mesurée après render)
+  const headerEl = document.querySelector('#grille-semaine .gs-header');
+  if (headerEl) {
+    const hh = headerEl.offsetHeight + 'px';
+    document.querySelectorAll('#grille-semaine .gs-period-overlay').forEach(el => {
+      el.style.top = hh;
+    });
+  }
 }
 
 // ── MOIS ─────────────────────────────────────────────────────
