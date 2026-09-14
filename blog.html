@@ -55,7 +55,7 @@
 
     .blog-card-img {
       width: 100%;
-      aspect-ratio: 16/9;
+      aspect-ratio: 4/3;
       object-fit: cover;
       background: var(--surface2);
       border-radius: 8px;
@@ -63,7 +63,7 @@
 
     .blog-card-img-placeholder {
       width: 100%;
-      aspect-ratio: 16/9;
+      aspect-ratio: 4/3;
       background: var(--surface2);
       display: flex;
       align-items: center;
@@ -92,6 +92,9 @@
       color: var(--text1);
       line-height: 1.35;
       margin: 0;
+      min-height: 2.7em;
+      display: grid;
+      align-content: center;
     }
 
     .blog-card-excerpt {
@@ -150,7 +153,25 @@
         <!-- ═══════════════════════════════════════════
              CARTE ARTICLE — dupliquer pour chaque article
              ═══════════════════════════════════════════ -->
-        <a href="articles/promenades-fortes-chaleurs.html" class="blog-card">
+         <a href="articles/combien-gagne-pet-sitter.html" class="blog-card">
+          <picture>
+            <source type="image/webp" srcset="images/selva-mini.webp">
+            <img src="images/selva-mini.jpg"
+                 alt="chien portant des lunettes et une montre couché sur des billets"
+                 class="blog-card-img"
+                 loading="lazy">
+          </picture>
+          <div class="blog-card-body">
+            <span class="blog-card-date">30 septembre 2026</span>
+            <h2 class="blog-card-title">Quels sont les vrais revenus d'une pet-sitter ?</h2>
+            <p class="blog-card-excerpt">Temps de trajet, charges... Ce qui se cache vraiment derrière les tarifs d'une pet-sitter.</p>
+            <span class="blog-card-lire">Lire l'article →</span>
+          </div>
+        </a>
+        
+        
+        
+             <a href="articles/promenades-fortes-chaleurs.html" class="blog-card">
           <picture>
             <source type="image/webp" srcset="images/chien-canicule-mini.webp">
             <img src="images/chien-canicule-3.jpg"
@@ -165,18 +186,6 @@
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
         </a>
-
-        <!-- ═══ MODÈLE CARTE — copier-coller pour chaque nouvel article ═══
-        <a href="articles/nom-article.html" class="blog-card">
-          <div class="blog-card-img-placeholder">🐾</div>
-          <div class="blog-card-body">
-            <span class="blog-card-date">JJ mois AAAA</span>
-            <h2 class="blog-card-title">Titre de l'article</h2>
-            <p class="blog-card-excerpt">Court extrait donnant envie de lire la suite.</p>
-            <span class="blog-card-lire">Lire l'article →</span>
-          </div>
-        </a>
-        ════════════════════════════════════════════════════════════ -->
 
         <a href="articles/spots-promenades-ouest-lyonnais.html" class="blog-card">
           <picture>
@@ -202,7 +211,7 @@
           </div>
           <div class="blog-card-body">
             <span class="blog-card-date">08 mai 2026</span>
-            <h2 class="blog-card-title">Foire aux questions</h2>
+            <h2 class="blog-card-title">FOIRE AUX QUESTIONS</h2>
             <p class="blog-card-excerpt">Pré-visite, remise des clefs, annulation, règlement… Retrouvez les réponses à toutes à vos questions.</p>
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
