@@ -450,9 +450,9 @@
     <div class="page-title">Bilan</div>
 
     <div class="planning-tabs">
-      <button class="ptab vtab active" id="btab-annuel" onclick="switchBilanMode('annuel')">Annuel</button>
+      <button class="ptab vtab" id="btab-annuel" onclick="switchBilanMode('annuel')">Annuel</button>
       <button class="ptab vtab" id="btab-trimestriel" onclick="switchBilanMode('trimestriel')">Trimestriel</button>
-      <button class="ptab vtab" id="btab-mois" onclick="switchBilanMode('mois')">Mois</button>
+      <button class="ptab vtab active" id="btab-mois" onclick="switchBilanMode('mois')">Mois</button>
     </div>
     <div class="card">
       <div class="filter-bar">
@@ -463,7 +463,7 @@
           <option value="T3">T3 — Juil. à Sept.</option>
           <option value="T4">T4 — Oct. à Déc.</option>
         </select>
-        <select id="filter-bilan-mois" onchange="renderBilan()" style="display:none"></select>
+        <select id="filter-bilan-mois" onchange="renderBilan()"></select>
       </div>
       <div class="stats-row" id="stats-row"></div>
     </div>

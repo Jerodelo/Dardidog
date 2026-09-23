@@ -653,7 +653,7 @@ function renderPrestations() {
 let planningTab = 'jour';
 let planningDate = new Date();
 let jourDate = new Date();
-let bilanMode = 'annuel';
+let bilanMode = 'mois';
 
 function switchPrestationsTab(tab) {
   ['indiv','lot','liste'].forEach(t => {
@@ -1905,6 +1905,10 @@ function renderBilan() {
     <div class="stat-card full">
       <div class="stat-val" style="color:#2d7a4f">+${fmt(caExtraTotal)}</div>
       <div class="stat-label">Extra</div>
+    </div>
+    <div class="stat-card full">
+      <div class="stat-val">${fmt(caEncaisse + caExtraTotal)}</div>
+      <div class="stat-label">Revenu total</div>
     </div>
     <div class="stat-card full">
       <div class="stat-val">${fmt(benefice)}</div>
