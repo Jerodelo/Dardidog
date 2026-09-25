@@ -118,6 +118,14 @@ Options -Indexes
 # </IfModule>
 
 # ==========================
+# REDIRECTIONS D'ANCIENNES URLS
+# ==========================
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^articles/faq\.html$ /faq.html [L,R=301]
+</IfModule>
+
+# ==========================
 # PAGE D'ERREUR PERSONNALISÉE (Optionnel)
 # ==========================
 # ErrorDocument 404 /404.html

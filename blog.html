@@ -24,14 +24,16 @@
 
   <style>
     .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+      display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 28px;
       margin-top: var(--spacing-md);
     }
 
     .blog-card {
+      flex: 1 1 280px;
+      max-width: 340px;
       display: flex;
       flex-direction: column;
       background: var(--surface);
@@ -146,7 +148,7 @@
 
   <main>
     <section class="section-spacing-bottom">
-      <h1>LE BLOG</h1>
+      <h1>BLOG</h1>
 
       <div class="blog-grid">
 
@@ -156,15 +158,15 @@
          <a href="articles/combien-gagne-pet-sitter.html" class="blog-card">
           <picture>
             <source type="image/webp" srcset="images/selva-mini.webp">
-            <img src="images/selva-mini.jpg"
+            <img src="images/selva.jpg"
                  alt="chien portant des lunettes et une montre couché sur des billets"
                  class="blog-card-img"
                  loading="lazy">
           </picture>
           <div class="blog-card-body">
-            <span class="blog-card-date">30 septembre 2026</span>
+            <span class="blog-card-date">25 septembre 2026</span>
             <h2 class="blog-card-title">Quels sont les vrais revenus d'une pet-sitter ?</h2>
-            <p class="blog-card-excerpt">Temps de trajet, charges... Ce qui se cache vraiment derrière les tarifs d'une pet-sitter.</p>
+            <p class="blog-card-excerpt">Temps de trajet, charges, travail invisible... Ce qui se cache vraiment derrière les tarifs d'une pet-sitter.</p>
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
         </a>
@@ -182,7 +184,7 @@
           <div class="blog-card-body">
             <span class="blog-card-date">15 juillet 2026</span>
             <h2 class="blog-card-title">Les promenades canines avec Dardidog lors des fortes chaleurs</h2>
-            <p class="blog-card-excerpt">Hydratation, horaires adaptés... Comment sont organisées les sorties pour pallier les risques liés à la chaleur.</p>
+            <p class="blog-card-excerpt">Hydratation, horaires, trajet... Comment sont organisées les sorties pour pallier les risques liés à la chaleur.</p>
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
         </a>
@@ -199,20 +201,6 @@
             <span class="blog-card-date">02 juin 2026</span>
             <h2 class="blog-card-title">Mes spots préférés pour promener les chiens dans l'Ouest Lyonnais</h2>
             <p class="blog-card-excerpt">Découvrez mes lieux favoris pour des balades canines réussies.</p>
-            <span class="blog-card-lire">Lire l'article →</span>
-          </div>
-        </a>
-
-        <a href="articles/faq.html" class="blog-card">
-          <div class="blog-card-img-placeholder">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="90" height="90" fill="none">
-              <text x="32" y="52" text-anchor="middle" font-family="sans-serif" font-size="52" font-weight="700" fill="#154734">?</text>
-            </svg>
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-card-date">08 mai 2026</span>
-            <h2 class="blog-card-title">FOIRE AUX QUESTIONS</h2>
-            <p class="blog-card-excerpt">Pré-visite, remise des clefs, annulation, règlement… Retrouvez les réponses à toutes à vos questions.</p>
             <span class="blog-card-lire">Lire l'article →</span>
           </div>
         </a>

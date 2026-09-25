@@ -625,7 +625,7 @@ function renderPrestations() {
   thDel.innerHTML = `<button class="btn-icon btn-danger-icon" title="Supprimer les prestations affichées" onclick="supprimerPrestationsFiltrees()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>`;
 
   const total = items.reduce((s, p) => s + (p.montant || 0), 0);
-  tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;font-weight:600;padding-right:8px">Total</td><td><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td></td><td></td></tr>`;
+  tfoot.innerHTML = `<tr style="background:var(--surface2)"><td colspan="4" style="text-align:right;font-weight:600;padding-right:8px;border-bottom:1px solid var(--border)">Total</td><td style="border-bottom:1px solid var(--border)"><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td style="border-bottom:1px solid var(--border)"></td><td style="border-bottom:1px solid var(--border)"></td></tr>`;
 
   tbody.innerHTML = items.map(p => {
     const factureBadge = p.facture
@@ -1511,7 +1511,7 @@ function renderRecettes() {
   empty.style.display = 'none';
 
   const total = items.reduce((s, r) => s + (r.montant || 0), 0);
-  tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;font-weight:600;padding-right:8px">Total</td><td><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td colspan="4"></td></tr>`;
+  tfoot.innerHTML = `<tr style="background:var(--surface2)"><td colspan="5" style="text-align:right;font-weight:600;padding-right:8px;border-bottom:1px solid var(--border)">Total</td><td style="border-bottom:1px solid var(--border)"><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td colspan="4" style="border-bottom:1px solid var(--border)"></td></tr>`;
 
   tbody.innerHTML = items.map(r => {
     const type = getTypePrestation(getPrestsForRecette(r));
