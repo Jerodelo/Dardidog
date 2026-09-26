@@ -1442,7 +1442,7 @@ function toggleStatutRecette(id) {
   saveState(); renderRecettes();
 }
 
-function getPrestsForRecette(r) {
+function getPrestsForRecette(r, strict = false) {
   function prestsForCle(moisCle) {
     const annee = moisCle.slice(0, 4);
     const moisNom = MOIS_LIST[parseInt(moisCle.slice(5, 7)) - 1];
@@ -1465,6 +1465,11 @@ function getPrestsForRecette(r) {
     );
   }
   if (r.moisCle2) prests = [...prests, ...prestsForCle(r.moisCle2)];
+  // En mode strict, ne garder que les prestations réellement rattachées à CETTE
+  // facture (r.ref) : sans ce filtre, une facture sur 2 mois (ou un mois
+  // partagé avec une autre facture) récupère aussi des prestations déjà
+  // facturées ailleurs, d'où l'incohérence entre le total et la liste affichée.
+  if (strict) prests = prests.filter(p => p.facture === r.ref);
   return prests;
 }
 
@@ -1514,7 +1519,7 @@ function renderRecettes() {
   tfoot.innerHTML = `<tr style="background:var(--surface2)"><td colspan="5" style="text-align:right;font-weight:600;padding-right:8px;border-bottom:1px solid var(--border)">Total</td><td style="border-bottom:1px solid var(--border)"><strong>${total % 1 === 0 ? total : total.toFixed(2)}€</strong></td><td colspan="4" style="border-bottom:1px solid var(--border)"></td></tr>`;
 
   tbody.innerHTML = items.map(r => {
-    const type = getTypePrestation(getPrestsForRecette(r));
+    const type = getTypePrestation(getPrestsForRecette(r, true));
     return `
     <tr onclick="toggleStatutRecette('${r.id}')" style="cursor:pointer">
       <td><button class="btn-icon" title="Exporter PDF" onclick="exporterFacturePDF('${r.id}');event.stopPropagation()">📄</button></td>
@@ -1557,7 +1562,7 @@ async function genererPDFFromRecette(id) {
     annee = rec.date.slice(0, 4);
     moisNom = getMoisFromDate(rec.date);
   }
-  const prestsMois = getPrestsForRecette(rec);
+  const prestsMois = getPrestsForRecette(rec, true);
   let periodeLabel = `${moisNom} ${annee}`;
   if (rec.moisCle2) {
     const { annee: annee2, moisNom: moisNom2 } = getMoisAnneeFromCle(rec.moisCle2);
@@ -2583,7 +2588,7 @@ function exporterRecettesCSV() {
       const date = r.date ? new Date(r.date).toLocaleDateString('fr-FR') : '';
       const datePaiement = r.datePaiement ? new Date(r.datePaiement).toLocaleDateString('fr-FR') : '';
       const montant = String(r.montant).replace('.', ',');
-      const type = getTypePrestation(getPrestsForRecette(r));
+      const type = getTypePrestation(getPrestsForRecette(r, true));
       return [r.ref, r.client, type, date, montant, r.mode || '', r.statut || '', datePaiement]
         .map(v => `"${String(v).replace(/"/g, '""')}"`)
         .join(';');
