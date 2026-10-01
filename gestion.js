@@ -409,6 +409,12 @@ function populateSelects() {
     rAnnee.innerHTML = annees.map(a => `<option ${a===val?'selected':''}>${a}</option>`).join('');
   }
 
+  // Date de facturation : aujourd'hui par défaut, modifiable
+  const rDateFacturation = document.getElementById('r-date-facturation');
+  if (rDateFacturation && !rDateFacturation.value) {
+    rDateFacturation.value = dateToISO(new Date());
+  }
+
   // Filtre animal
   const fa = document.getElementById('filter-animal');
   if (fa) {
@@ -1332,7 +1338,8 @@ function previewFacture() {
   const totalBrut = prestsMois.reduce((s,p) => s + p.montant, 0);
   const animauxConcernes = [...new Set(prestsMois.map(p => p.animal))];
   const ref = getNextRef();
-  const dateFacture = new Date();
+  const dateFacturationVal = document.getElementById('r-date-facturation').value;
+  const dateFacture = dateFacturationVal ? new Date(dateFacturationVal + 'T00:00:00') : new Date();
   const ristourneType = document.getElementById('r-ristourne-type').value;
   const ristourneVal  = parseFloat(document.getElementById('r-ristourne-val').value) || 0;
   const totalNet = calcTotalNet(totalBrut, ristourneType, ristourneVal);
@@ -1673,8 +1680,8 @@ async function _buildPDF(ref, client, adresse, mois, dateFacture, prestations, t
   const hasRemise = ristourneType && ristourneVal > 0;
   const totalsHeight = hasRemise ? 24 : 12;
   const reglementLines = [docType === 'DEVIS'
-    ? 'RÈGLEMENT EN LIQUIDE, PAR CHÈQUE OU PAR VIREMENT BANCAIRE.'
-    : 'RÈGLEMENT DÛ SOUS 15 JOURS EN LIQUIDE, PAR CHÈQUE OU PAR VIREMENT BANCAIRE.'];
+    ? 'RÈGLEMENT EN LIQUIDE OU PAR VIREMENT BANCAIRE.'
+    : 'RÈGLEMENT DÛ SOUS 15 JOURS EN LIQUIDE OU PAR VIREMENT BANCAIRE.'];
   const sortedPrests = [...prestations].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
   // Stratégie de mise en page : on tente d'abord l'espacement normal, puis un
