@@ -2250,6 +2250,7 @@ function renderAnimaux() {
   const svgSms = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`;
   const tous = [];
   state.clients.forEach(c => (c.animaux||[]).forEach(a => tous.push({ c, a })));
+  tous.sort((x, y) => x.a.nom.localeCompare(y.a.nom));
   if (!tous.length) { container.innerHTML = ''; container.style.display = 'none'; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   container.style.display = '';
@@ -2315,7 +2316,7 @@ function renderClients() {
           </tr>
         </thead>
         <tbody>
-          ${state.clients.map(c => `
+          ${state.clients.slice().sort((a,b) => a.nom.localeCompare(b.nom)).map(c => `
             <tr style="cursor:pointer" onclick="voirFicheClient('${c.id}')">
               <td onclick="event.stopPropagation()" style="white-space:nowrap">
                 ${c.tel ? `<a href="sms:${c.tel.replace(/\s/g,'')}" class="btn-icon" title="Envoyer un SMS" style="color:#4a6355;display:inline-flex;align-items:center;vertical-align:middle;margin-right:6px" onclick="event.stopPropagation()">${svgSms}</a>` : ''}
