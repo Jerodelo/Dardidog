@@ -11,7 +11,7 @@ Dardidog est une entreprise individuelle fondée par Jéromine Deloffre, basée 
 - [Secteur d'intervention](https://dardidog.fr/secteur-dintervention.html) : Zone géographique couverte dans l'Ouest Lyonnais
 - [Contact](https://dardidog.fr/contact.html) : Formulaire de contact et coordonnées
 - [Blog](https://dardidog.fr/blog.html) : Articles sur le pet-sitting, les balades canines et le bien-être animal
-- [CGV](https://dardidog.fr/cgv.html) : Conditions générales de vente
+- [CGP](https://dardidog.fr/cgp.html) : Conditions générales de prestations
 - [Mentions légales](https://dardidog.fr/mentions-legales.html) : Mentions légales et conditions d'utilisation
 
 ## Articles de blog

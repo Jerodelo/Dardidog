@@ -389,8 +389,8 @@ footer {
     </div>
 
     <label style="display:flex;align-items:flex-start;gap:10px;margin-top:16px;cursor:pointer;font-size:0.88rem;color:var(--color-text);line-height:1.5">
-      <input type="checkbox" id="cgv-check" style="margin-top:2px;accent-color:var(--color-primary);flex-shrink:0;width:16px;height:16px">
-      <span>J'ai lu et j'accepte les <a href="/cgv.html" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600">conditions générales de vente</a> de Dardidog.</span>
+      <input type="checkbox" id="cgp-check" style="margin-top:2px;accent-color:var(--color-primary);flex-shrink:0;width:16px;height:16px">
+      <span>J'ai lu et j'accepte les <a href="/cgp.html" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600">conditions générales de prestations</a> de Dardidog.</span>
     </label>
 
     <div class="btn-row" style="margin-top:16px">
@@ -628,8 +628,8 @@ function validerProprietaire() {
     showAlert('Veuillez indiquer votre préférence concernant les photos.', 'error');
     return;
   }
-  if (!document.getElementById('cgv-check').checked) {
-    showAlert('Veuillez accepter les conditions générales de vente pour continuer.', 'error');
+  if (!document.getElementById('cgp-check').checked) {
+    showAlert('Veuillez accepter les conditions générales de prestations pour continuer.', 'error');
     return;
   }
 

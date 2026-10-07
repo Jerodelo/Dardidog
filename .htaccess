@@ -123,6 +123,7 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule ^articles/faq\.html$ /faq.html [L,R=301]
+  RewriteRule ^cgv\.html$ /cgp.html [L,R=301]
 </IfModule>
 
 # ==========================
