@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="gestion.css?v=4">
+<link rel="stylesheet" href="gestion.css?v=20">
 </style>
 
 </head>
@@ -38,6 +38,7 @@
      <li><a href="#" data-page="recettes" onclick="showPage('recettes');return false;">Factures</a></li>
           <li><a href="#" data-page="depenses" onclick="showPage('depenses');return false;">Charges</a></li>
       <li><a href="#" data-page="bilan" onclick="showPage('bilan');return false;">Bilan</a></li>
+      <li><a href="#" data-page="impots" onclick="showPage('impots');return false;">Imp&ocirc;ts</a></li>
       <li><a href="#" data-page="clients" onclick="showPage('clients');return false;">Clients</a></li>
       <li><a href="#" data-page="donnees" onclick="showPage('donnees');return false;">Donn&eacute;es</a></li>
     </ul>
@@ -69,6 +70,7 @@
      <li><a href="#" data-page="depenses" onclick="showPage('depenses');closeMobileNav();return false;">Charges</a></li>
     
       <li><a href="#" data-page="bilan" onclick="showPage('bilan');closeMobileNav();return false;">Bilan</a></li>
+      <li><a href="#" data-page="impots" onclick="showPage('impots');closeMobileNav();return false;">Imp&ocirc;ts</a></li>
       <li><a href="#" data-page="clients" onclick="showPage('clients');closeMobileNav();return false;">Clients</a></li>
       <li><a href="#" data-page="donnees" onclick="showPage('donnees');closeMobileNav();return false;">Donn&eacute;es</a></li>
     </ul>
@@ -478,6 +480,59 @@
 
   <!-- ═══════════════════════════════════════════════════ -->
 
+  <!-- PAGE IMPÔTS -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-impots">
+    <div class="page-title">Impôts</div>
+    <div id="alert-impots"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="form-grid cols-1">
+        <div class="form-group">
+          <label>Année</label>
+          <select id="imp-annee" onchange="renderImpots()"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="planning-tabs" id="imp-personne-tabs"></div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="max-width:90%;margin:0 auto">
+        <div class="planning-tabs" id="imp-revenu-tabs"></div>
+        <div class="card" style="margin-bottom:0;padding:16px">
+          <div id="imp-revenu-actif"></div>
+        </div>
+      </div>
+
+      <div style="max-width:90%;margin:20px auto 0">
+        <div class="card" style="margin-bottom:0;padding:16px">
+          <h3 style="margin-top:0">Dons et crédits d'impôts</h3>
+          <div id="imp-dons-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h3 style="margin-top:0">Résultats</h3>
+      <div id="imp-resultats"></div>
+    </div>
+
+    <div class="card collapsible-card">
+      <div class="card-toggle" onclick="toggleSection('imp-bareme-body')">
+        <span>Barème d'imposition</span>
+      </div>
+      <div id="imp-bareme-body" class="collapse-body" style="display:none">
+        <p style="font-size:0.82rem;color:var(--text2);margin-top:10px">Taux marginal appliqué à la part de base imposable au-dessus de chaque seuil. À ajuster chaque année.</p>
+        <div id="imp-bareme-list"></div>
+        <button class="btn btn-secondary" style="margin-top:10px" onclick="ajouterTrancheBareme()">+ Ajouter une tranche</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
   <!-- PAGE CLIENTS -->
 
   <!-- ═══════════════════════════════════════════════════ -->
@@ -767,6 +822,7 @@
     <p id="modal-action-presta-label" style="font-weight:600;color:var(--color-primary);margin-bottom:20px;font-size:0.95rem"></p>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button class="btn btn-primary" onclick="ouvrirEditionPrestation()">Modifier</button>
+      <button class="btn btn-secondary" onclick="ouvrirDuplicationPrestation()">Dupliquer</button>
       <button class="btn btn-danger" onclick="supprimerPrestationDepuisMenu()">Supprimer</button>
       <button class="btn btn-secondary" onclick="closeModal('modal-action-presta')">Annuler</button>
     </div>
@@ -776,7 +832,7 @@
 <!-- MODAL ÉDITION PRESTATION -->
 <div class="modal-overlay" id="modal-edit-presta" onclick="closeModal('modal-edit-presta')">
   <div class="modal" style="max-width:480px;padding:24px;overflow-y:auto;max-height:90vh" onclick="event.stopPropagation()">
-    <div style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier la prestation</div>
+    <div id="ep-titre" style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier la prestation</div>
     <div class="form-grid">
       <div class="form-group">
         <label>Animal</label>
@@ -914,7 +970,7 @@
 </div>
 
 <div id="gs-toast"></div>
-<script src="gestion.js?v=4"></script>
+<script src="gestion.js?v=20"></script>
 <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 
 </body>

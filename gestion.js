@@ -126,6 +126,19 @@ function moisToNum(m) { return MOIS_LIST.indexOf(m.toLowerCase()); }
 // STATE (localStorage)
 // ═══════════════════════════════════════════════════════════════
 
+function getDefaultImpots() {
+  return {
+    bareme: [
+      { seuil: 11601, taux: 0.11 },
+      { seuil: 29579, taux: 0.30 },
+      { seuil: 84577, taux: 0.41 },
+      { seuil: 180294, taux: 0.45 },
+    ],
+    revenus: [],
+    donsCredits: [],
+  };
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem('petsitter_data');
@@ -135,6 +148,7 @@ function loadState() {
       data.caExtra = data.caExtra || [];
       data.evenements = data.evenements || [];
       data.config = data.config || {...DEFAULT_CONFIG};
+      data.impots = data.impots || getDefaultImpots();
       return data;
     }
   } catch(e) {}
@@ -155,6 +169,7 @@ function getDefaultState() {
     prestationsTypes: [...DEFAULT_PRESTATIONS_TYPES],
     lastFactureNum: 2,
     config: {...DEFAULT_CONFIG},
+    impots: getDefaultImpots(),
   };
 }
 
@@ -259,6 +274,7 @@ function showPage(name) {
   }
   if (name === 'clients') switchClientsVue('animaux');
   if (name === 'donnees') switchDonneesTab('presta');
+  if (name === 'impots') renderImpots();
   if (name === 'planning') { jourDate = new Date(); renderPlanning(); }
 }
 
@@ -752,11 +768,9 @@ function supprimerPrestationDepuisMenu() {
   if (_lpContextId) supprimerPrestation(_lpContextId);
 }
 
-function ouvrirEditionPrestation() {
-  closeModal('modal-action-presta');
-  const p = state.prestations.find(x => x.id === _lpContextId);
-  if (!p) return;
+let _lpEditMode = 'edit'; // 'edit' | 'duplicate'
 
+function remplirFormEditionPrestation(p) {
   const animaux = getAllAnimaux();
   document.getElementById('ep-animal').innerHTML = '<option value="">-- Choisir --</option>' +
     animaux.map(a => `<option${a.nom === p.animal ? ' selected' : ''}>${a.nom}</option>`).join('');
@@ -770,12 +784,33 @@ function ouvrirEditionPrestation() {
   document.getElementById('ep-hdebut2').value = p.hdebut2 || '';
   document.getElementById('ep-hfin2').value = p.hfin2 || '';
   onPrestationChange('ep');
+}
 
+function ouvrirEditionPrestation() {
+  closeModal('modal-action-presta');
+  const p = state.prestations.find(x => x.id === _lpContextId);
+  if (!p) return;
+
+  _lpEditMode = 'edit';
+  document.getElementById('ep-titre').textContent = 'Modifier la prestation';
+  remplirFormEditionPrestation(p);
+  document.getElementById('modal-edit-presta').classList.add('open');
+}
+
+function ouvrirDuplicationPrestation() {
+  closeModal('modal-action-presta');
+  const p = state.prestations.find(x => x.id === _lpContextId);
+  if (!p) return;
+
+  _lpEditMode = 'duplicate';
+  document.getElementById('ep-titre').textContent = 'Dupliquer la prestation';
+  remplirFormEditionPrestation(p);
   document.getElementById('modal-edit-presta').classList.add('open');
 }
 
 function sauvegarderEditionPrestation() {
-  const p = state.prestations.find(x => x.id === _lpContextId);
+  const isDuplicate = _lpEditMode === 'duplicate';
+  const p = isDuplicate ? { id: uid() } : state.prestations.find(x => x.id === _lpContextId);
   if (!p) return;
 
   const date = document.getElementById('ep-date').value;
@@ -801,12 +836,17 @@ function sauvegarderEditionPrestation() {
   p.hdebut2 = document.getElementById('ep-hdebut2').value;
   p.hfin2 = document.getElementById('ep-hfin2').value;
 
+  if (isDuplicate) {
+    p.facture = null;
+    state.prestations.push(p);
+  }
+
   state.prestations.sort((a, b) => a.date.localeCompare(b.date));
   saveState();
   renderPrestations();
   renderPlanning();
   closeModal('modal-edit-presta');
-  showAlert('', 'Prestation modifiée.', 'success');
+  showAlert('', isDuplicate ? 'Prestation dupliquée.' : 'Prestation modifiée.', 'success');
 }
 
 let _lpEvTimer = null;
@@ -1941,6 +1981,380 @@ function renderBilan() {
         </div>
       </div>
     </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPÔTS
+// ═══════════════════════════════════════════════════════════════
+
+const IMP_PERSONNES = ['Jéromine', 'Victor'];
+const IMP_NB_PARTS = 2;
+let impPersonneActive = 'Jéromine';
+let impRevenuActifParPersonne = {};
+
+// Calcule l'impôt sur une base donnée, pour un barème {seuil, taux} trié
+// croissant. Chaque tranche ne taxe que la portion comprise entre son
+// seuil et le seuil suivant (ou l'infini pour la dernière tranche).
+function calcBaremeImpot(base, bareme) {
+  const sorted = [...bareme].sort((a, b) => a.seuil - b.seuil);
+  let impot = 0;
+  for (let i = 0; i < sorted.length; i++) {
+    const seuilBas = sorted[i].seuil;
+    const seuilHaut = sorted[i + 1] ? sorted[i + 1].seuil : Infinity;
+    if (base > seuilBas) {
+      impot += (Math.min(base, seuilHaut) - seuilBas) * sorted[i].taux;
+    }
+  }
+  return impot;
+}
+
+function getImpAnneeCourante() {
+  const sel = document.getElementById('imp-annee');
+  return (sel && sel.value) || String(new Date().getFullYear());
+}
+
+function getRevenusImpot(personne, annee) {
+  return state.impots.revenus.filter(r => r.personne === personne && r.annee === annee);
+}
+
+function getBaseImposablePersonne(personne, annee) {
+  return getRevenusImpot(personne, annee).reduce((s, r) => {
+    const total = MOIS_LIST.reduce((sm, m) => sm + (r.montants[m] || 0), 0);
+    return s + total * (r.type === 'salaire' ? 0.9 : 0.5);
+  }, 0);
+}
+
+function getPASTotalPersonne(personne, annee) {
+  return getRevenusImpot(personne, annee).reduce((s, r) =>
+    s + MOIS_LIST.reduce((sm, m) => sm + (r.pas[m] || 0), 0), 0);
+}
+
+function getDonsCreditsListe(personne, annee) {
+  return state.impots.donsCredits.filter(d => d.personne === personne && d.annee === annee);
+}
+
+function getAbattementDons(personne, annee) {
+  return getDonsCreditsListe(personne, annee)
+    .filter(d => d.type === 'don')
+    .reduce((s, d) => s + d.montant * (d.taux / 100), 0);
+}
+
+function getCreditsImpot(personne, annee) {
+  return getDonsCreditsListe(personne, annee)
+    .filter(d => d.type === 'credit')
+    .reduce((s, d) => s + d.montant, 0);
+}
+
+function calculerImpots(annee) {
+  const bases = {}, impotsIndiv = {}, pas = {}, abattement = {}, credits = {};
+  IMP_PERSONNES.forEach(p => {
+    bases[p] = getBaseImposablePersonne(p, annee);
+    impotsIndiv[p] = calcBaremeImpot(bases[p], state.impots.bareme);
+    pas[p] = getPASTotalPersonne(p, annee);
+    abattement[p] = getAbattementDons(p, annee);
+    credits[p] = getCreditsImpot(p, annee);
+  });
+
+  const basePart = (bases['Jéromine'] + bases['Victor']) / IMP_NB_PARTS;
+  const impotFoyer = calcBaremeImpot(basePart, state.impots.bareme) * IMP_NB_PARTS;
+
+  const regularisations = {};
+  IMP_PERSONNES.forEach(p => {
+    regularisations[p] = impotsIndiv[p] - abattement[p] + credits[p] - pas[p];
+  });
+
+  const totalAbattement = IMP_PERSONNES.reduce((s, p) => s + abattement[p], 0);
+  const totalCredits    = IMP_PERSONNES.reduce((s, p) => s + credits[p], 0);
+  const totalPAS        = IMP_PERSONNES.reduce((s, p) => s + pas[p], 0);
+  const regularisationCommune = impotFoyer - totalAbattement + totalCredits - totalPAS;
+
+  return { bases, impotsIndiv, pas, basePart, impotFoyer, regularisations, regularisationCommune, totalPAS, totalAbattement, totalCredits };
+}
+
+function populateImpAnnee() {
+  const sel = document.getElementById('imp-annee');
+  if (!sel) return;
+  const curYear = new Date().getFullYear();
+  const annees = new Set([String(curYear), String(curYear + 1)]);
+  state.impots.revenus.forEach(r => annees.add(r.annee));
+  const val = sel.value || String(curYear);
+  const sorted = [...annees].sort().reverse();
+  sel.innerHTML = sorted.map(a => `<option ${a === val ? 'selected' : ''}>${a}</option>`).join('');
+}
+
+function renderImpots() {
+  populateImpAnnee();
+  const annee = getImpAnneeCourante();
+
+  // ── Barème ──
+  const bl = document.getElementById('imp-bareme-list');
+  const sortedBareme = state.impots.bareme.map((t, i) => ({ ...t, i }))
+    .sort((a, b) => a.seuil - b.seuil);
+  bl.innerHTML = sortedBareme.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="font-size:0.82rem;color:var(--text2);white-space:nowrap">Au-dessus de</span>
+      <input type="number" value="${t.seuil}" step="1" style="width:90px;padding:5px 8px;border:1px solid #ddd6c8;border-radius:6px"
+        onchange="updateTrancheBareme(${t.i},'seuil',parseFloat(this.value)||0)">
+      <span style="font-size:0.82rem;color:var(--text2)">€ →</span>
+      <input type="number" value="${t.taux * 100}" step="0.5" style="width:70px;padding:5px 8px;border:1px solid #ddd6c8;border-radius:6px"
+        onchange="updateTrancheBareme(${t.i},'taux',(parseFloat(this.value)||0)/100)">
+      <span style="font-size:0.82rem;color:var(--text2)">%</span>
+      <button class="btn-icon btn-danger-icon" onclick="supprimerTrancheBareme(${t.i})" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+    </div>
+  `).join('');
+
+  // ── Revenus : onglets personne, puis sous-onglets type/source (fixes, auto-créés) ──
+  if (impPersonneActive === 'Victor') ensureVictorRevenu(annee);
+  if (impPersonneActive === 'Jéromine') ensureJeromineRevenus(annee);
+
+  const pt = document.getElementById('imp-personne-tabs');
+  pt.innerHTML = IMP_PERSONNES.map(p => `
+    <button class="ptab vtab${p === impPersonneActive ? ' active' : ''}" onclick="switchImpPersonne('${p}')">${p}</button>
+  `).join('');
+
+  const revenusPersonne = state.impots.revenus.filter(r => r.personne === impPersonneActive && r.annee === annee);
+  let activeId = impRevenuActifParPersonne[impPersonneActive];
+  if (!activeId || !revenusPersonne.find(r => r.id === activeId)) {
+    activeId = revenusPersonne[0] ? revenusPersonne[0].id : null;
+    impRevenuActifParPersonne[impPersonneActive] = activeId;
+  }
+
+  const rt = document.getElementById('imp-revenu-tabs');
+  rt.innerHTML = revenusPersonne.length > 1 ? revenusPersonne.map(r => `
+    <button class="ptab vtab${r.id === activeId ? ' active' : ''}" onclick="switchImpRevenu('${r.id}')">${r.source || (r.type === 'salaire' ? 'Salaire' : 'CA')}</button>
+  `).join('') : '';
+
+  const ra = document.getElementById('imp-revenu-actif');
+  const rActif = revenusPersonne.find(r => r.id === activeId);
+  if (!rActif) {
+    ra.innerHTML = `<p style="font-size:0.85rem;color:var(--text2)">Aucun revenu saisi pour ${impPersonneActive} en ${annee}.</p>`;
+  } else {
+    const total = MOIS_LIST.reduce((s, m) => s + (rActif.montants[m] || 0), 0);
+    const totalPas = MOIS_LIST.reduce((s, m) => s + (rActif.pas[m] || 0), 0);
+    const canAutoCA = rActif.personne === 'Jéromine' && rActif.type === 'ca' && rActif.source === 'Dardidog';
+    ra.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px">
+        ${canAutoCA ? `<button class="btn btn-secondary" style="font-size:0.78rem;padding:6px 10px" onclick="recupererCADardidog('${rActif.id}')">Récupérer le CA encaissé</button>` : ''}
+        <button class="btn-icon btn-danger-icon" onclick="supprimerRevenuImpot('${rActif.id}')" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mois</th><th>Montant</th><th>PAS</th></tr></thead>
+          <tbody>
+            ${MOIS_LIST.map(m => `
+              <tr>
+                <td>${m}</td>
+                <td>${canAutoCA
+                  ? `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" disabled title="Récupéré automatiquement depuis le CA encaissé" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px;background:var(--surface2);color:var(--text2)">`
+                  : `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
+                      onchange="updateRevenuChamp('${rActif.id}','montants','${m}',parseFloat(this.value)||0)">`}</td>
+                <td><input type="number" value="${rActif.pas[m] || ''}" step="0.01" placeholder="0" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
+                  onchange="updateRevenuChamp('${rActif.id}','pas','${m}',parseFloat(this.value)||0)"></td>
+              </tr>
+            `).join('')}
+            <tr style="background:var(--surface2)">
+              <td style="font-weight:600">Total</td>
+              <td style="font-weight:600">${total.toFixed(2)}€</td>
+              <td style="font-weight:600">${totalPas.toFixed(2)}€</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // ── Dons et crédits : liste de lignes, propres à la personne active ──
+  const dl = document.getElementById('imp-dons-list');
+  {
+    const liste = getDonsCreditsListe(impPersonneActive, annee);
+    const svgTrash = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+    dl.innerHTML = `
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="imp-dc-type" onchange="onImpDonsTypeChange()">
+            <option value="don">Don</option>
+            <option value="credit">Crédit d'impôt</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Montant (€)</label>
+          <input type="number" id="imp-dc-montant" step="0.01" placeholder="0">
+        </div>
+      </div>
+      <div class="form-grid cols-1" id="imp-dc-taux-wrap" style="margin-top:8px">
+        <div class="form-group">
+          <label>Taux d'abattement (%)</label>
+          <input type="number" id="imp-dc-taux" step="1" value="75">
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-primary" onclick="ajouterDonCredit()">Ajouter</button>
+      </div>
+      ${liste.length ? `
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Type</th><th>Montant</th><th>Taux</th><th></th></tr></thead>
+          <tbody>
+            ${liste.map(d => `
+              <tr>
+                <td>${d.type === 'don' ? 'Don' : "Crédit d'impôt"}</td>
+                <td>${d.montant.toFixed(2)}€</td>
+                <td>${d.type === 'don' ? d.taux + '%' : '—'}</td>
+                <td><button class="btn-icon btn-danger-icon" onclick="supprimerDonCredit('${d.id}')" title="Supprimer">${svgTrash}</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>` : `<p style="font-size:0.85rem;color:var(--text2);margin-top:10px">Aucun don ou crédit saisi pour ${impPersonneActive} en ${annee}.</p>`}
+    `;
+  }
+
+  // ── Résultats ──
+  const res = calculerImpots(annee);
+  const fmt = n => n.toFixed(2).replace('.', ',') + ' €';
+  const regSigne = n => `<span style="color:${n > 0 ? '#b14545' : '#2d7a4f'}">${n > 0 ? 'Reste à payer : ' : 'À rembourser : '}${fmt(Math.abs(n))}</span>`;
+  document.getElementById('imp-resultats').innerHTML = `
+    <div class="stats-row">
+      ${IMP_PERSONNES.map(p => `
+        <div class="stat-card">
+          <div class="stat-val" style="font-size:1.3rem">${fmt(res.impotsIndiv[p])}</div>
+          <div class="stat-label">Impôt dû — ${p} (individuel)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="font-size:1.3rem">${fmt(res.pas[p])}</div>
+          <div class="stat-label">Déjà payé (PAS) — ${p}</div>
+        </div>
+        <div class="stat-card full" style="text-align:center">
+          ${regSigne(res.regularisations[p])}
+          <div class="stat-label">Régularisation — ${p}, déclaration individuelle</div>
+        </div>
+      `).join('')}
+      <div class="stat-card">
+        <div class="stat-val" style="font-size:1.3rem">${fmt(res.impotFoyer)}</div>
+        <div class="stat-label">Impôt dû — foyer</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="font-size:1.3rem">${fmt(res.totalPAS)}</div>
+        <div class="stat-label">Déjà payé (PAS) — foyer</div>
+      </div>
+      <div class="stat-card full" style="text-align:center">
+        ${regSigne(res.regularisationCommune)}
+        <div class="stat-label">Régularisation — déclaration commune</div>
+      </div>
+    </div>
+  `;
+}
+
+function ajouterTrancheBareme() {
+  state.impots.bareme.push({ seuil: 0, taux: 0 });
+  saveState();
+  renderImpots();
+}
+
+function updateTrancheBareme(i, field, val) {
+  if (!state.impots.bareme[i]) return;
+  state.impots.bareme[i][field] = val;
+  saveState();
+  renderImpots();
+}
+
+function supprimerTrancheBareme(i) {
+  if (!confirm('Supprimer cette tranche ?')) return;
+  state.impots.bareme.splice(i, 1);
+  saveState();
+  renderImpots();
+}
+
+function switchImpPersonne(p) {
+  impPersonneActive = p;
+  renderImpots();
+}
+
+function switchImpRevenu(id) {
+  impRevenuActifParPersonne[impPersonneActive] = id;
+  renderImpots();
+}
+
+function ensureVictorRevenu(annee) {
+  const existing = state.impots.revenus.find(r => r.personne === 'Victor' && r.annee === annee);
+  if (!existing) {
+    state.impots.revenus.push({ id: uid(), annee, personne: 'Victor', type: 'salaire', source: 'Salaire', montants: {}, pas: {} });
+    saveState();
+  }
+}
+
+function ensureJeromineRevenus(annee) {
+  const existantes = state.impots.revenus.filter(r => r.personne === 'Jéromine' && r.annee === annee);
+  let changed = false;
+  if (!existantes.find(r => r.type === 'salaire')) {
+    state.impots.revenus.push({ id: uid(), annee, personne: 'Jéromine', type: 'salaire', source: 'Salaire', montants: {}, pas: {} });
+    changed = true;
+  }
+  if (!existantes.find(r => r.type === 'ca')) {
+    state.impots.revenus.push({ id: uid(), annee, personne: 'Jéromine', type: 'ca', source: 'Dardidog', montants: {}, pas: {} });
+    changed = true;
+  }
+  if (changed) saveState();
+}
+
+function supprimerRevenuImpot(id) {
+  if (!confirm('Supprimer ce revenu ? (il sera recréé vide au prochain affichage)')) return;
+  state.impots.revenus = state.impots.revenus.filter(r => r.id !== id);
+  if (impRevenuActifParPersonne[impPersonneActive] === id) {
+    impRevenuActifParPersonne[impPersonneActive] = null;
+  }
+  saveState();
+  renderImpots();
+}
+
+function updateRevenuChamp(id, champ, mois, val) {
+  const r = state.impots.revenus.find(x => x.id === id);
+  if (!r) return;
+  r[champ][mois] = val;
+  saveState();
+  renderImpots();
+}
+
+function recupererCADardidog(revenuId) {
+  const r = state.impots.revenus.find(x => x.id === revenuId);
+  if (!r) return;
+  const annee = r.annee;
+  const parMois = {};
+  MOIS_LIST.forEach(m => parMois[m] = 0);
+  state.recettes
+    .filter(rec => rec.statut === 'Payé' && (rec.datePaiement || rec.date || '').startsWith(annee))
+    .forEach(rec => {
+      const mois = getMoisFromDate(rec.datePaiement || rec.date);
+      if (mois) parMois[mois] += rec.montant || 0;
+    });
+  r.montants = parMois;
+  saveState();
+  renderImpots();
+  showAlert('alert-impots', 'CA Dardidog encaissé récupéré.', 'success');
+}
+
+function onImpDonsTypeChange() {
+  const type = document.getElementById('imp-dc-type').value;
+  document.getElementById('imp-dc-taux-wrap').style.display = type === 'don' ? '' : 'none';
+}
+
+function ajouterDonCredit() {
+  const type = document.getElementById('imp-dc-type').value;
+  const montant = parseFloat(document.getElementById('imp-dc-montant').value) || 0;
+  const taux = type === 'don' ? (parseFloat(document.getElementById('imp-dc-taux').value) || 0) : 0;
+  const annee = getImpAnneeCourante();
+  state.impots.donsCredits.push({ id: uid(), personne: impPersonneActive, annee, type, montant, taux });
+  saveState();
+  renderImpots();
+  showAlert('alert-impots', 'Ligne ajoutée.', 'success');
+}
+
+function supprimerDonCredit(id) {
+  if (!confirm('Supprimer cette ligne ?')) return;
+  state.impots.donsCredits = state.impots.donsCredits.filter(d => d.id !== id);
+  saveState();
+  renderImpots();
 }
 
 // ═══════════════════════════════════════════════════════════════
