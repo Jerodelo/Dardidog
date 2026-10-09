@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="gestion.css?v=20">
+<link rel="stylesheet" href="gestion.css?v=21">
 </style>
 
 </head>
@@ -499,15 +499,15 @@
 
     <div class="planning-tabs" id="imp-personne-tabs"></div>
     <div class="card" style="margin-bottom:16px">
-      <div style="max-width:90%;margin:0 auto">
+      <div class="imp-subcard-wrap">
         <div class="planning-tabs" id="imp-revenu-tabs"></div>
-        <div class="card" style="margin-bottom:0;padding:16px">
+        <div class="card imp-subcard">
           <div id="imp-revenu-actif"></div>
         </div>
       </div>
 
-      <div style="max-width:90%;margin:20px auto 0">
-        <div class="card" style="margin-bottom:0;padding:16px">
+      <div class="imp-subcard-wrap" style="margin-top:20px">
+        <div class="card imp-subcard">
           <h3 style="margin-top:0">Dons et crédits d'impôts</h3>
           <div id="imp-dons-list"></div>
         </div>
@@ -970,7 +970,7 @@
 </div>
 
 <div id="gs-toast"></div>
-<script src="gestion.js?v=20"></script>
+<script src="gestion.js?v=21"></script>
 <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 
 </body>

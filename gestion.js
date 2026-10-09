@@ -2145,10 +2145,10 @@ function renderImpots() {
               <tr>
                 <td>${m}</td>
                 <td>${canAutoCA
-                  ? `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" disabled title="Récupéré automatiquement depuis le CA encaissé" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px;background:var(--surface2);color:var(--text2)">`
-                  : `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
+                  ? `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" disabled title="Récupéré automatiquement depuis le CA encaissé" class="imp-cell-input" style="padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px;background:var(--surface2);color:var(--text2)">`
+                  : `<input type="number" value="${rActif.montants[m] || ''}" step="0.01" placeholder="0" class="imp-cell-input" style="padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
                       onchange="updateRevenuChamp('${rActif.id}','montants','${m}',parseFloat(this.value)||0)">`}</td>
-                <td><input type="number" value="${rActif.pas[m] || ''}" step="0.01" placeholder="0" style="width:90px;padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
+                <td><input type="number" value="${rActif.pas[m] || ''}" step="0.01" placeholder="0" class="imp-cell-input" style="padding:4px 6px;border:1px solid #ddd6c8;border-radius:6px"
                   onchange="updateRevenuChamp('${rActif.id}','pas','${m}',parseFloat(this.value)||0)"></td>
               </tr>
             `).join('')}

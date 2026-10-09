@@ -358,6 +358,16 @@ color: var(--text2); transition: all 0.2s; flex: 1; text-align: center;
   .ptab.vtab { font-size: 0.75rem; padding: 7px 8px 9px; }
 }
 
+.imp-subcard-wrap { max-width: 90%; margin: 0 auto; }
+.imp-subcard { padding: 16px; }
+.imp-cell-input { width: 90px; }
+@media (max-width: 600px) {
+  .imp-subcard-wrap { max-width: 100%; }
+  .imp-subcard { padding: 8px; }
+  #page-impots > .card { padding: 12px; }
+  .imp-cell-input { width: 62px; }
+}
+
 .planning-nav {
 display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
 }
