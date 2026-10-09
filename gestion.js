@@ -654,7 +654,7 @@ function renderPrestations() {
       ? `<span style="background:var(--accent2);color:#fff;border-radius:4px;padding:2px 7px;font-size:0.72rem;font-weight:600;white-space:nowrap">✓ ${p.facture}</span>`
       : `<span style="border:1px solid #bbb;border-radius:4px;padding:2px 7px;font-size:0.72rem;color:#999;background:transparent;white-space:nowrap">—</span>`;
     return `
-    <tr>
+    <tr style="cursor:pointer" ontouchstart="startLongPress('${p.id}')" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" oncontextmenu="openPrestationContextMenu('${p.id}');return false;">
       <td>${formatDate(p.date)}</td>
       <td><strong>${p.animal}</strong></td>
       <td style="color:#4a6355">${p.client}</td>
@@ -662,7 +662,8 @@ function renderPrestations() {
       <td><strong>${p.montant}€</strong></td>
       <td style="text-align:center">${factureBadge}</td>
       <td>
-        <button class="btn-icon btn-danger-icon" onclick="supprimerPrestation('${p.id}')" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+        <button class="btn-icon" onclick="openPrestationContextMenu('${p.id}');event.stopPropagation()" title="Modifier / dupliquer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="btn-icon btn-danger-icon" onclick="supprimerPrestation('${p.id}');event.stopPropagation()" title="Supprimer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
       </td>
     </tr>`;
   }).join('');
@@ -2829,23 +2830,82 @@ function setDepenseMode(mode) {
   lCA.style.background  = mode === 'caextra' ? 'var(--accent)' : 'transparent';
   lCA.style.color       = mode === 'caextra' ? '#fff' : 'var(--text2)';
   document.getElementById('dep-type-group').style.display = mode === 'depense' ? '' : 'none';
+  document.getElementById('dep-recurrence-group').style.display = mode === 'depense' ? '' : 'none';
+  if (mode !== 'depense') setDepenseRecurrence('ponctuelle');
+}
+
+function setDepenseRecurrence(mode) {
+  const lPonct = document.getElementById('btn-recur-ponctuelle-label');
+  const lRecur = document.getElementById('btn-recur-recurrente-label');
+  lPonct.style.background = mode === 'ponctuelle' ? 'var(--accent)' : 'transparent';
+  lPonct.style.color      = mode === 'ponctuelle' ? '#fff' : 'var(--text2)';
+  lRecur.style.background = mode === 'recurrente' ? 'var(--accent)' : 'transparent';
+  lRecur.style.color      = mode === 'recurrente' ? '#fff' : 'var(--text2)';
+  document.getElementById('dep-date-group').style.display  = mode === 'ponctuelle' ? '' : 'none';
+  document.getElementById('dep-recur-fields').style.display = mode === 'recurrente' ? '' : 'none';
+}
+
+// Génère les dates ISO d'une série récurrente entre debut et fin inclus.
+// Cale toujours sur le jour du mois de la date de début (plafonné à la
+// longueur du mois d'arrivée, ex: départ le 31 janvier -> 28/29 février).
+function genererDatesRecurrence(debut, fin, frequence) {
+  const pas = frequence === 'trimestrielle' ? 3 : frequence === 'annuelle' ? 12 : 1;
+  const dDebut = new Date(debut + 'T00:00:00');
+  const dFin   = new Date(fin + 'T00:00:00');
+  const jour   = dDebut.getDate();
+  const dates = [];
+  let i = 0;
+  while (true) {
+    const d = new Date(dDebut.getFullYear(), dDebut.getMonth() + i * pas, 1);
+    const dernierJourMois = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(jour, dernierJourMois));
+    if (d > dFin) break;
+    dates.push(dateToISO(d));
+    i++;
+    if (i > 1000) break; // garde-fou
+  }
+  return dates;
 }
 
 function ajouterDepense() {
   const label = document.getElementById('dep-label').value.trim();
-  const date = document.getElementById('dep-date').value;
   const montant = parseFloat(document.getElementById('dep-montant').value) || 0;
-  if (!date) { showAlert('alert-depenses', '⚠️ La date est obligatoire.', 'error'); return; }
 
   if (depenseMode === 'caextra') {
+    const date = document.getElementById('dep-date').value;
+    if (!date) { showAlert('alert-depenses', '⚠️ La date est obligatoire.', 'error'); return; }
     state.caExtra.push({ id: uid(), label, date, montant });
     saveState();
     ['dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     document.getElementById('dep-date').value = dateToISO(new Date());
     renderDepenses();
     showAlert('alert-depenses', 'Extra ajouté.', 'success');
+    return;
+  }
+
+  const type = document.getElementById('dep-type').value;
+  const recurrence = document.querySelector('input[name="dep-recurrence"]:checked').value;
+
+  if (recurrence === 'recurrente') {
+    const frequence = document.getElementById('dep-recur-frequence').value;
+    const debut = document.getElementById('dep-recur-debut').value;
+    const fin = document.getElementById('dep-recur-fin').value;
+    if (!debut || !fin) { showAlert('alert-depenses', '⚠️ La date de début et de fin sont obligatoires.', 'error'); return; }
+    if (fin < debut) { showAlert('alert-depenses', '⚠️ La date de fin doit être après la date de début.', 'error'); return; }
+    const recurrenceId = uid();
+    const dates = genererDatesRecurrence(debut, fin, frequence);
+    dates.forEach(date => {
+      state.depenses.push({ id: uid(), type, label, date, montant, recurrenceId, recurrenceFrequence: frequence, recurrenceDebut: debut, recurrenceFin: fin });
+    });
+    saveState();
+    ['dep-type','dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('dep-recur-debut').value = '';
+    document.getElementById('dep-recur-fin').value = '';
+    renderDepenses();
+    showAlert('alert-depenses', `Charge récurrente ajoutée (${dates.length} occurrence${dates.length > 1 ? 's' : ''}).`, 'success');
   } else {
-    const type = document.getElementById('dep-type').value;
+    const date = document.getElementById('dep-date').value;
+    if (!date) { showAlert('alert-depenses', '⚠️ La date est obligatoire.', 'error'); return; }
     state.depenses.push({ id: uid(), type, label, date, montant });
     saveState();
     ['dep-type','dep-label','dep-montant'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
@@ -2902,29 +2962,116 @@ function renderDepenses() {
   if (!items.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   const svgTrash = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+  const svgEdit = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const svgRecur = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-left:4px" title="Charge récurrente"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>`;
   tbody.innerHTML = items.map(d => {
     const isExtra = d._caextra;
     const typeLabel = isExtra ? '<span style="color:#2d7a4f;font-weight:600;font-size:0.82rem">Extra</span>' : `<span style="color:var(--text2);font-size:0.82rem">${d.type||'—'}</span>`;
     const montantLabel = isExtra
       ? `<span style="color:#2d7a4f;font-weight:600">+${(d.montant||0).toFixed(2)} €</span>`
       : `${(d.montant||0).toFixed(2)} €`;
-    const deleteBtn = isExtra
+    const rowAttrs = isExtra ? '' : `style="cursor:pointer" ontouchstart="startLongPressDep('${d.id}')" ontouchend="cancelLongPressDep()" ontouchmove="cancelLongPressDep()" oncontextmenu="openDepenseContextMenu('${d.id}');return false;"`;
+    const actions = isExtra
       ? `<button class="btn-icon btn-danger-icon" onclick="supprimerCaExtra('${d.id}')" title="Supprimer">${svgTrash}</button>`
-      : `<button class="btn-icon btn-danger-icon" onclick="supprimerDepense('${d.id}')" title="Supprimer">${svgTrash}</button>`;
-    return `<tr>
+      : `<button class="btn-icon" onclick="openDepenseContextMenu('${d.id}');event.stopPropagation()" title="Modifier">${svgEdit}</button>
+         <button class="btn-icon btn-danger-icon" onclick="supprimerDepense('${d.id}');event.stopPropagation()" title="Supprimer">${svgTrash}</button>`;
+    return `<tr ${rowAttrs}>
       <td>${d.date ? new Date(d.date+'T00:00:00').toLocaleDateString('fr-FR') : ''}</td>
       <td>${typeLabel}</td>
-      <td>${d.label||'—'}</td>
+      <td>${d.label||'—'}${d.recurrenceId ? svgRecur : ''}</td>
       <td>${montantLabel}</td>
-      <td>${deleteBtn}</td>
+      <td>${actions}</td>
     </tr>`;
   }).join('');
 }
 
 function supprimerDepense(id) {
-  if (!confirm('Supprimer cette charge ?')) return;
+  const d = state.depenses.find(x => x.id === id);
+  const msg = d && d.recurrenceId
+    ? 'Supprimer cette occurrence de la charge récurrente ? (les autres occurrences de la série ne sont pas touchées)'
+    : 'Supprimer cette charge ?';
+  if (!confirm(msg)) return;
   state.depenses = state.depenses.filter(d => d.id !== id);
   saveState(); renderDepenses();
+}
+
+let _lpTimerDep = null;
+let _lpContextDepId = null;
+function startLongPressDep(id) {
+  _lpTimerDep = setTimeout(() => { _lpTimerDep = null; openDepenseContextMenu(id); }, 600);
+}
+function cancelLongPressDep() { if (_lpTimerDep) { clearTimeout(_lpTimerDep); _lpTimerDep = null; } }
+
+function openDepenseContextMenu(id) {
+  const d = state.depenses.find(x => x.id === id);
+  if (!d) return;
+  _lpContextDepId = id;
+  document.getElementById('modal-action-depense-label').textContent = `${d.type || 'Charge'} — ${d.label || d.date}`;
+  document.getElementById('modal-action-depense').classList.add('open');
+}
+
+function supprimerDepenseDepuisMenu() {
+  closeModal('modal-action-depense');
+  if (_lpContextDepId) supprimerDepense(_lpContextDepId);
+}
+
+function ouvrirEditionDepense() {
+  closeModal('modal-action-depense');
+  const d = state.depenses.find(x => x.id === _lpContextDepId);
+  if (!d) return;
+
+  document.getElementById('ed-type').value = d.type || '';
+  document.getElementById('ed-label').value = d.label || '';
+  document.getElementById('ed-montant').value = d.montant || '';
+  document.getElementById('ed-date').value = d.date || '';
+
+  const estRecurrente = !!d.recurrenceId;
+  document.getElementById('ed-date-group').style.display = estRecurrente ? 'none' : '';
+  document.getElementById('ed-recur-fields').style.display = estRecurrente ? '' : 'none';
+  if (estRecurrente) {
+    document.getElementById('ed-recur-frequence').value = d.recurrenceFrequence || 'mensuelle';
+    document.getElementById('ed-recur-debut').value = d.recurrenceDebut || d.date;
+    document.getElementById('ed-recur-fin').value = d.recurrenceFin || d.date;
+  }
+
+  document.getElementById('modal-edit-depense').classList.add('open');
+}
+
+function sauvegarderEditionDepense() {
+  const d = state.depenses.find(x => x.id === _lpContextDepId);
+  if (!d) return;
+
+  const type = document.getElementById('ed-type').value;
+  const label = document.getElementById('ed-label').value.trim();
+  const montant = parseFloat(document.getElementById('ed-montant').value) || 0;
+
+  if (d.recurrenceId) {
+    const frequence = document.getElementById('ed-recur-frequence').value;
+    const debut = document.getElementById('ed-recur-debut').value;
+    const fin = document.getElementById('ed-recur-fin').value;
+    if (!debut || !fin) { showAlert('', '⚠️ La date de début et de fin sont obligatoires.', 'error'); return; }
+    if (fin < debut) { showAlert('', '⚠️ La date de fin doit être après la date de début.', 'error'); return; }
+
+    const recurrenceId = d.recurrenceId;
+    state.depenses = state.depenses.filter(x => x.recurrenceId !== recurrenceId);
+    const dates = genererDatesRecurrence(debut, fin, frequence);
+    dates.forEach(date => {
+      state.depenses.push({ id: uid(), type, label, date, montant, recurrenceId, recurrenceFrequence: frequence, recurrenceDebut: debut, recurrenceFin: fin });
+    });
+    showAlert('', `Série récurrente mise à jour (${dates.length} occurrence${dates.length > 1 ? 's' : ''}).`, 'success');
+  } else {
+    const date = document.getElementById('ed-date').value;
+    if (!date) { showAlert('', '⚠️ La date est obligatoire.', 'error'); return; }
+    d.type = type;
+    d.label = label;
+    d.montant = montant;
+    d.date = date;
+    showAlert('', 'Charge modifiée.', 'success');
+  }
+
+  saveState();
+  renderDepenses();
+  closeModal('modal-edit-depense');
 }
 
 function supprimerCaExtra(id) {

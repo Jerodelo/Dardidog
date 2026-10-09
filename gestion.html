@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="gestion.css?v=21">
+<link rel="stylesheet" href="gestion.css?v=22">
 </style>
 
 </head>
@@ -390,6 +390,16 @@
           <span id="btn-mode-caextra-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:transparent;color:var(--text2);transition:.15s">Extra</span>
         </label>
       </div>
+      <div id="dep-recurrence-group" style="display:flex;gap:0;margin-bottom:14px;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content">
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="dep-recurrence" id="btn-recur-ponctuelle" value="ponctuelle" checked onchange="setDepenseRecurrence('ponctuelle')" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+          <span id="btn-recur-ponctuelle-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:var(--accent);color:#fff;transition:.15s">Ponctuelle</span>
+        </label>
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="dep-recurrence" id="btn-recur-recurrente" value="recurrente" onchange="setDepenseRecurrence('recurrente')" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+          <span id="btn-recur-recurrente-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:transparent;color:var(--text2);transition:.15s">Récurrente</span>
+        </label>
+      </div>
       <div class="form-grid">
         <div class="form-group" id="dep-type-group">
           <label>Type</label>
@@ -406,13 +416,31 @@
           <label>Libellé</label>
           <input type="text" id="dep-label" placeholder="Ex: Plein du 15 mai…">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="dep-date-group">
           <label>Date</label>
           <input type="date" id="dep-date">
         </div>
         <div class="form-group">
           <label>Montant (€)</label>
           <input type="number" id="dep-montant" step="0.01" min="0" placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-grid" id="dep-recur-fields" style="display:none;margin-top:10px">
+        <div class="form-group">
+          <label>Fréquence</label>
+          <select id="dep-recur-frequence">
+            <option value="mensuelle" selected>Mensuelle</option>
+            <option value="trimestrielle">Trimestrielle</option>
+            <option value="annuelle">Annuelle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date début</label>
+          <input type="date" id="dep-recur-debut">
+        </div>
+        <div class="form-group">
+          <label>Date fin</label>
+          <input type="date" id="dep-recur-fin">
         </div>
       </div>
       <div class="btn-row">
@@ -888,6 +916,75 @@
   </div>
 </div>
 
+<!-- MODAL ACTION CHARGE (appui long liste des charges) -->
+<div class="modal-overlay" id="modal-action-depense" onclick="closeModal('modal-action-depense')">
+  <div class="modal" style="max-width:320px;padding:24px;text-align:center" onclick="event.stopPropagation()">
+    <p id="modal-action-depense-label" style="font-weight:600;color:var(--color-primary);margin-bottom:20px;font-size:0.95rem"></p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" onclick="ouvrirEditionDepense()">Modifier</button>
+      <button class="btn btn-danger" onclick="supprimerDepenseDepuisMenu()">Supprimer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-action-depense')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ÉDITION CHARGE -->
+<div class="modal-overlay" id="modal-edit-depense" onclick="closeModal('modal-edit-depense')">
+  <div class="modal" style="max-width:480px;padding:24px;overflow-y:auto;max-height:90vh" onclick="event.stopPropagation()">
+    <div style="font-weight:700;font-size:1.1rem;color:var(--color-primary);margin-bottom:18px">Modifier la charge</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Type</label>
+        <select id="ed-type">
+          <option value="">-- Choisir --</option>
+          <option>Essence</option>
+          <option>Matériel</option>
+          <option>Communication</option>
+          <option>Frais de gestion</option>
+          <option>Impôts</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Libellé</label>
+        <input type="text" id="ed-label" placeholder="Ex: Plein du 15 mai…">
+      </div>
+      <div class="form-group" id="ed-date-group">
+        <label>Date</label>
+        <input type="date" id="ed-date">
+      </div>
+      <div class="form-group">
+        <label>Montant (€)</label>
+        <input type="number" id="ed-montant" step="0.01" min="0" placeholder="0.00">
+      </div>
+    </div>
+    <div id="ed-recur-fields" style="display:none">
+      <p style="font-size:0.8rem;color:var(--text2);margin:14px 0 8px">Cette charge fait partie d'une série récurrente. Modifier ces champs régénère toutes les occurrences de la série (passées incluses). Pour arrêter la récurrence à partir d'une certaine date, réduis simplement la date de fin.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Fréquence</label>
+          <select id="ed-recur-frequence">
+            <option value="mensuelle">Mensuelle</option>
+            <option value="trimestrielle">Trimestrielle</option>
+            <option value="annuelle">Annuelle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date début</label>
+          <input type="date" id="ed-recur-debut">
+        </div>
+        <div class="form-group">
+          <label>Date fin</label>
+          <input type="date" id="ed-recur-fin">
+        </div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:20px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-depense')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderEditionDepense()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ACTION ÉVÉNEMENT (appui long agenda) -->
 <div class="modal-overlay" id="modal-action-ev" onclick="closeModal('modal-action-ev')">
   <div class="modal" style="max-width:320px;padding:24px;text-align:center" onclick="event.stopPropagation()">
@@ -970,7 +1067,7 @@
 </div>
 
 <div id="gs-toast"></div>
-<script src="gestion.js?v=21"></script>
+<script src="gestion.js?v=22"></script>
 <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 
 </body>
