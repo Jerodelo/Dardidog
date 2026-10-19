@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="gestion.css?v=22">
+<link rel="stylesheet" href="gestion.css?v=23">
 </style>
 
 </head>
@@ -37,6 +37,7 @@
      <li><a href="#" data-page="planning" onclick="showPage('planning');return false;">Planning</a></li>
      <li><a href="#" data-page="recettes" onclick="showPage('recettes');return false;">Factures</a></li>
           <li><a href="#" data-page="depenses" onclick="showPage('depenses');return false;">Charges</a></li>
+      <li><a href="#" data-page="contrats" onclick="showPage('contrats');return false;">Contrats</a></li>
       <li><a href="#" data-page="bilan" onclick="showPage('bilan');return false;">Bilan</a></li>
       <li><a href="#" data-page="impots" onclick="showPage('impots');return false;">Imp&ocirc;ts</a></li>
       <li><a href="#" data-page="clients" onclick="showPage('clients');return false;">Clients</a></li>
@@ -69,6 +70,7 @@
    <li><a href="#" data-page="recettes" onclick="showPage('recettes');closeMobileNav();return false;">Factures</a></li>
      <li><a href="#" data-page="depenses" onclick="showPage('depenses');closeMobileNav();return false;">Charges</a></li>
     
+      <li><a href="#" data-page="contrats" onclick="showPage('contrats');closeMobileNav();return false;">Contrats</a></li>
       <li><a href="#" data-page="bilan" onclick="showPage('bilan');closeMobileNav();return false;">Bilan</a></li>
       <li><a href="#" data-page="impots" onclick="showPage('impots');closeMobileNav();return false;">Imp&ocirc;ts</a></li>
       <li><a href="#" data-page="clients" onclick="showPage('clients');closeMobileNav();return false;">Clients</a></li>
@@ -476,6 +478,80 @@
       <div id="empty-depenses" class="empty" style="display:none"><div>Aucune charge pour ces filtres</div></div>
     </div>
     </div><!-- /charge-vue-liste -->
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- PAGE CONTRATS -->
+
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <div class="page" id="page-contrats">
+    <div class="page-title">Contrats</div>
+    <div id="alert-contrats"></div>
+
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client</label>
+          <select id="ctr-client" onchange="onContratClientChange()"><option value="">-- Choisir --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Type de prestation</label>
+          <select id="ctr-prestation">
+            <option value="visite">Visite à domicile</option>
+            <option value="promenade">Promenade</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full" style="margin-top:14px">
+        <label>Animal(aux) concerné(s)</label>
+        <div id="ctr-animaux-list" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px">
+          <span style="font-size:0.85rem;color:var(--text2)">Choisissez d'abord un client.</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;margin:14px 0 0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content">
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="ctr-validite" id="btn-ctr-ponctuelle" value="ponctuelle" checked onchange="setContratValidite('ponctuelle')" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+          <span id="btn-ctr-ponctuelle-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:var(--accent);color:#fff;transition:.15s">Ponctuel</span>
+        </label>
+        <label style="margin:0;cursor:pointer">
+          <input type="radio" name="ctr-validite" id="btn-ctr-annuelle" value="annuelle" onchange="setContratValidite('annuelle')" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+          <span id="btn-ctr-annuelle-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:transparent;color:var(--text2);transition:.15s">Annuel</span>
+        </label>
+      </div>
+
+      <div class="form-grid" id="ctr-dates-ponctuel" style="margin-top:10px">
+        <div class="form-group">
+          <label>Date début</label>
+          <input type="date" id="ctr-debut">
+        </div>
+        <div class="form-group">
+          <label>Date fin</label>
+          <input type="date" id="ctr-fin">
+        </div>
+      </div>
+      <div class="form-grid cols-1" id="ctr-dates-annuel" style="display:none;margin-top:10px">
+        <div class="form-group">
+          <label>Date de signature</label>
+          <input type="date" id="ctr-signature">
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn btn-primary" onclick="genererLienContrat()">Générer le lien</button>
+      </div>
+
+      <div id="ctr-resultat" style="display:none;margin-top:16px">
+        <label>Lien à envoyer au client</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input type="text" id="ctr-lien" readonly style="flex:1">
+          <button class="btn btn-secondary" onclick="copierLienContrat()">Copier</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- PAGE BILAN -->
@@ -1067,7 +1143,7 @@
 </div>
 
 <div id="gs-toast"></div>
-<script src="gestion.js?v=22"></script>
+<script src="gestion.js?v=23"></script>
 <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 
 </body>

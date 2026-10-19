@@ -275,6 +275,7 @@ function showPage(name) {
   if (name === 'clients') switchClientsVue('animaux');
   if (name === 'donnees') switchDonneesTab('presta');
   if (name === 'impots') renderImpots();
+  if (name === 'contrats') renderContrats();
   if (name === 'planning') { jourDate = new Date(); renderPlanning(); }
 }
 
@@ -2993,6 +2994,95 @@ function supprimerDepense(id) {
   if (!confirm(msg)) return;
   state.depenses = state.depenses.filter(d => d.id !== id);
   saveState(); renderDepenses();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONTRATS (génération de lien à faire signer)
+// ═══════════════════════════════════════════════════════════════
+
+function renderContrats() {
+  const sel = document.getElementById('ctr-client');
+  if (!sel) return;
+  const val = sel.value;
+  const noms = state.clients.map(c => c.nom).sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">-- Choisir --</option>' +
+    noms.map(n => `<option ${n === val ? 'selected' : ''}>${n}</option>`).join('');
+  onContratClientChange();
+}
+
+function onContratClientChange() {
+  const nom = document.getElementById('ctr-client').value;
+  const list = document.getElementById('ctr-animaux-list');
+  const client = state.clients.find(c => c.nom === nom);
+  if (!client || !(client.animaux || []).length) {
+    list.innerHTML = `<span style="font-size:0.85rem;color:var(--text2)">${nom ? 'Aucun animal enregistré pour ce client.' : "Choisissez d'abord un client."}</span>`;
+    return;
+  }
+  list.innerHTML = client.animaux.map(a => `
+    <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer">
+      <input type="checkbox" class="ctr-animal-check" value="${a.nom.replace(/"/g, '&quot;')}" checked>
+      ${a.nom}${a.race ? ` (${a.race})` : ''}
+    </label>
+  `).join('');
+}
+
+function setContratValidite(mode) {
+  const lPonct = document.getElementById('btn-ctr-ponctuelle-label');
+  const lAnnuel = document.getElementById('btn-ctr-annuelle-label');
+  lPonct.style.background = mode === 'ponctuelle' ? 'var(--accent)' : 'transparent';
+  lPonct.style.color      = mode === 'ponctuelle' ? '#fff' : 'var(--text2)';
+  lAnnuel.style.background = mode === 'annuelle' ? 'var(--accent)' : 'transparent';
+  lAnnuel.style.color      = mode === 'annuelle' ? '#fff' : 'var(--text2)';
+  document.getElementById('ctr-dates-ponctuel').style.display = mode === 'ponctuelle' ? '' : 'none';
+  document.getElementById('ctr-dates-annuel').style.display   = mode === 'annuelle' ? '' : 'none';
+}
+
+function genererLienContrat() {
+  const client = document.getElementById('ctr-client').value;
+  if (!client) { showAlert('alert-contrats', '⚠️ Choisissez un client.', 'error'); return; }
+
+  const animaux = [...document.querySelectorAll('.ctr-animal-check:checked')].map(c => c.value);
+  if (!animaux.length) { showAlert('alert-contrats', '⚠️ Choisissez au moins un animal.', 'error'); return; }
+
+  const prestation = document.getElementById('ctr-prestation').value;
+  const validite = document.querySelector('input[name="ctr-validite"]:checked').value;
+  const clientData = state.clients.find(c => c.nom === client);
+  const adresse = clientData ? [clientData.adresse, clientData.complement, clientData.cp, clientData.ville].filter(Boolean).join(', ') : '';
+
+  const params = new URLSearchParams();
+  params.set('client', client);
+  params.set('tel', clientData?.tel || '');
+  params.set('adresse', adresse);
+  params.set('animaux', animaux.join(','));
+  params.set('prestation', prestation);
+  params.set('validite', validite);
+
+  if (validite === 'ponctuelle') {
+    const debut = document.getElementById('ctr-debut').value;
+    const fin = document.getElementById('ctr-fin').value;
+    if (!debut || !fin) { showAlert('alert-contrats', '⚠️ Renseignez les dates de début et de fin.', 'error'); return; }
+    params.set('debut', debut);
+    params.set('fin', fin);
+  } else {
+    const signature = document.getElementById('ctr-signature').value || dateToISO(new Date());
+    params.set('signature', signature);
+  }
+
+  const lien = `${location.origin}/contrat.html?${params.toString()}`;
+  document.getElementById('ctr-lien').value = lien;
+  document.getElementById('ctr-resultat').style.display = '';
+  showAlert('alert-contrats', 'Lien généré.', 'success');
+}
+
+function copierLienContrat() {
+  const input = document.getElementById('ctr-lien');
+  input.select();
+  (navigator.clipboard?.writeText(input.value) || Promise.reject())
+    .then(() => showAlert('alert-contrats', 'Lien copié.', 'success'))
+    .catch(() => {
+      document.execCommand('copy');
+      showAlert('alert-contrats', 'Lien copié.', 'success');
+    });
 }
 
 let _lpTimerDep = null;
