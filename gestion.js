@@ -301,21 +301,38 @@ document.getElementById('burgerBtn').addEventListener('click', function() {
 // ═══════════════════════════════════════════════════════════════
 
 function getAllAnimaux() {
-  // Returns flat list of {nom, proprietaire, prestation, tarif}
+  // Returns flat list of {nom, proprietaire, clientId, prestation, tarif}
   const list = [];
   state.clients.forEach(c => {
     (c.animaux || []).forEach(a => {
-      list.push({ nom: a.nom, proprietaire: c.nom, prestation: a.prestation || '', tarif: a.tarif || 0 });
+      list.push({ nom: a.nom, proprietaire: c.nom, clientId: c.id, prestation: a.prestation || '', tarif: a.tarif || 0 });
     });
   });
   return list.sort((a,b) => a.nom.localeCompare(b.nom));
 }
 
+// Conservée pour compat éventuelle, mais ne plus utiliser pour résoudre un
+// animal sélectionné dans un <select> : en cas d'homonymes chez deux
+// propriétaires différents, elle renvoie toujours le premier trouvé.
+// Préférer la valeur composite "clientId::nomAnimal" des selects animal.
 function getProprietaireByAnimal(animalNom) {
   for (const c of state.clients) {
     if ((c.animaux||[]).find(a => a.nom === animalNom)) return c;
   }
   return null;
+}
+
+// Construit la valeur composite utilisée par les <select> animal,
+// et sait aussi parser cette valeur pour retrouver client + animal exacts.
+function animalSelectValue(clientId, animalNom) { return `${clientId}::${animalNom}`; }
+function resolveAnimalSelectValue(val) {
+  if (!val) return { proprio: null, animal: null, animalNom: '' };
+  const sep = val.indexOf('::');
+  const clientId = sep === -1 ? '' : val.slice(0, sep);
+  const animalNom = sep === -1 ? val : val.slice(sep + 2); // compat anciennes valeurs sans id
+  const proprio = clientId ? state.clients.find(c => c.id === clientId) : getProprietaireByAnimal(animalNom);
+  const animal = proprio ? (proprio.animaux||[]).find(a => a.nom === animalNom) : null;
+  return { proprio, animal, animalNom };
 }
 
 function populateSelects() {
@@ -324,13 +341,25 @@ function populateSelects() {
   const proprietaireNames = [...new Set(state.clients.map(c => c.nom))].sort();
   const types = state.prestationsTypes;
 
-  // Animal selects (saisie prestations)
+  // Noms d'animaux en doublon chez des propriétaires différents : on précise
+  // le propriétaire dans le libellé uniquement pour ceux-là, pour ne pas
+  // alourdir l'affichage dans le cas courant.
+  const nomCounts = {};
+  animaux.forEach(a => { nomCounts[a.nom] = (nomCounts[a.nom] || 0) + 1; });
+
+  // Animal selects (saisie prestations) — valeur composite clientId::nomAnimal
+  // car deux animaux homonymes chez deux clients différents doivent rester
+  // distincts (cf. bug où le mauvais propriétaire était associé).
   ['p-animal','lot-animal'].forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
     const val = sel.value;
     sel.innerHTML = '<option value="">-- Choisir --</option>' +
-      animalNames.map(a => `<option ${a===val?'selected':''}>${a}</option>`).join('');
+      animaux.map(a => {
+        const value = animalSelectValue(a.clientId, a.nom);
+        const label = nomCounts[a.nom] > 1 ? `${a.nom} (${a.proprietaire})` : a.nom;
+        return `<option value="${value}" ${value===val?'selected':''}>${label}</option>`;
+      }).join('');
   });
 
   // Prestation selects
@@ -347,10 +376,13 @@ function populateSelects() {
   if (rClient) {
     const rcVal = rClient.value;
     const animauxOptions = [];
-    state.clients.forEach(c => (c.animaux || []).forEach(a => animauxOptions.push({ label: a.nom, value: c.nom })));
-    animauxOptions.sort((a, b) => a.label.localeCompare(b.label));
+    state.clients.forEach(c => (c.animaux || []).forEach(a => animauxOptions.push({ nom: a.nom, value: c.nom })));
+    animauxOptions.sort((a, b) => a.nom.localeCompare(b.nom));
     rClient.innerHTML = '<option value="">-- Choisir --</option>' +
-      animauxOptions.map(o => `<option value="${o.value}" ${o.value===rcVal?'selected':''}>${o.label}</option>`).join('');
+      animauxOptions.map(o => {
+        const label = nomCounts[o.nom] > 1 ? `${o.nom} (${o.value})` : o.nom;
+        return `<option value="${o.value}" ${o.value===rcVal?'selected':''}>${label}</option>`;
+      }).join('');
   }
 
   const now = new Date();
@@ -442,9 +474,7 @@ function populateSelects() {
 }
 
 function onAnimalChange(prefix) {
-  const animal = document.getElementById(prefix+'-animal').value;
-  const proprio = getProprietaireByAnimal(animal);
-  const animalData = proprio ? (proprio.animaux||[]).find(a => a.nom === animal) : null;
+  const { proprio, animal: animalData } = resolveAnimalSelectValue(document.getElementById(prefix+'-animal').value);
   document.getElementById(prefix+'-client').value = proprio ? proprio.nom : '';
   if (animalData) {
     const prestSel = document.getElementById(prefix+'-prestation');
@@ -509,7 +539,7 @@ function autoFillHeureFin(prefix) {
 
 function ajouterPrestation() {
   const date = document.getElementById('p-date').value;
-  const animal = document.getElementById('p-animal').value;
+  const animal = resolveAnimalSelectValue(document.getElementById('p-animal').value).animalNom;
   const client = document.getElementById('p-client').value;
   const prestation = document.getElementById('p-prestation').value;
   const montant = parseFloat(document.getElementById('p-montant').value);
@@ -540,7 +570,7 @@ function ajouterPrestation() {
 }
 
 function ajouterLot() {
-  const animal = document.getElementById('lot-animal').value;
+  const animal = resolveAnimalSelectValue(document.getElementById('lot-animal').value).animalNom;
   const client = document.getElementById('lot-client').value;
   const prestation = document.getElementById('lot-prestation').value;
   const montant = parseFloat(document.getElementById('lot-montant').value);
@@ -774,8 +804,17 @@ let _lpEditMode = 'edit'; // 'edit' | 'duplicate'
 
 function remplirFormEditionPrestation(p) {
   const animaux = getAllAnimaux();
+  const nomCounts = {};
+  animaux.forEach(a => { nomCounts[a.nom] = (nomCounts[a.nom] || 0) + 1; });
   document.getElementById('ep-animal').innerHTML = '<option value="">-- Choisir --</option>' +
-    animaux.map(a => `<option${a.nom === p.animal ? ' selected' : ''}>${a.nom}</option>`).join('');
+    animaux.map(a => {
+      const value = animalSelectValue(a.clientId, a.nom);
+      const label = nomCounts[a.nom] > 1 ? `${a.nom} (${a.proprietaire})` : a.nom;
+      // En édition, on identifie l'animal exact via son nom ET son propriétaire
+      // (p.client), pour bien distinguer deux homonymes.
+      const estCelui = a.nom === p.animal && a.proprietaire === p.client;
+      return `<option value="${value}" ${estCelui ? 'selected' : ''}>${label}</option>`;
+    }).join('');
   document.getElementById('ep-client').value = p.client || '';
   document.getElementById('ep-prestation').innerHTML = '<option value="">-- Choisir --</option>' +
     state.prestationsTypes.map(t => `<option${t === p.prestation ? ' selected' : ''}>${t}</option>`).join('');
@@ -816,7 +855,7 @@ function sauvegarderEditionPrestation() {
   if (!p) return;
 
   const date = document.getElementById('ep-date').value;
-  const animal = document.getElementById('ep-animal').value;
+  const animal = resolveAnimalSelectValue(document.getElementById('ep-animal').value).animalNom;
   const prestation = document.getElementById('ep-prestation').value;
   const montant = parseFloat(document.getElementById('ep-montant').value);
   const hdebut = document.getElementById('ep-hdebut').value;
