@@ -2521,6 +2521,7 @@ function renderFicheClientView(client) {
 
   document.getElementById('fiche-client-content').innerHTML =
     row('Numéro', client.tel) +
+    row('Email', client.email) +
     adresseRow +
     `<div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Animaux</div>
     ${animauxHTML}`;
@@ -2536,6 +2537,7 @@ function renderFicheClientEdit(client) {
 
   document.getElementById('fiche-client-content').innerHTML =
     wrap('Téléphone', inp('tel', client.tel, '06 00 00 00 00')) +
+    wrap('Email', inp('email', client.email, 'nom@exemple.fr')) +
     wrap('Adresse', inp('adresse', client.adresse, 'Rue...')) +
     wrap('Complément d\'adresse', inp('complement', client.complement, 'Bâtiment, étage…')) +
     grid2(wrap('Code postal', inp('cp', client.cp, '69000')) + wrap('Ville', inp('ville', client.ville, 'Lyon')));
@@ -2587,11 +2589,16 @@ function switchFicheMode() {
 function renderFicheView(animal) {
   document.getElementById('notes-section').style.display = 'none';
 
-  const section = (titre, champs) => `
+  const type = animal.type || '';
+  const estNac = type === 'NAC';
+  const estChat = type === 'Chat';
+  const estChien = type === 'Chien';
+
+  const section = (titre, champs) => champs ? `
     <div style="margin-bottom:16px">
       <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.06em;color:#7a9e7e;font-weight:700;margin-bottom:8px;padding-bottom:3px;border-bottom:1px solid #e8e0d4">${titre}</div>
       ${champs}
-    </div>`;
+    </div>` : '';
   const row = (label, val) =>
     `<div style="margin-bottom:8px">
       <div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;line-height:1.2;margin-bottom:3px">${label}</div>
@@ -2602,26 +2609,29 @@ function renderFicheView(animal) {
   document.getElementById('fiche-animal-content').innerHTML =
     section('Identité',
       grid2(
-        row('Race / Espèce', animal.race) +
+        row('Type', type) +
+        row(estNac ? 'Espèce' : 'Race', animal.race) +
         row('Sexe', animal.sexe) +
         row('Naissance', animal.naissance ? new Date(animal.naissance).toLocaleDateString('fr-FR') : '') +
         row('Âge', calcAge(animal.naissance)) +
-        row('Stérilisé(e)', animal.sterilise) +
-        row('Vaccins à jour', animal.vaccins)
+        (!estNac ? row('N° identification', animal.identification) : '') +
+        (!estNac ? row('Stérilisé(e)', animal.sterilise) : '') +
+        (!estNac ? row('Vaccins à jour', animal.vaccins) : '')
       )
     ) +
     section('Santé',
       row('Problèmes de santé', animal.sante) +
       row('Traitement en cours', animal.traitement) +
-      grid2(row('Vétérinaire', animal.veto) + row('Aliments interdits', animal.aliments))
+      grid2(row('Vétérinaire', animal.veto) + (estChien ? row('Aliments interdits', animal.aliments) : ''))
     ) +
     section('Comportement',
-      grid2(
+      (estChien ? grid2(
         row('Entente chiens', animal.entente_chiens) +
         row('Entente chats', animal.entente_chats) +
         row('Entente enfants', animal.entente_enfants)
-      ) +
-      row('Peurs', animal.peurs) +
+      ) : '') +
+      (estChat ? row('Caractère', animal.caractere) : '') +
+      (!estNac ? row('Peurs', animal.peurs) : '') +
       row('Autres', animal.autres)
     ) +
     section('Notes personnelles', `<div style="font-size:0.88rem;color:${animal.notes ? '#2d3b2f' : '#bbb'};font-weight:${animal.notes ? '500' : '400'};line-height:1.4">${animal.notes || '—'}</div>`);
@@ -2646,29 +2656,37 @@ function renderFicheEdit(animal) {
       ${champs}
     </div>`;
 
+  const type = animal.type || '';
+  const estNac = type === 'NAC';
+  const estChat = type === 'Chat';
+  const estChien = type === 'Chien';
+
   document.getElementById('fiche-animal-content').innerHTML =
     section('Identité',
       `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
-        ${stat('Race / Espèce', animal.race)}
+        ${stat('Type', type)}
+        ${stat(estNac ? 'Espèce' : 'Race', animal.race)}
         ${stat('Sexe', animal.sexe)}
         ${s('Date de naissance','naissance',animal.naissance,'date')}
-        ${sel('Stérilisé(e)','sterilise',animal.sterilise,['Oui','Non'])}
-        ${sel('Vaccins à jour','vaccins',animal.vaccins,['Oui','Non'])}
+        ${!estNac ? s('N° identification','identification',animal.identification) : ''}
+        ${!estNac ? sel('Stérilisé(e)','sterilise',animal.sterilise,['Oui','Non']) : ''}
+        ${!estNac ? sel('Vaccins à jour','vaccins',animal.vaccins,['Oui','Non']) : ''}
       </div>`) +
     section('Santé',
       s('Problèmes de santé','sante',animal.sante,'area') +
       s('Traitement en cours','traitement',animal.traitement,'area') +
       `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
         ${s('Vétérinaire','veto',animal.veto)}
-        ${s('Aliments interdits','aliments',animal.aliments)}
+        ${estChien ? s('Aliments interdits','aliments',animal.aliments) : ''}
       </div>`) +
     section('Comportement',
-      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+      (estChien ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
         ${s('Entente avec les chiens','entente_chiens',animal.entente_chiens)}
         ${s('Entente avec les chats','entente_chats',animal.entente_chats)}
         ${s('Entente avec les enfants','entente_enfants',animal.entente_enfants)}
-      </div>` +
-      s('Peurs','peurs',animal.peurs,'area') +
+      </div>` : '') +
+      (estChat ? s('Caractère','caractere',animal.caractere,'area') : '') +
+      (!estNac ? s('Peurs','peurs',animal.peurs,'area') : '') +
       s('Autres','autres',animal.autres,'area'));
 
   const notesEl = document.getElementById('fiche-animal-notes');
@@ -3323,6 +3341,7 @@ function importerDonnees(event) {
       state.evenements = data.evenements || [];
       state.prestationsTypes = data.prestationsTypes || [...DEFAULT_PRESTATIONS_TYPES];
       state.lastFactureNum = data.lastFactureNum || 1;
+      state.impots = data.impots || getDefaultImpots();
       if (data.config) state.config = data.config;
       if (data.notes) saveNotes(data.notes);
       saveState();
@@ -3346,10 +3365,22 @@ function importerFicheClient(data) {
     return;
   }
 
+  const mapAnimal = a => ({
+    type:a.type||'', nom:a.nom||'', race:a.race||'', identification:a.identification||'',
+    sexe:a.sexe||'', naissance:a.naissance||'',
+    sterilise:a.sterilise||'', vaccins:a.vaccins||'', sante:a.sante||'',
+    traitement:a.traitement||'', veto:a.veto||'', aliments:a.aliments||'',
+    entente_chiens:a.entente_chiens||'', entente_chats:a.entente_chats||'',
+    entente_enfants:a.entente_enfants||'', caractere:a.caractere||'',
+    peurs:a.peurs||'', autres:a.autres||'',
+    prestation:'', tarif:0,
+  });
+
   const existant = state.clients.find(c => c.nom.toLowerCase() === proprio.nom.toLowerCase());
   if (existant) {
     if (!confirm(`"${proprio.nom}" existe déjà. Mettre à jour et ajouter les nouveaux animaux ?`)) return;
     existant.tel = proprio.tel || existant.tel;
+    existant.email = proprio.email || existant.email;
     existant.adresse = proprio.adresse || existant.adresse;
     existant.complement = proprio.complement || existant.complement;
     existant.cp = proprio.cp || existant.cp;
@@ -3357,7 +3388,7 @@ function importerFicheClient(data) {
     if (proprio.consent_photos) existant.consent_photos = proprio.consent_photos;
     animaux.forEach(a => {
       if (!existant.animaux.find(ea => ea.nom.toLowerCase() === a.nom.toLowerCase())) {
-        existant.animaux.push({ ...a, prestation:'', tarif:0 });
+        existant.animaux.push(mapAnimal(a));
       }
     });
     saveState(); populateSelects(); renderClients(); showPage('clients');
@@ -3366,18 +3397,11 @@ function importerFicheClient(data) {
   }
 
   state.clients.push({
-    id: uid(), nom: proprio.nom, tel: proprio.tel||'', adresse: proprio.adresse||'',
+    id: uid(), nom: proprio.nom, tel: proprio.tel||'', email: proprio.email||'', adresse: proprio.adresse||'',
     complement: proprio.complement||'', cp: proprio.cp||'', ville: proprio.ville||'',
     consent_photos: proprio.consent_photos||'',
     mode: '',
-    animaux: animaux.map(a => ({
-      nom:a.nom||'', race:a.race||'', sexe:a.sexe||'', naissance:a.naissance||'',
-      sterilise:a.sterilise||'', vaccins:a.vaccins||'', sante:a.sante||'',
-      traitement:a.traitement||'', veto:a.veto||'', aliments:a.aliments||'',
-      entente_chiens:a.entente_chiens||'', entente_chats:a.entente_chats||'',
-      entente_enfants:a.entente_enfants||'', peurs:a.peurs||'', autres:a.autres||'',
-      prestation:'', tarif:0,
-    }))
+    animaux: animaux.map(mapAnimal)
   });
   saveState(); populateSelects(); renderClients(); showPage('clients');
   showAlert('alert-clients',

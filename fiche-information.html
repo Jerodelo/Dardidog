@@ -156,7 +156,7 @@ label {
   margin-bottom: 6px;
 }
 .required::after { content: ' *'; color: var(--red); }
-input[type=text], input[type=tel], input[type=date], textarea, select {
+input[type=text], input[type=tel], input[type=email], input[type=date], textarea, select {
   width: 100%;
   border: 1.5px solid var(--border);
   border-radius: var(--border-radius-sm);
@@ -356,6 +356,10 @@ footer {
         <input type="tel" id="proprio-tel" autocomplete="tel">
       </div>
       <div class="form-group">
+        <label>Adresse mail</label>
+        <input type="email" id="proprio-email" autocomplete="email">
+      </div>
+      <div class="form-group">
         <label class="required">Adresse</label>
         <input type="text" id="proprio-adresse" autocomplete="street-address">
       </div>
@@ -411,86 +415,112 @@ footer {
 
     <div class="card">
       <div id="animal-badge-wrap" style="margin-bottom:14px;text-align:center"></div>
+
       <div class="form-group">
-        <label class="required">Nom de l'animal</label>
-        <input type="text" id="animal-nom">
-      </div>
-      <div class="form-group">
-        <label class="required">Sexe</label>
+        <label class="required">Type d'animal</label>
         <div class="radio-group">
-          <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Mâle')">
-            <input type="radio" name="animal-sexe" value="Mâle"><div class="dot"></div> Mâle
+          <label class="radio-option" onclick="selectRadio(this,'animal-type','Chien');onAnimalTypeChange('Chien')">
+            <input type="radio" name="animal-type" value="Chien"><div class="dot"></div> Chien
           </label>
-          <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Femelle')">
-            <input type="radio" name="animal-sexe" value="Femelle"><div class="dot"></div> Femelle
+          <label class="radio-option" onclick="selectRadio(this,'animal-type','Chat');onAnimalTypeChange('Chat')">
+            <input type="radio" name="animal-type" value="Chat"><div class="dot"></div> Chat
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'animal-type','NAC');onAnimalTypeChange('NAC')">
+            <input type="radio" name="animal-type" value="NAC"><div class="dot"></div> NAC
           </label>
         </div>
       </div>
-      <div class="form-group">
-        <label class="required">Date de naissance</label>
-        <input type="date" id="animal-naissance">
-      </div>
-      <div class="form-group">
-        <label>Espèce / Race</label>
-        <input type="text" id="animal-race">
-      </div>
-      <div class="form-group">
-        <label class="required">Stérilisée / Castré </label>
-        <div class="radio-group">
-          <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Oui')">
-            <input type="radio" name="animal-sterilise" value="Oui"><div class="dot"></div> Oui
-          </label>
-          <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Non')">
-            <input type="radio" name="animal-sterilise" value="Non"><div class="dot"></div> Non
-          </label>
+
+      <div id="animal-fields-wrap" style="display:none">
+        <div class="form-group">
+          <label class="required">Nom de l'animal</label>
+          <input type="text" id="animal-nom">
         </div>
-      </div>
-      <div class="form-group">
-        <label class="required">Vaccins à jour</label>
-        <div class="radio-group">
-          <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Oui')">
-            <input type="radio" name="animal-vaccins" value="Oui"><div class="dot"></div> Oui
-          </label>
-          <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Non')">
-            <input type="radio" name="animal-vaccins" value="Non"><div class="dot"></div> Non
-          </label>
+        <div class="form-group" data-types="Chien,Chat">
+          <label id="label-identification">Numéro d'identification</label>
+          <input type="text" id="animal-identification">
         </div>
-      </div>
-      <div class="form-group">
-        <label>Problème(s) de santé à connaître</label>
-        <textarea id="animal-sante"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Traitement en cours et posologie</label>
-        <textarea id="animal-traitement"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Nom et adresse du cabinet vétérinaire</label>
-        <textarea id="animal-veto" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Aliments interdits</label>
-        <textarea id="animal-aliments" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Entente avec les chiens</label>
-        <textarea id="animal-chiens" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Entente avec les chats</label>
-        <textarea id="animal-chats" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Entente avec les enfants</label>
-        <textarea id="animal-enfants" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Peurs particulières</label>
-        <textarea id="animal-peurs" rows="2"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Autres informations importantes</label>
-        <textarea id="animal-autres" rows="3"></textarea>
+        <div class="form-group">
+          <label class="required">Sexe</label>
+          <div class="radio-group">
+            <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Mâle')">
+              <input type="radio" name="animal-sexe" value="Mâle"><div class="dot"></div> Mâle
+            </label>
+            <label class="radio-option" onclick="selectRadio(this,'animal-sexe','Femelle')">
+              <input type="radio" name="animal-sexe" value="Femelle"><div class="dot"></div> Femelle
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="required">Date de naissance</label>
+          <input type="date" id="animal-naissance">
+        </div>
+        <div class="form-group">
+          <label id="label-race">Race</label>
+          <input type="text" id="animal-race">
+        </div>
+        <div class="form-group" data-types="Chien,Chat">
+          <label class="required">Stérilisée / Castré </label>
+          <div class="radio-group">
+            <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Oui')">
+              <input type="radio" name="animal-sterilise" value="Oui"><div class="dot"></div> Oui
+            </label>
+            <label class="radio-option" onclick="selectRadio(this,'animal-sterilise','Non')">
+              <input type="radio" name="animal-sterilise" value="Non"><div class="dot"></div> Non
+            </label>
+          </div>
+        </div>
+        <div class="form-group" data-types="Chien,Chat">
+          <label class="required">Vaccins à jour</label>
+          <div class="radio-group">
+            <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Oui')">
+              <input type="radio" name="animal-vaccins" value="Oui"><div class="dot"></div> Oui
+            </label>
+            <label class="radio-option" onclick="selectRadio(this,'animal-vaccins','Non')">
+              <input type="radio" name="animal-vaccins" value="Non"><div class="dot"></div> Non
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Problème(s) de santé à connaître</label>
+          <textarea id="animal-sante"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Traitement en cours et posologie</label>
+          <textarea id="animal-traitement"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Nom et adresse du cabinet vétérinaire</label>
+          <textarea id="animal-veto" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chien">
+          <label>Aliments interdits</label>
+          <textarea id="animal-aliments" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chien">
+          <label>Entente avec les chiens</label>
+          <textarea id="animal-chiens" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chien">
+          <label>Entente avec les chats</label>
+          <textarea id="animal-chats" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chien">
+          <label>Entente avec les enfants</label>
+          <textarea id="animal-enfants" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chat">
+          <label>Caractère</label>
+          <textarea id="animal-caractere" rows="2"></textarea>
+        </div>
+        <div class="form-group" data-types="Chien,Chat">
+          <label>Peurs particulières</label>
+          <textarea id="animal-peurs" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Autres informations importantes</label>
+          <textarea id="animal-autres" rows="3"></textarea>
+        </div>
       </div>
     </div>
 
@@ -564,7 +594,7 @@ const EMAILJS_PUBLIC_KEY  = '4xOShhDbIP50Z1RUo';
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
 const state = {
-  proprietaire: { nom:'', tel:'', adresse:'', complement:'', cp:'', ville:'' },
+  proprietaire: { nom:'', tel:'', email:'', adresse:'', complement:'', cp:'', ville:'' },
   animaux: [],
   _animalEnCours: null,
 };
@@ -610,9 +640,24 @@ function getRadio(name) {
   return checked ? checked.value : null;
 }
 
+function onAnimalTypeChange(type) {
+  document.getElementById('animal-fields-wrap').style.display = '';
+
+  document.querySelectorAll('#animal-fields-wrap [data-types]').forEach(el => {
+    const types = el.dataset.types.split(',');
+    el.style.display = types.includes(type) ? '' : 'none';
+  });
+
+  document.getElementById('label-race').textContent = type === 'NAC' ? 'Espèce' : 'Race';
+
+  const labelId = document.getElementById('label-identification');
+  labelId.classList.toggle('required', type === 'Chien');
+}
+
 function validerProprietaire() {
   const nom = document.getElementById('proprio-nom').value.trim();
   const tel = document.getElementById('proprio-tel').value.trim();
+  const email = document.getElementById('proprio-email').value.trim();
   const adresse = document.getElementById('proprio-adresse').value.trim();
   const complement = document.getElementById('proprio-complement').value.trim();
   const cp = document.getElementById('proprio-cp').value.trim();
@@ -633,7 +678,7 @@ function validerProprietaire() {
     return;
   }
 
-  state.proprietaire = { nom, tel, adresse, complement, cp, ville, consent_photos: consentPhotos };
+  state.proprietaire = { nom, tel, email, adresse, complement, cp, ville, consent_photos: consentPhotos };
   clearAlert();
   resetAnimalForm();
   showSection('animal');
@@ -642,18 +687,22 @@ function validerProprietaire() {
 }
 
 function validerAnimal() {
+  const type = getRadio('animal-type');
   const nom = document.getElementById('animal-nom').value.trim();
   const sexe = getRadio('animal-sexe');
   const naissance = document.getElementById('animal-naissance').value;
-  const sterilise = getRadio('animal-sterilise');
-  const vaccins = getRadio('animal-vaccins');
+  const identification = document.getElementById('animal-identification').value.trim();
+  const sterilise = type !== 'NAC' ? getRadio('animal-sterilise') : null;
+  const vaccins = type !== 'NAC' ? getRadio('animal-vaccins') : null;
 
   const missing = [];
+  if (!type) missing.push('Type d\'animal');
   if (!nom) missing.push('Nom de l\'animal');
   if (!sexe) missing.push('Sexe');
   if (!naissance) missing.push('Date de naissance');
-  if (!sterilise) missing.push('Stérilisation');
-  if (!vaccins) missing.push('Vaccins');
+  if (type === 'Chien' && !identification) missing.push('Numéro d\'identification');
+  if (type !== 'NAC' && !sterilise) missing.push('Stérilisation');
+  if (type !== 'NAC' && !vaccins) missing.push('Vaccins');
 
   if (missing.length > 0) {
     showAlert('Champs obligatoires manquants : ' + missing.join(', '), 'error');
@@ -661,10 +710,12 @@ function validerAnimal() {
   }
 
   const animal = {
+    type,
     nom,
     sexe,
     naissance,
     race: document.getElementById('animal-race').value.trim(),
+    identification,
     sterilise,
     vaccins,
     sante: document.getElementById('animal-sante').value.trim(),
@@ -674,6 +725,7 @@ function validerAnimal() {
     entente_chiens: document.getElementById('animal-chiens').value.trim(),
     entente_chats: document.getElementById('animal-chats').value.trim(),
     entente_enfants: document.getElementById('animal-enfants').value.trim(),
+    caractere: document.getElementById('animal-caractere').value.trim(),
     peurs: document.getElementById('animal-peurs').value.trim(),
     autres: document.getElementById('animal-autres').value.trim(),
   };
@@ -716,17 +768,21 @@ function validerAutreAnimal() {
 }
 
 function resetAnimalForm() {
-  ['animal-nom','animal-race','animal-naissance','animal-sante','animal-traitement',
+  ['animal-nom','animal-race','animal-identification','animal-naissance','animal-sante','animal-traitement',
    'animal-veto','animal-aliments','animal-chiens','animal-chats','animal-enfants',
-   'animal-peurs','animal-autres']
+   'animal-caractere','animal-peurs','animal-autres']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
 
-  ['animal-sexe','animal-sterilise','animal-vaccins'].forEach(name => {
+  ['animal-type','animal-sexe','animal-sterilise','animal-vaccins'].forEach(name => {
     document.querySelectorAll(`[name="${name}"]`).forEach(r => {
       r.closest('.radio-option').classList.remove('selected');
       r.checked = false;
     });
   });
+
+  document.getElementById('animal-fields-wrap').style.display = 'none';
+  document.getElementById('label-race').textContent = 'Race';
+  document.getElementById('label-identification').classList.remove('required');
 }
 
 function afficherRecapAnimaux() {
@@ -734,7 +790,7 @@ function afficherRecapAnimaux() {
 
   list.innerHTML = state.animaux.map((a, i) => `
     <div class="animal-recap">
-      <strong>🐾 ${a.nom}</strong> — ${a.race || 'race non précisée'} — ${a.sexe}
+      <strong>🐾 ${a.nom}</strong> — ${a.type || ''}${a.race ? ' · ' + a.race : ''} — ${a.sexe}
       <br><span style="color:var(--text2);font-size:0.8rem">
         Né(e) le ${a.naissance ? new Date(a.naissance).toLocaleDateString('fr-FR') : '?'}
       </span>
@@ -746,7 +802,7 @@ function afficherRecapFinal() {
   document.getElementById('recap-final').innerHTML = `
     <div style="text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:var(--border-radius-md);padding:16px;margin-top:20px">
 <div style="font-size:0.85rem;margin-bottom:2px"><strong style="color:var(--color-text)">${state.proprietaire.nom}</strong></div>
-      <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px">${state.proprietaire.tel}</div>
+      <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px">${[state.proprietaire.tel, state.proprietaire.email].filter(Boolean).join(' · ')}</div>
       ${(state.proprietaire.adresse || state.proprietaire.complement || state.proprietaire.cp || state.proprietaire.ville) ? `<div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">${[state.proprietaire.adresse, state.proprietaire.complement, [state.proprietaire.cp, state.proprietaire.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ')}</div>` : ''}
       ${state.animaux.map(a => `
         <div style="background:white;border:1px solid var(--border);border-radius:var(--border-radius-sm);padding:10px;margin-top:8px;font-size:0.83rem">
@@ -765,6 +821,7 @@ async function envoyerFicheEmail() {
   const templateParams = {
     proprio_nom:     state.proprietaire.nom,
     proprio_tel:     state.proprietaire.tel,
+    proprio_email:   state.proprietaire.email || '—',
     proprio_adresse: [state.proprietaire.adresse, state.proprietaire.complement, [state.proprietaire.cp, state.proprietaire.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ') || '—',
     animaux_noms:    state.animaux.map(a => `${a.nom}${a.race ? ' ('+a.race+')' : ''}`).join(', '),
     json_data:       json,
