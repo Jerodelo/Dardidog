@@ -403,6 +403,24 @@ pointer-events: auto; cursor: pointer;
 user-select: none;
 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.gs-anniv-overlay {
+position: absolute;
+top: 0; bottom: 0;
+background: rgba(214,51,108,0.12);
+border-left: 3px solid #D6336C;
+pointer-events: none;
+z-index: 3;
+}
+.gs-anniv-label {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+display: block;
+padding: 2px 5px;
+font-size: 0.62rem; font-weight: 700;
+color: white; background: #D6336C;
+user-select: none;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .gs-header {
 background: var(--accent2); color: white;
 padding: 8px 4px; text-align: center; font-weight: 600;
@@ -498,6 +516,23 @@ color: white; background: #D4BC9E;
 pointer-events: auto; cursor: pointer;
 user-select: none;
 }
+.gj-anniv-overlay {
+position: absolute;
+left: 48px; right: 0; top: 0; bottom: 0;
+background: rgba(214,51,108,0.12);
+border-left: 3px solid #D6336C;
+pointer-events: none;
+z-index: 3;
+}
+.gj-anniv-label {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+display: block;
+padding: 3px 8px;
+font-size: 0.7rem; font-weight: 700;
+color: white; background: #D6336C;
+user-select: none;
+}
 .gj-cell {
 border-top: 1px solid var(--border);
 border-left: 1px solid var(--border);
@@ -542,6 +577,8 @@ min-width: 0; overflow: hidden;
 .gm-cell:nth-child(7n+1) { border-left: none; }
 .gm-cell.other-month { background: var(--surface2); }
 .gm-cell.today-cell { background: #f0f8f3; }
+.gm-cell.has-anniv { background: #fcecd8; }
+.gm-cell.has-anniv.today-cell { background: #f6ecd0; }
 .gm-date {
 font-size: 0.75rem; font-weight: 600; color: var(--text2);
 margin-bottom: 3px; display: inline-block;

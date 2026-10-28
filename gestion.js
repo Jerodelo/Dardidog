@@ -1084,6 +1084,14 @@ function renderJour() {
     ).join('');
   }
 
+  // Overlays pleine hauteur pour les anniversaires d'animaux (libellé en bas)
+  const annivJour = anniversairesForDate(iso);
+  if (annivJour.length) {
+    html += annivJour.map(a =>
+      `<div class="gj-anniv-overlay"><span class="gj-anniv-label">🎂 ${a.nom} (${a.age} an${a.age > 1 ? 's' : ''})</span></div>`
+    ).join('');
+  }
+
   document.getElementById('grille-jour').innerHTML = html;
 }
 
@@ -1224,13 +1232,20 @@ function renderSemaine() {
     });
   });
 
+  // Overlays pleine hauteur pour les anniversaires d'animaux (libellé en bas)
+  isoJours.forEach((iso, i) => {
+    anniversairesForDate(iso).forEach(a => {
+      html += `<div class="gs-anniv-overlay" style="left:calc(48px + ${i} * (100% - 48px) / 7);right:calc(${6-i} * (100% - 48px) / 7)"><span class="gs-anniv-label">🎂 ${a.nom} (${a.age} an${a.age > 1 ? 's' : ''})</span></div>`;
+    });
+  });
+
   document.getElementById('grille-semaine').innerHTML = html;
 
   // Décaler les overlays sous le header (hauteur mesurée après render)
   const headerEl = document.querySelector('#grille-semaine .gs-header');
   if (headerEl) {
     const hh = headerEl.offsetHeight + 'px';
-    document.querySelectorAll('#grille-semaine .gs-period-overlay').forEach(el => {
+    document.querySelectorAll('#grille-semaine .gs-period-overlay, #grille-semaine .gs-anniv-overlay').forEach(el => {
       el.style.top = hh;
     });
   }
@@ -1276,10 +1291,12 @@ function renderMois() {
     const isToday = d.getTime() === today.getTime();
     const dayPrests = expandPrestations(state.prestations.filter(p => p.date === iso));
     const dayEvPerso = eventsForDate(iso);
+    const dayAnniv = anniversairesForDate(iso);
 
     let cellClass = 'gm-cell';
     if (!isThisMonth) cellClass += ' other-month';
     if (isToday) cellClass += ' today-cell';
+    if (dayAnniv.length) cellClass += ' has-anniv';
 
     let eventsHtml = '';
     const MAX_VISIBLE = 3;
@@ -1299,7 +1316,8 @@ function renderMois() {
     }
 
     const clickAttr = isThisMonth ? ` onclick="ouvrirJour('${iso}')" style="cursor:pointer"` : '';
-    html += `<div class="${cellClass}"${clickAttr}>
+    const annivAttr = dayAnniv.length ? ` title="🎂 ${dayAnniv.map(a => a.nom + ' (' + a.age + ' an' + (a.age > 1 ? 's' : '') + ')').join(', ')}"` : '';
+    html += `<div class="${cellClass}"${clickAttr}${annivAttr}>
       <span class="gm-date${isToday?' today-date':''}">${d.getDate()}</span>
       ${eventsHtml}
     </div>`;
@@ -3467,6 +3485,25 @@ function eventsForDate(iso) {
     if (ev.type === 'periode') return ev.dateDebut <= iso && ev.dateFin >= iso;
     return false;
   });
+}
+
+// Anniversaires des animaux : calculés directement depuis la date de
+// naissance enregistrée sur chaque animal (state.clients[].animaux[].naissance),
+// donc automatiquement à jour pour les animaux déjà en base comme pour ceux
+// ajoutés via l'import d'une fiche client.
+function anniversairesForDate(iso) {
+  const [anneeIso, mm, dd] = iso.split('-');
+  const result = [];
+  state.clients.forEach(c => {
+    (c.animaux || []).forEach(a => {
+      if (!a.naissance) return;
+      const [anneeNaiss, amm, add] = a.naissance.split('-');
+      if (amm === mm && add === dd) {
+        result.push({ nom: a.nom, proprietaire: c.nom, age: parseInt(anneeIso, 10) - parseInt(anneeNaiss, 10) });
+      }
+    });
+  });
+  return result;
 }
 
 function updateEvForm() {
