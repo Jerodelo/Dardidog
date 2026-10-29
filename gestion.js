@@ -2514,6 +2514,15 @@ function renderFicheClientView(client) {
       <div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">${label}</div>
       <div style="font-size:0.9rem;color:${v ? '#2d3b2f' : '#bbb'};font-weight:${v ? '500' : '400'}">${v || '—'}</div>
     </div>`;
+  const emailRow = `
+    <div style="margin-bottom:12px">
+      <div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Email</div>
+      <div style="font-size:0.9rem;color:${client.email ? '#2d3b2f' : '#bbb'};font-weight:${client.email ? '500' : '400'}">
+        ${client.email
+          ? `<a href="mailto:${client.email}" style="color:inherit;text-decoration:underline">${client.email}</a>`
+          : '—'}
+      </div>
+    </div>`;
   const adresseDisplay = [client.adresse, client.complement, client.cp, client.ville].filter(Boolean).join(', ') || null;
   const adresseMaps = [client.adresse, client.cp, client.ville].filter(Boolean).join(' ');
   const adresseRow = `
@@ -2539,7 +2548,7 @@ function renderFicheClientView(client) {
 
   document.getElementById('fiche-client-content').innerHTML =
     row('Numéro', client.tel) +
-    row('Email', client.email) +
+    emailRow +
     adresseRow +
     `<div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Animaux</div>
     ${animauxHTML}`;
