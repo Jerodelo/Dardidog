@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&family=Open+Sans:wght@400;600;700&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="gestion.css?v=28">
+<link rel="stylesheet" href="gestion.css?v=31">
 </style>
 
 </head>
@@ -277,14 +277,24 @@
           <span id="r-doc-type-devis-label" style="display:block;padding:6px 20px;font-size:0.85rem;font-weight:600;background:transparent;color:var(--text2);transition:.15s">Devis</span>
         </label>
       </div>
+      <div style="margin-bottom:14px;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="r-pro" onchange="onProChange()">
+        <label for="r-pro" style="cursor:pointer;font-size:0.9rem;margin:0">Facturer un professionnel</label>
+      </div>
       <div class="form-grid">
         <div class="form-group">
           <label>Client</label>
-          <select id="r-client" onchange="resetFactureForm()"><option value="">-- Choisir --</option></select>
+          <select id="r-client" onchange="autoFillSiren();resetFactureForm()"><option value="">-- Choisir --</option></select>
         </div>
         <div class="form-group">
           <label>Année</label>
           <select id="r-annee" onchange="resetFactureForm()"></select>
+        </div>
+      </div>
+      <div class="form-grid cols-1" id="r-siren-wrap" style="display:none;margin-top:10px">
+        <div class="form-group">
+          <label>SIREN du client</label>
+          <input type="text" id="r-siren" placeholder="123 456 789" oninput="resetFactureForm()">
         </div>
       </div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
@@ -1143,7 +1153,7 @@
 </div>
 
 <div id="gs-toast"></div>
-<script src="gestion.js?v=28"></script>
+<script src="gestion.js?v=31"></script>
 <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 
 </body>
