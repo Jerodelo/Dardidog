@@ -1364,17 +1364,17 @@ function calcTotalNet(totalBrut, ristourneType, ristourneVal) {
 }
 
 function onProChange() {
-  autoFillSiren();
+  autoFillSiret();
   resetFactureForm();
 }
 
-function autoFillSiren() {
+function autoFillSiret() {
   const isPro = document.getElementById('r-pro').checked;
-  document.getElementById('r-siren-wrap').style.display = isPro ? '' : 'none';
+  document.getElementById('r-siret-wrap').style.display = isPro ? '' : 'none';
   if (!isPro) return;
   const proprio = document.getElementById('r-client').value;
   const client = state.clients.find(c => c.nom === proprio);
-  document.getElementById('r-siren').value = client?.siren || '';
+  document.getElementById('r-siret').value = client?.siret || '';
 }
 
 function onDocTypeChange() {
@@ -1456,13 +1456,13 @@ function previewFacture() {
   const ristourneType = document.getElementById('r-ristourne-type').value;
   const ristourneVal  = parseFloat(document.getElementById('r-ristourne-val').value) || 0;
   const isPro = document.getElementById('r-pro').checked;
-  const siren = isPro ? document.getElementById('r-siren').value.trim() : '';
+  const siret = isPro ? document.getElementById('r-siret').value.trim() : '';
   const totalNet = calcTotalNet(totalBrut, ristourneType, ristourneVal);
   const periodeLabel = mois2
     ? `${mois} – ${mois2} ${annee2 !== annee ? annee+'/'+annee2 : annee}`
     : `${mois} ${annee}`;
 
-  lastFactureData = { proprio, mois, annee, mois2: mois2||null, annee2: mois2?annee2:null, prestsMois, total: totalBrut, totalNet, ristourneType, ristourneVal, isPro, siren, ref, dateFacture, animauxConcernes, periodeLabel };
+  lastFactureData = { proprio, mois, annee, mois2: mois2||null, annee2: mois2?annee2:null, prestsMois, total: totalBrut, totalNet, ristourneType, ristourneVal, isPro, siret, ref, dateFacture, animauxConcernes, periodeLabel };
 
   const remiseLigne = ristourneType && ristourneVal > 0
     ? `<div><strong>Remise :</strong> ${ristourneType === 'pct' ? ristourneVal + '%' : ristourneVal + '€'}</div>
@@ -1500,10 +1500,10 @@ function onBtnCreer() {
 
 async function genererDevis() {
   if (!lastFactureData) return;
-  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, isPro, siren, dateFacture } = lastFactureData;
+  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, isPro, siret, dateFacture } = lastFactureData;
   const clientData = state.clients.find(c => c.nom === proprio);
   const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
-  if (isPro && siren) adresseLines.push('SIREN : ' + siren);
+  if (isPro && siret) adresseLines.push('SIRET : ' + siret);
   const d = new Date();
   const devisRef = 'D-' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
   await _buildPDF(devisRef, proprio, adresseLines, periodeLabel, dateFacture, prestsMois, total, clientData?.mode || 'Liquide', ristourneType || '', ristourneVal || 0, 'DEVIS', isPro);
@@ -1519,7 +1519,7 @@ function resetFactureForm() {
 }
 
 function genererFacture() {
-  const { proprio, mois, annee, mois2, annee2, total, totalNet, ristourneType, ristourneVal, isPro, siren, ref, dateFacture, prestsMois } = lastFactureData;
+  const { proprio, mois, annee, mois2, annee2, total, totalNet, ristourneType, ristourneVal, isPro, siret, ref, dateFacture, prestsMois } = lastFactureData;
 
   const clientData = state.clients.find(c => c.nom === proprio);
   const mode = clientData ? clientData.mode : 'Liquide';
@@ -1539,7 +1539,7 @@ function genererFacture() {
     ...(moisCle2 ? { moisCle2 } : {}),
     montant: totalNet ?? total, montantBrut: total,
     ristourneType: ristourneType || '', ristourneVal: ristourneVal || 0,
-    isPro: !!isPro, siren: isPro ? (siren || '') : '',
+    isPro: !!isPro, siret: isPro ? (siret || '') : '',
     mode, statut: 'Dû'
   });
   prestsMois.forEach(pm => {
@@ -1666,11 +1666,11 @@ function renderRecettes() {
 
 async function genererPDF() {
   if (!lastFactureData) return;
-  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, isPro, siren, ref, dateFacture } = lastFactureData;
+  const { proprio, periodeLabel, prestsMois, total, ristourneType, ristourneVal, isPro, siret, ref, dateFacture } = lastFactureData;
   const clientData = state.clients.find(c => c.nom === proprio);
   const mode = clientData ? clientData.mode : 'Liquide';
   const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
-  if (isPro && siren) adresseLines.push('SIREN : ' + siren);
+  if (isPro && siret) adresseLines.push('SIRET : ' + siret);
   await _buildPDF(ref, proprio, adresseLines, periodeLabel, dateFacture, prestsMois, total, mode, ristourneType || '', ristourneVal || 0, 'FACTURE', isPro);
 }
 
@@ -1695,7 +1695,7 @@ async function genererPDFFromRecette(id) {
   }
   const clientData = state.clients.find(c => c.nom === rec.client);
   const adresseLines = clientData ? [clientData.adresse, [clientData.cp, clientData.ville].filter(Boolean).join(' ')].filter(Boolean) : [];
-  if (rec.isPro && rec.siren) adresseLines.push('SIREN : ' + rec.siren);
+  if (rec.isPro && (rec.siret || rec.siren)) adresseLines.push('SIRET : ' + (rec.siret || rec.siren));
   const totalBrut = rec.montantBrut || prestsMois.reduce((s,p) => s + p.montant, 0);
   await _buildPDF(rec.ref, rec.client, adresseLines, periodeLabel, new Date(rec.date), prestsMois, totalBrut, rec.mode, rec.ristourneType || '', rec.ristourneVal || 0, 'FACTURE', rec.isPro);
 }
@@ -2558,7 +2558,7 @@ function renderFicheClientView(client) {
           : '—'}
       </div>
     </div>`;
-  const sirenRow = row('SIREN (professionnel)', client.siren);
+  const siretRow = row('SIRET (professionnel)', client.siret || client.siren);
   const animaux = client.animaux || [];
   const animauxHTML = animaux.length === 0
     ? `<div style="font-size:0.85rem;color:#bbb;margin-top:4px">Aucun animal enregistré</div>`
@@ -2575,7 +2575,7 @@ function renderFicheClientView(client) {
     row('Numéro', client.tel) +
     emailRow +
     adresseRow +
-    sirenRow +
+    siretRow +
     `<div style="font-size:0.67rem;color:#7a9e7e;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Animaux</div>
     ${animauxHTML}`;
 }
@@ -2594,7 +2594,7 @@ function renderFicheClientEdit(client) {
     wrap('Adresse', inp('adresse', client.adresse, 'Rue...')) +
     wrap('Complément d\'adresse', inp('complement', client.complement, 'Bâtiment, étage…')) +
     grid2(wrap('Code postal', inp('cp', client.cp, '69000')) + wrap('Ville', inp('ville', client.ville, 'Lyon'))) +
-    wrap('SIREN (si client professionnel)', inp('siren', client.siren, '123 456 789'));
+    wrap('SIRET (si client professionnel)', inp('siret', client.siret || client.siren, '123 456 789 00012'));
 }
 
 function saveClientField(field, val) {
